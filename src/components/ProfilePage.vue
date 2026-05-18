@@ -1286,7 +1286,7 @@ const handleLogout = () => {
 /* ================= TWO-COLUMN GRID LAYOUT ================= */
 .profile-grid {
   display: grid;
-  grid-template-columns: 290px 1fr;
+  grid-template-columns: 220px 1fr;
   gap: 1.75rem;
   align-items: start;
 }
@@ -1771,22 +1771,22 @@ const handleLogout = () => {
 
 .detail-val-col-wrapper {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
 }
 
 .verified-pill {
   background-color: #EBF7EE;
   color: #2E7D32;
-  font-size: 0.68rem;
+  font-size: 0.6rem;
   font-weight: 600;
-  padding: 0.15rem 0.5rem;
+  padding: 0.1rem 0.4rem;
   border-radius: 30px;
   border: 1px solid rgba(46, 125, 50, 0.15);
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.25rem;
 }
 
 .inline-check {
@@ -3296,23 +3296,37 @@ const handleLogout = () => {
 /* ================= RESPONSIVE LAYOUT CONFIGURATIONS ================= */
 @media (max-width: 1024px) {
   .profile-grid {
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: 200px 1fr;
     gap: 1.25rem;
   }
 }
 
 @media (max-width: 768px) {
   .profile-page-wrapper {
-    padding: 1rem 0.75rem;
-    padding-bottom: 5rem; /* extra space for mobile bottom navbar */
+    padding: 0 1.5rem; /* Match footer's mobile side padding exactly */
+    padding-top: 1rem;
+    padding-bottom: 5rem;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .profile-container {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .profile-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .profile-sidebar {
+    width: 100%;
+    box-sizing: border-box;
     padding: 1.25rem 1rem;
     border-radius: 12px;
   }
@@ -3365,6 +3379,9 @@ const handleLogout = () => {
     padding: 1rem;
     border-radius: 12px;
     min-height: auto;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   /* Horizontal swipeable tabs nav bar */
@@ -3485,6 +3502,10 @@ const handleLogout = () => {
   .detail-val-col-wrapper {
     padding-left: 1.65rem;
     width: 100%;
+  }
+
+  .detail-val-col-wrapper .detail-val-col {
+    padding-left: 0;
   }
 
   .inline-edit-input {
