@@ -9,11 +9,9 @@
       <!-- Center: Menu -->
       <nav class="main-nav mobile-hidden">
         <ul>
-          <li><a href="#" class="nav-item" :class="{ active: currentPage === 'home' }" @click.prevent="currentPage = 'home'">{{ getMenuLabel('home') }}</a></li>
-          <li><a href="#" class="nav-item" :class="{ active: currentPage === 'shop' || currentPage === 'checkout' || currentPage === 'payment' }" @click.prevent="currentPage = 'shop'">{{ getMenuLabel('shop') }}</a></li>
-          <li><a href="#" class="nav-item">{{ getMenuLabel('collections') }}</a></li>
-          <!-- <li><a href="#" class="nav-item">{{ getMenuLabel('about') }}</a></li> -->
-          <!-- <li><a href="#" class="nav-item">{{ getMenuLabel('faq') }}</a></li> -->
+          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'home' }" @click.prevent="navigateToSection('home')">{{ getMenuLabel('home') }}</a></li>
+          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'collections' }" @click.prevent="navigateToSection('collections')">{{ getMenuLabel('collections') }}</a></li>
+          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'shop' }" @click.prevent="navigateToSection('shop')">{{ getMenuLabel('shop') }}</a></li>
         </ul>
       </nav>
 
@@ -69,7 +67,7 @@
         </button>
 
         <!-- Profile Icon (Placed on the far right) -->
-        <button class="action-btn" aria-label="Profile" @click="openProfileToast">
+        <button class="action-btn" :class="{ 'profile-active': currentPage === 'profile' }" aria-label="Profile" @click="openProfileToast">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
@@ -106,11 +104,9 @@
         
         <div class="mobile-sidebar-content">
           <ul class="mobile-nav-list">
-            <li><a href="#" :class="{ active: currentPage === 'home' }" @click.prevent="currentPage = 'home'; isMobileMenuOpen = false;">{{ getMenuLabel('home') }}</a></li>
-            <li><a href="#" :class="{ active: currentPage === 'shop' || currentPage === 'checkout' || currentPage === 'payment' }" @click.prevent="currentPage = 'shop'; isMobileMenuOpen = false;">{{ getMenuLabel('shop') }}</a></li>
-            <li><a href="#">{{ getMenuLabel('collections') }}</a></li>
-            <!-- <li><a href="#">{{ getMenuLabel('about') }}</a></li> -->
-            <!-- <li><a href="#">{{ getMenuLabel('faq') }}</a></li> -->
+            <li><a href="#" :class="{ active: activeSection === 'home' }" @click.prevent="navigateToSection('home'); isMobileMenuOpen = false;">{{ getMenuLabel('home') }}</a></li>
+            <li><a href="#" :class="{ active: activeSection === 'collections' }" @click.prevent="navigateToSection('collections'); isMobileMenuOpen = false;">{{ getMenuLabel('collections') }}</a></li>
+            <li><a href="#" :class="{ active: activeSection === 'shop' }" @click.prevent="navigateToSection('shop'); isMobileMenuOpen = false;">{{ getMenuLabel('shop') }}</a></li>
           </ul>
           
           <div class="mobile-sidebar-actions">
@@ -168,12 +164,98 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, watch } from 'vue';
+import { ref, computed, nextTick, watch, onMounted, onUnmounted } from 'vue';
 import { isCartOpen, totalItems, searchQuery, currentLang, currentPage, isSearchOpen, triggerProfile } from '../store/cart.js';
 
 const isLangDropdownOpen = ref(false);
 const isMobileMenuOpen = ref(false);
 const searchInput = ref(null);
+
+const activeSection = ref('home');
+
+// Scroll observer to update active section based on scroll position of .collections-container
+const updateActiveSectionOnScroll = () => {
+  if (currentPage.value === 'shop' || currentPage.value === 'checkout' || currentPage.value === 'payment') {
+    activeSection.value = 'shop';
+    return;
+  }
+  if (currentPage.value !== 'home') {
+    activeSection.value = '';
+    return;
+  }
+  
+  const collectionsEl = document.querySelector('.collections-container');
+  if (!collectionsEl) {
+    activeSection.value = 'home';
+    return;
+  }
+  
+  const rect = collectionsEl.getBoundingClientRect();
+  // If the top of the collections section is scrolled above 45% of viewport height, mark collections active
+  if (rect.top <= window.innerHeight * 0.45) {
+    activeSection.value = 'collections';
+  } else {
+    activeSection.value = 'home';
+  }
+};
+
+// Handle navigation clicks dynamically
+const navigateToSection = (section) => {
+  if (section === 'shop') {
+    currentPage.value = 'shop';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    activeSection.value = 'shop';
+  } else if (section === 'home') {
+    if (currentPage.value !== 'home') {
+      currentPage.value = 'home';
+      nextTick(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    activeSection.value = 'home';
+  } else if (section === 'collections') {
+    const scrollToCollections = () => {
+      const collectionsEl = document.querySelector('.collections-container');
+      if (collectionsEl) {
+        const yOffset = -90; // sticky header padding
+        const y = collectionsEl.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    };
+    if (currentPage.value !== 'home') {
+      currentPage.value = 'home';
+      setTimeout(scrollToCollections, 150); // wait for homepage to mount and transitions
+    } else {
+      scrollToCollections();
+    }
+    activeSection.value = 'collections';
+  }
+};
+
+watch(currentPage, (val) => {
+  if (val === 'shop' || val === 'checkout' || val === 'payment') {
+    activeSection.value = 'shop';
+  } else if (val === 'home') {
+    // Check scroll after state transition
+    nextTick(() => {
+      updateActiveSectionOnScroll();
+    });
+  } else {
+    activeSection.value = '';
+  }
+}, { immediate: true });
+
+onMounted(() => {
+  window.addEventListener('scroll', updateActiveSectionOnScroll, { passive: true });
+  // Initial check
+  updateActiveSectionOnScroll();
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', updateActiveSectionOnScroll);
+});
 
 watch(triggerProfile, (newVal) => {
   if (newVal) {
@@ -211,10 +293,7 @@ const triggerToast = (msg) => {
 };
 
 const openProfileToast = () => {
-  const msg = currentLang.value === 'id' 
-    ? 'Membuka menu profil pelanggan...' 
-    : 'Opening customer profile menu...';
-  triggerToast(msg);
+  currentPage.value = 'login';
 };
 
 const openCart = () => {
@@ -329,6 +408,7 @@ const getMenuLabel = (key) => {
   padding: 0.5rem 0;
   position: relative;
   letter-spacing: 0.02em;
+  transition: opacity 0.25s ease;
 }
 
 .nav-item:hover {
@@ -337,17 +417,27 @@ const getMenuLabel = (key) => {
 
 .nav-item.active {
   opacity: 1;
+  font-weight: 600;
 }
 
-/* Home underline active styling */
-.nav-item.active::after {
+/* Elegant premium sliding underline */
+.nav-item::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 1.5px;
+  height: 2px;
   background-color: var(--color-mocca-dark);
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-item:hover::after,
+.nav-item.active::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
 }
 
 .header-actions {
@@ -375,9 +465,11 @@ const getMenuLabel = (key) => {
   transform: translateY(-1px);
 }
 
-.action-btn.search-active {
+.action-btn.search-active,
+.action-btn.profile-active {
   color: var(--color-mocca-dark);
   opacity: 1;
+  transform: scale(1.05);
 }
 
 .cart-btn {

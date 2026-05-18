@@ -13,6 +13,28 @@
   --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+/* ======== Theme: Vintage Sepia ======== */
+body[data-theme="sepia"] {
+  --color-bg-light: #F5EDD8;
+  --color-bg-cream: #EFE6CE;
+  --color-bg-shop: #EFE6CE;
+  --color-mocca-dark: #4A3728;
+  --color-mocca-muted: #7A6651;
+  --color-mocca-border: #D6C9A8;
+  --color-mocca-active: #4A3728;
+}
+
+/* ======== Theme: Cozy Dark Cocoa ======== */
+body[data-theme="cocoa"] {
+  --color-bg-light: #2A1A0F;
+  --color-bg-cream: #1E1108;
+  --color-bg-shop: #1E1108;
+  --color-mocca-dark: #F0E4CE;
+  --color-mocca-muted: #B8A08A;
+  --color-mocca-border: #3D2A1A;
+  --color-mocca-active: #F0E4CE;
+}
+
 * {
   margin: 0;
   padding: 0;

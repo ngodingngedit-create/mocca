@@ -18,13 +18,13 @@
                 :class="['thumb-btn', { active: activeImageIndex === idx }]"
                 @click="activeImageIndex = idx"
               >
-                <img :src="thumb" :alt="`${product.title} thumb ${idx}`" class="thumb-img" />
+                <img :src="thumb" :alt="`${productTitle} thumb ${idx}`" class="thumb-img" />
               </button>
             </div>
 
             <!-- 2. Main Product Display frame -->
             <div class="main-display-frame">
-              <img :src="productData.thumbnails[activeImageIndex]" :alt="product.title" class="main-display-img" />
+              <img :src="productData.thumbnails[activeImageIndex]" :alt="productTitle" class="main-display-img" />
             </div>
           </div>
 
@@ -33,7 +33,7 @@
             <!-- Title Header -->
             <div class="info-header">
               <span class="info-tag">Official Merch • Limited Collection</span>
-              <h2 class="info-title">{{ product.title }}</h2>
+              <h2 class="info-title">{{ productTitle }}</h2>
               
               <!-- Rating and Wishlist row -->
               <div class="info-meta-row">
@@ -164,7 +164,7 @@
 
 <script setup>
 import { ref, watch, computed } from 'vue';
-import { addToCart, updateQuantity, getItemQuantity, currentPage } from '../store/cart.js';
+import { addToCart, updateQuantity, getItemQuantity, currentPage, currentLang } from '../store/cart.js';
 
 const props = defineProps({
   isOpen: { type: Boolean, required: true },
@@ -172,6 +172,11 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close']);
+
+const productTitle = computed(() => {
+  if (!props.product) return '';
+  return props.product.title || (currentLang.value === 'id' ? props.product.titleId : props.product.titleEn) || '';
+});
 
 const activeImageIndex = ref(0);
 const selectedColor = ref('');
@@ -293,7 +298,7 @@ const changeModalQty = (delta) => {
 const handleAddToCart = () => {
   const p = {
     id: props.product.id,
-    title: props.product.title,
+    title: productTitle.value,
     price: props.product.price,
     image: props.product.image
   };
@@ -320,7 +325,7 @@ const handleAddToCart = () => {
 const handleBuyNow = () => {
   const p = {
     id: props.product.id,
-    title: props.product.title,
+    title: productTitle.value,
     price: props.product.price,
     image: props.product.image
   };

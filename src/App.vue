@@ -1,7 +1,7 @@
 <template>
   <div class="site-container">
-    <Header />
-    <main>
+    <Header v-if="currentPage !== 'login'" />
+    <main :class="{ 'no-padding': currentPage === 'login' }">
       <Transition name="fade" mode="out-in">
         <div v-if="currentPage === 'home'" key="home">
           <HeroSection />
@@ -17,12 +17,18 @@
         <div v-else-if="currentPage === 'payment'" key="payment">
           <PaymentPage />
         </div>
+        <div v-else-if="currentPage === 'profile'" key="profile">
+          <ProfilePage />
+        </div>
+        <div v-else-if="currentPage === 'login'" key="login">
+          <LoginPage />
+        </div>
       </Transition>
     </main>
-    <Footer />
-    <CartDrawer />
-    <BottomCartBar v-if="currentPage !== 'checkout' && currentPage !== 'payment'" />
-    <MobileNavbar v-if="currentPage !== 'checkout'" />
+    <Footer v-if="currentPage !== 'login'" />
+    <CartDrawer v-if="currentPage !== 'login'" />
+    <BottomCartBar v-if="currentPage !== 'checkout' && currentPage !== 'payment' && currentPage !== 'login' && currentPage !== 'profile'" />
+    <MobileNavbar v-if="currentPage !== 'checkout' && currentPage !== 'login'" />
   </div>
 </template>
 
@@ -34,11 +40,22 @@ import ShopSection from './components/sections/ShopSection.vue'
 import ShopPage from './components/ShopPage.vue'
 import CheckoutPage from './components/CheckoutPage.vue'
 import PaymentPage from './components/PaymentPage.vue'
+import ProfilePage from './components/ProfilePage.vue'
+import LoginPage from './components/LoginPage.vue'
 import Footer from './components/Footer.vue'
 import CartDrawer from './components/CartDrawer.vue'
 import BottomCartBar from './components/BottomCartBar.vue'
 import MobileNavbar from './components/MobileNavbar.vue'
-import { currentPage, totalItems } from './store/cart.js'
+import { currentPage, totalItems, currentTheme } from './store/cart.js'
+import { watch } from 'vue'
+
+watch(currentTheme, (theme) => {
+  if (theme === 'cream') {
+    document.body.removeAttribute('data-theme');
+  } else {
+    document.body.setAttribute('data-theme', theme);
+  }
+}, { immediate: true });
 </script>
 
 <style>
@@ -50,6 +67,11 @@ import { currentPage, totalItems } from './store/cart.js'
 
 main {
   flex-grow: 1;
+}
+
+main.no-padding {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 /* Ensure global fonts are applied */

@@ -91,7 +91,7 @@
         <div class="collections-text-col">
           <h2 class="collections-title">{{ t('collections') }}</h2>
           <p class="collections-subtitle">{{ t('collectionsSub') }}</p>
-          <button class="collections-cta-button">{{ t('exploreBtn') }}</button>
+          <button class="collections-cta-button" @click="currentPage = 'shop'">{{ t('exploreBtn') }}</button>
         </div>
 
         <!-- Right: 3 Landscape Thumbnails -->

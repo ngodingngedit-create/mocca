@@ -12,8 +12,24 @@
         </div>
       </div>
 
+      <!-- Empty State -->
+      <div v-if="items.length === 0" class="empty-checkout-state">
+        <div class="empty-icon-container">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="empty-bag-icon">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+        </div>
+        <h2 class="empty-checkout-title">Keranjang Belanja Anda Kosong</h2>
+        <p class="empty-checkout-subtitle">Jelajahi koleksi merchandise official Mocca dan temukan produk favoritmu!</p>
+        <button class="shop-now-btn-checkout" @click="backToShop">
+          Mulai Belanja
+        </button>
+      </div>
+
       <!-- Main Two-Column Layout -->
-      <div class="checkout-grid">
+      <div v-else class="checkout-grid">
         <!-- Left Column: Shopping Cart Table -->
         <div class="left-column">
           <div class="cart-table-card">
@@ -129,11 +145,41 @@
           <div class="summary-card">
             <h2 class="summary-title">Ringkasan Pesanan</h2>
             
+            <!-- Products List inside checkout summary -->
+            <div class="summary-products-list">
+              <div 
+                v-for="item in checkedProducts" 
+                :key="`${item.id}-${item.color}`" 
+                class="summary-prod-item"
+              >
+                <div class="prod-left">
+                  <div class="prod-thumb">
+                    <img :src="item.image" :alt="item.name" />
+                  </div>
+                  <div class="prod-info">
+                    <h4 class="prod-name font-bold">{{ item.name }}</h4>
+                    <span class="prod-meta">Warna: {{ item.color }}, Ukuran: {{ item.size }}</span>
+                    <span class="prod-note" v-if="item.note">Catatan: "{{ item.note }}"</span>
+                  </div>
+                </div>
+                
+                <div class="prod-right text-right">
+                  <span class="prod-price font-bold">{{ formatPrice(item.price) }}</span>
+                  <span class="prod-qty">x {{ item.qty }}</span>
+                </div>
+              </div>
+              <div v-if="checkedProducts.length === 0" class="empty-summary-text text-center py-4">
+                Belum ada produk yang dipilih.
+              </div>
+            </div>
+
+            <div class="summary-divider"></div>
+            
             <div class="summary-rows">
-              <!-- <div class="summary-row">
+              <div class="summary-row">
                 <span class="row-label">Subtotal ({{ checkedItemsCount }} produk)</span>
                 <span class="row-value">{{ formatPrice(subtotal) }}</span>
-              </div> -->
+              </div>
               
               <div class="summary-row">
                 <span class="row-label">Ongkir</span>
@@ -217,8 +263,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { currentPage } from '../store/cart.js';
+import { ref, computed, watch } from 'vue';
+import { currentPage, cartItems, updateQuantity, removeFromCart, checkedCheckoutItems } from '../store/cart.js';
 
 // Trust accordion items configuration
 const trustItems = ref([
@@ -258,81 +304,37 @@ const toggleAccordion = (index) => {
   activeAccordion.value = activeAccordion.value === index ? null : index;
 };
 
-// Setup Checkout Items list (Exactly matching the mockup)
-const items = ref([
-  {
-    id: 'tee',
-    name: 'Mocca Group Tee',
-    price: 199000,
-    qty: 1,
-    color: 'Cream',
-    size: 'M',
-    checked: true,
-    image: '/mocca_group_tee.png',
-    note: '',
-    notePlaceholder: 'Contoh: untuk hadiah ulang tahun'
-  },
-  {
-    id: 'tote',
-    name: 'Mocca Logo Tote Bag',
-    price: 149000,
-    qty: 1,
-    color: 'Forest Green',
-    size: '-',
-    checked: true,
-    image: '/mocca_tote_bag.png',
-    note: '',
-    notePlaceholder: 'Contoh: tulis happy birthday di tag'
-  },
-  {
-    id: 'mug',
-    name: 'Mocca Enamel Mug',
-    price: 119000,
-    qty: 2,
-    color: 'Cream',
-    size: '-',
-    checked: true,
-    image: '/mocca_enamel_mug.png',
-    note: '',
-    notePlaceholder: 'Contoh: tolong dibungkus rapi'
-  },
-  {
-    id: 'cap',
-    name: 'Mocca Logo Cap',
-    price: 179000,
-    qty: 0,
-    color: 'Beige',
-    size: '-',
-    checked: false,
-    image: '/mocca_logo_cap.png',
-    note: '',
-    notePlaceholder: 'Contoh: tanpa box'
-  },
-  {
-    id: 'sticker',
-    name: 'Mocca Sticker Pack',
-    price: 49000,
-    qty: 0,
-    color: 'Cream',
-    size: '-',
-    checked: false,
-    image: '/mocca_sticker_pack.png',
-    note: '',
-    notePlaceholder: 'Contoh: buat koleksi pribadi'
-  },
-  {
-    id: 'keychain',
-    name: 'Mocca Keychain',
-    price: 59000,
-    qty: 0,
-    color: 'Cream',
-    size: '-',
-    checked: false,
-    image: '/mocca_keychain.png',
-    note: '',
-    notePlaceholder: 'Contoh: gantungan tas'
-  }
-]);
+// Setup Checkout Items list synchronized with the global cart store
+const items = ref([]);
+
+watch(cartItems, (newCartItems) => {
+  const updatedItems = [];
+  newCartItems.forEach(cartItem => {
+    // Find existing item in our local items to preserve custom fields like checked, note
+    const existing = items.value.find(i => i.id === cartItem.id && i.color === cartItem.color);
+    if (existing) {
+      existing.qty = cartItem.quantity;
+      existing.name = cartItem.title;
+      existing.price = cartItem.price;
+      existing.image = cartItem.image;
+      updatedItems.push(existing);
+    } else {
+      updatedItems.push({
+        id: cartItem.id,
+        name: cartItem.title,
+        price: cartItem.price,
+        qty: cartItem.quantity,
+        color: cartItem.color || 'default',
+        size: '-', // Default size
+        checked: true,
+        image: cartItem.image,
+        note: '',
+        notePlaceholder: 'Contoh: tolong dibungkus rapi'
+      });
+    }
+  });
+  items.value = updatedItems;
+}, { immediate: true, deep: true });
 
 const toastActive = ref(false);
 const toastMessage = ref('');
@@ -356,6 +358,10 @@ const checkedItemsCount = computed(() => {
   return items.value.filter(item => item.checked && item.qty > 0).length;
 });
 
+const checkedProducts = computed(() => {
+  return items.value.filter(item => item.checked && item.qty > 0);
+});
+
 // Select All logic
 const isAllSelected = computed(() => {
   const activeItems = items.value.filter(item => item.qty > 0);
@@ -366,10 +372,11 @@ const isAllSelected = computed(() => {
 const toggleSelectAll = () => {
   const allChecked = isAllSelected.value;
   items.value.forEach(item => {
-    // If not active, clicking select all turns it active with qty 1
     if (!allChecked) {
       item.checked = true;
-      if (item.qty === 0) item.qty = 1;
+      if (item.qty === 0) {
+        updateQuantity(item.id, item.color, 1);
+      }
     } else {
       item.checked = false;
     }
@@ -378,25 +385,18 @@ const toggleSelectAll = () => {
 
 // Quantity Adjusters
 const adjustQty = (item, delta) => {
-  item.qty = Math.max(0, item.qty + delta);
-  if (item.qty > 0) {
-    item.checked = true;
-  } else {
-    item.checked = false;
-  }
+  updateQuantity(item.id, item.color, delta);
 };
 
 const handleCheckboxChange = (item) => {
   if (item.checked && item.qty === 0) {
-    item.qty = 1;
+    updateQuantity(item.id, item.color, 1);
   }
 };
 
-// Delete item (zero it out and uncheck)
+// Delete item
 const deleteItem = (item) => {
-  item.qty = 0;
-  item.checked = false;
-  item.note = '';
+  removeFromCart(item.id, item.color);
 };
 
 // Format Currency IDR
@@ -419,6 +419,21 @@ const processPayment = () => {
     showToast('Pilih setidaknya 1 produk untuk checkout!');
     return;
   }
+  
+  // Save checked items to the store for PaymentPage to read
+  checkedCheckoutItems.value = items.value
+    .filter(item => item.checked && item.qty > 0)
+    .map(item => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      qty: item.qty,
+      color: item.color,
+      size: item.size || '-',
+      image: item.image,
+      note: item.note || ''
+    }));
+
   showToast('Menghubungkan ke gerbang pembayaran aman...');
   setTimeout(() => {
     currentPage.value = 'payment';
@@ -1209,5 +1224,199 @@ const showToast = (msg) => {
   .note-input {
     width: 100%;
   }
+}
+
+/* Empty state styling */
+.empty-checkout-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #FFFFFF;
+  border: 1px solid var(--color-mocca-border);
+  border-radius: 12px;
+  padding: 5rem 2rem;
+  box-shadow: 0 4px 20px rgba(59, 35, 20, 0.03);
+  max-width: 600px;
+  margin: 4rem auto;
+}
+
+.empty-icon-container {
+  color: var(--color-mocca-muted);
+  opacity: 0.4;
+  margin-bottom: 1.5rem;
+}
+
+.empty-bag-icon {
+  width: 80px;
+  height: 80px;
+}
+
+.empty-checkout-title {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: var(--color-mocca-dark);
+  margin-bottom: 0.75rem;
+}
+
+.empty-checkout-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-mocca-muted);
+  max-width: 400px;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.shop-now-btn-checkout {
+  background-color: var(--color-mocca-dark);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.95rem 2.5rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(59, 35, 20, 0.15);
+  transition: all 0.3s ease;
+}
+
+.shop-now-btn-checkout:hover {
+  background-color: #55331C;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 35, 20, 0.2);
+}
+
+/* Products inside checkout summary card */
+.summary-products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* Custom scrollbar for summary products list to fit scrapbook aesthetic */
+.summary-products-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.summary-products-list::-webkit-scrollbar-track {
+  background: #FDFBF7;
+  border-radius: 4px;
+}
+
+.summary-products-list::-webkit-scrollbar-thumb {
+  background: var(--color-mocca-border);
+  border-radius: 4px;
+}
+
+.summary-products-list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-mocca-dark);
+}
+
+.summary-prod-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dotted var(--color-mocca-border);
+}
+
+.summary-prod-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.prod-left {
+  display: flex;
+  gap: 0.75rem;
+  flex-grow: 1;
+}
+
+.prod-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  background-color: #FCFAF7;
+  border: 1px solid var(--color-mocca-border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.prod-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.prod-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-align: left;
+}
+
+.prod-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-mocca-dark);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.prod-meta {
+  font-size: 0.7rem;
+  color: var(--color-mocca-muted);
+}
+
+.prod-note {
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--color-mocca-muted);
+  background-color: #FAF5EE;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  margin-top: 0.25rem;
+  display: inline-block;
+  border-left: 2px solid var(--color-mocca-dark);
+}
+
+.prod-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  flex-shrink: 0;
+}
+
+.prod-price {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-mocca-dark);
+}
+
+.prod-qty {
+  font-size: 0.7rem;
+  color: var(--color-mocca-muted);
+}
+
+.empty-summary-text {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-mocca-muted);
+  font-style: italic;
+  background-color: #FAF8F5;
+  border-radius: 8px;
+  border: 1px dashed var(--color-mocca-border);
 }
 </style>

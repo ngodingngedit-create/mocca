@@ -1,43 +1,7 @@
 <template>
   <div class="payment-page-wrapper">
     <div class="payment-container">
-      
-      <!-- Stepper Progress Header -->
-      <div class="stepper-section">
-        <div class="stepper-wrapper">
-          <div class="step-item done">
-            <span class="step-badge">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </span>
-            <span class="step-text">Keranjang</span>
-          </div>
-          <div class="step-line active"></div>
-          
-          <div class="step-item done">
-            <span class="step-badge">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </span>
-            <span class="step-text">Pengiriman</span>
-          </div>
-          <div class="step-line active"></div>
-          
-          <div class="step-item active">
-            <span class="step-badge">3</span>
-            <span class="step-text">Pembayaran</span>
-          </div>
-          <div class="step-line"></div>
-          
-          <div class="step-item">
-            <span class="step-badge">4</span>
-            <span class="step-text">Konfirmasi</span>
-          </div>
-        </div>
-      </div>
-
+    
       <!-- Main Columns Grid Layout -->
       <div class="payment-grid">
         
@@ -509,7 +473,7 @@
                       <button class="sqty-btn plus" @click="adjustSummaryQty(item, 1)">
                         <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                       </button>
-                      <button class="sqty-delete-btn" @click="item.qty = 0" title="Hapus produk">
+                      <button class="sqty-delete-btn" @click="deleteSummaryItem(item)" title="Hapus produk">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                       </button>
                     </div>
@@ -655,7 +619,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { currentPage, cartItems, clearCart } from '../store/cart.js';
+import { currentPage, cartItems, clearCart, updateQuantity, removeFromCart, checkedCheckoutItems } from '../store/cart.js';
 
 // 1. Data Diri
 const profile = ref({
@@ -718,9 +682,14 @@ const addNewAddress = () => {
   syncAddressDetails();
 };
 
-// Initialize addresses
+// Initialize addresses & cart items
 onMounted(() => {
   syncAddressDetails();
+  if (checkedCheckoutItems.value && checkedCheckoutItems.value.length > 0) {
+    activeCartItems.value = checkedCheckoutItems.value.map(item => ({ ...item }));
+  } else {
+    activeCartItems.value = [];
+  }
 });
 
 // 3. Metode Pengiriman
@@ -811,38 +780,7 @@ const selectedPayMethodName = computed(() => {
 const notes = ref('');
 
 // Right Column: Order Summary data
-const activeCartItems = ref([
-  {
-    id: 'tee',
-    name: 'Mocca Group Tee',
-    price: 199000,
-    qty: 1,
-    color: 'Cream',
-    size: 'M',
-    image: '/mocca_group_tee.png',
-    note: 'untuk hadiah ulang tahun'
-  },
-  {
-    id: 'tote',
-    name: 'Mocca Logo Tote Bag',
-    price: 149000,
-    qty: 1,
-    color: 'Forest Green',
-    size: '-',
-    image: '/mocca_tote_bag.png',
-    note: 'tulis happy birthday di tag'
-  },
-  {
-    id: 'mug',
-    name: 'Mocca Enamel Mug',
-    price: 119000,
-    qty: 2,
-    color: 'Cream',
-    size: '-',
-    image: '/mocca_enamel_mug.png',
-    note: 'tolong dibungkus rapi'
-  }
-]);
+const activeCartItems = ref([]);
 
 // Summary Calculations
 const isEditingSummary = ref(false);
@@ -855,7 +793,19 @@ const visibleCartItems = computed(() => {
 });
 
 const adjustSummaryQty = (item, delta) => {
+  const oldQty = item.qty;
   item.qty = Math.max(0, item.qty + delta);
+  const newQty = item.qty;
+  const diff = newQty - oldQty;
+  
+  if (diff !== 0) {
+    updateQuantity(item.id, item.color, diff);
+  }
+};
+
+const deleteSummaryItem = (item) => {
+  item.qty = 0;
+  removeFromCart(item.id, item.color);
 };
 
 const cartProductCount = computed(() => {
@@ -929,6 +879,7 @@ const closeSuccessModal = () => {
   showSuccessModal.value = false;
   // Clear cart and go back home
   clearCart();
+  checkedCheckoutItems.value = [];
   currentPage.value = 'home';
 };
 
@@ -1116,6 +1067,8 @@ const formatPrice = (price) => {
 }
 
 .text-input {
+  width: 100%;
+  box-sizing: border-box;
   background-color: #FAF9F6;
   border: 1px solid var(--color-mocca-border);
   border-radius: 8px;
@@ -1173,6 +1126,8 @@ const formatPrice = (price) => {
 }
 
 .textarea-input {
+  width: 100%;
+  box-sizing: border-box;
   background-color: #FAF9F6;
   border: 1px solid var(--color-mocca-border);
   border-radius: 8px;
@@ -2510,6 +2465,11 @@ const formatPrice = (price) => {
   
   .success-modal-card {
     padding: 2rem 1.5rem;
+  }
+
+  .voucher-apply-btn {
+    padding: 0.35rem 0.75rem !important; /* Smaller size for mobile */
+    font-size: 0.72rem !important;
   }
 
   /* Compact Card styles */

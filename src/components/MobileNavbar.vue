@@ -1,6 +1,6 @@
 <template>
   <Transition name="slide-up">
-    <div v-if="totalItems === 0 || currentPage === 'payment'" class="mobile-navbar">
+    <div v-if="totalItems === 0 || currentPage === 'payment' || currentPage === 'profile'" class="mobile-navbar">
       <div class="nav-items-container">
         <!-- Home -->
         <button 
@@ -69,6 +69,7 @@
         <!-- Profile -->
         <button 
           class="nav-item" 
+          :class="{ active: currentPage === 'profile' }"
           @click="triggerProfileToast"
           aria-label="Profile"
         >

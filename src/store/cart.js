@@ -8,6 +8,8 @@ export const currentLang = ref('id');
 export const currentPage = ref('home');
 export const isSearchOpen = ref(false);
 export const triggerProfile = ref(false);
+export const checkedCheckoutItems = ref([]);
+export const currentTheme = ref('cream'); // 'cream' | 'sepia' | 'cocoa'
 
 // Format helper for ID
 const getCartKey = (id, color) => `${id}-${color}`;
@@ -20,10 +22,12 @@ export const addToCart = (product, color) => {
   if (existingItem) {
     existingItem.quantity += 1;
   } else {
+    // Get title with localization fallbacks (ShopPage uses titleEn/titleId)
+    const title = product.title || product.titleEn || product.titleId || 'Mocca Official Merch';
     cartItems.value.push({
       key,
       id: product.id,
-      title: product.title,
+      title: title,
       price: product.price,
       image: product.image,
       color: color || 'default',
