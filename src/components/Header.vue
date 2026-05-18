@@ -17,8 +17,8 @@
 
       <!-- Right: Action Icons -->
       <div class="header-actions">
-        <!-- Search Icon (Hidden on Shop Page since it has its own search bar) -->
-        <button v-if="currentPage !== 'shop'" class="action-btn" @click="toggleSearch" :class="{ 'search-active': isSearchOpen }" aria-label="Search">
+        <!-- Search Icon (Hidden on Shop Page since it has its own search bar, and hidden on mobile) -->
+        <button v-if="currentPage !== 'shop'" class="action-btn mobile-hidden" @click="toggleSearch" :class="{ 'search-active': isSearchOpen }" aria-label="Search">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -908,6 +908,10 @@ const getMenuLabel = (key) => {
   
   .header-actions {
     gap: 0.5rem; /* Reduce gap on mobile */
+  }
+  
+  .search-btn {
+    display: none !important;
   }
 }
 </style>
