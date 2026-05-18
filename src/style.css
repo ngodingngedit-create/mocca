@@ -1,0 +1,71 @@
+:root {
+  --color-bg-light: #FFFFFF;
+  --color-bg-cream: #FFFFFF; /* Pure white background */
+  --color-bg-shop: #FFFFFF;  /* Pure white background */
+  --color-mocca-dark: #3B2314; /* Beautiful uniform dark brown */
+  --color-mocca-muted: #8E7D73; /* Muted brown for subtext and meta labels */
+  --color-mocca-border: #E8E2D9; /* Warm grey/cream border */
+  --color-mocca-active: #3B2314;
+  
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  
+  --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-bg-cream);
+  color: var(--color-mocca-dark);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .serif-font {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--color-mocca-dark);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition-smooth);
+}
+
+button {
+  font-family: var(--font-body);
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-cream);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-mocca-muted);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-mocca-dark);
+}
+
+/* Selection Highlight */
+::selection {
+  background-color: var(--color-mocca-dark);
+  color: var(--color-bg-cream);
+}
