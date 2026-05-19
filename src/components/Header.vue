@@ -10,8 +10,11 @@
       <nav class="main-nav mobile-hidden">
         <ul>
           <li><a href="#" class="nav-item" :class="{ active: activeSection === 'home' }" @click.prevent="navigateToSection('home')">{{ getMenuLabel('home') }}</a></li>
-          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'collections' }" @click.prevent="navigateToSection('collections')">{{ getMenuLabel('collections') }}</a></li>
           <li><a href="#" class="nav-item" :class="{ active: activeSection === 'shop' }" @click.prevent="navigateToSection('shop')">{{ getMenuLabel('shop') }}</a></li>
+          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'collections' }" @click.prevent="navigateToSection('collections')">{{ getMenuLabel('collections') }}</a></li>
+          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'event' }" @click.prevent="navigateToSection('event')">{{ getMenuLabel('event') }}</a></li>
+          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'about' }" @click.prevent="navigateToSection('about')">{{ getMenuLabel('about') }}</a></li>
+          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'faq' }" @click.prevent="navigateToSection('faq')">{{ getMenuLabel('faq') }}</a></li>
         </ul>
       </nav>
 
@@ -105,8 +108,11 @@
         <div class="mobile-sidebar-content">
           <ul class="mobile-nav-list">
             <li><a href="#" :class="{ active: activeSection === 'home' }" @click.prevent="navigateToSection('home'); isMobileMenuOpen = false;">{{ getMenuLabel('home') }}</a></li>
-            <li><a href="#" :class="{ active: activeSection === 'collections' }" @click.prevent="navigateToSection('collections'); isMobileMenuOpen = false;">{{ getMenuLabel('collections') }}</a></li>
             <li><a href="#" :class="{ active: activeSection === 'shop' }" @click.prevent="navigateToSection('shop'); isMobileMenuOpen = false;">{{ getMenuLabel('shop') }}</a></li>
+            <li><a href="#" :class="{ active: activeSection === 'collections' }" @click.prevent="navigateToSection('collections'); isMobileMenuOpen = false;">{{ getMenuLabel('collections') }}</a></li>
+            <li><a href="#" :class="{ active: activeSection === 'event' }" @click.prevent="navigateToSection('event'); isMobileMenuOpen = false;">{{ getMenuLabel('event') }}</a></li>
+            <li><a href="#" :class="{ active: activeSection === 'about' }" @click.prevent="navigateToSection('about'); isMobileMenuOpen = false;">{{ getMenuLabel('about') }}</a></li>
+            <li><a href="#" :class="{ active: activeSection === 'faq' }" @click.prevent="navigateToSection('faq'); isMobileMenuOpen = false;">{{ getMenuLabel('faq') }}</a></li>
           </ul>
           
           <div class="mobile-sidebar-actions">
@@ -206,6 +212,10 @@ const navigateToSection = (section) => {
     currentPage.value = 'shop';
     window.scrollTo({ top: 0, behavior: 'smooth' });
     activeSection.value = 'shop';
+  } else if (section === 'event') {
+    currentPage.value = 'event';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    activeSection.value = 'event';
   } else if (section === 'home') {
     if (currentPage.value !== 'home') {
       currentPage.value = 'home';
@@ -232,12 +242,28 @@ const navigateToSection = (section) => {
       scrollToCollections();
     }
     activeSection.value = 'collections';
+  } else if (section === 'about' || section === 'faq') {
+    const scrollToFooter = () => {
+      const footerEl = document.querySelector('.site-footer');
+      if (footerEl) {
+        footerEl.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+    if (currentPage.value !== 'home') {
+      currentPage.value = 'home';
+      setTimeout(scrollToFooter, 150);
+    } else {
+      scrollToFooter();
+    }
+    activeSection.value = section;
   }
 };
 
 watch(currentPage, (val) => {
   if (val === 'shop' || val === 'checkout' || val === 'payment') {
     activeSection.value = 'shop';
+  } else if (val === 'event') {
+    activeSection.value = 'event';
   } else if (val === 'home') {
     // Check scroll after state transition
     nextTick(() => {
@@ -360,6 +386,7 @@ const menuTranslations = {
     home: 'Beranda',
     shop: 'Toko',
     collections: 'Koleksi',
+    event: 'Event',
     about: 'Tentang',
     faq: 'FAQ'
   },
@@ -367,6 +394,7 @@ const menuTranslations = {
     home: 'Home',
     shop: 'Shop',
     collections: 'Collections',
+    event: 'Event',
     about: 'About',
     faq: 'FAQ'
   }

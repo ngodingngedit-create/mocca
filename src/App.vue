@@ -20,6 +20,12 @@
         <div v-else-if="currentPage === 'profile'" key="profile">
           <ProfilePage />
         </div>
+        <div v-else-if="currentPage === 'creator'" key="creator">
+          <CreatorPage />
+        </div>
+        <div v-else-if="currentPage === 'event'" key="event">
+          <EventPage />
+        </div>
         <div v-else-if="currentPage === 'login'" key="login">
           <LoginPage />
         </div>
@@ -38,6 +44,8 @@ import HeroSection from './components/sections/HeroSection.vue'
 import FeaturesSection from './components/sections/FeaturesSection.vue'
 import ShopSection from './components/sections/ShopSection.vue'
 import ShopPage from './components/ShopPage.vue'
+import CreatorPage from './components/CreatorPage.vue'
+import EventPage from './components/EventPage.vue'
 import CheckoutPage from './components/CheckoutPage.vue'
 import PaymentPage from './components/PaymentPage.vue'
 import ProfilePage from './components/ProfilePage.vue'

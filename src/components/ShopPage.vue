@@ -114,6 +114,20 @@
               </div>
             </div>
           </div>
+
+          <!-- Divider Line -->
+          <div class="card-divider"></div>
+
+          <!-- Creator Section -->
+          <div class="card-creator-section" @click.stop="currentPage = 'creator'">
+            <div class="creator-avatar-wrapper">
+              <img :src="`/logo_${product.creator?.name || 'deelestari'}.png`" :alt="product.creator?.name" class="creator-avatar" />
+            </div>
+            <div class="creator-info">
+              <span class="creator-label">{{ currentLang === 'id' ? 'Partner Store' : 'Provided by' }}</span>
+              <span class="creator-name">{{ product.creator?.name || 'deelestari' }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -131,7 +145,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import ProductModal from './ProductModal.vue';
-import { addToCart, updateQuantity, getItemQuantity, currentLang, isSearchOpen, searchQuery } from '../store/cart.js';
+import { addToCart, updateQuantity, getItemQuantity, currentLang, isSearchOpen, searchQuery, currentPage } from '../store/cart.js';
 
 const isModalOpen = ref(false);
 const activeModalProduct = ref(null);
@@ -182,73 +196,85 @@ const products = [
     id: 'tee', category: 'apparel',
     titleEn: 'Mocca Group Tee', titleId: 'Kaos Mocca Group',
     price: 199000, image: '/mocca_group_tee.png',
-    colors: ['cream', 'black']
+    colors: ['cream', 'black'],
+    creator: { name: 'mocca', avatarInitial: 'M' }
   },
   {
     id: 'tote', category: 'accessories',
     titleEn: 'Mocca Logo Tote Bag', titleId: 'Tas Kanvas Mocca Logo',
     price: 149000, image: '/mocca_tote_bag.png',
-    colors: ['green', 'cream', 'black']
+    colors: ['green', 'cream', 'black'],
+    creator: { name: 'mocca', avatarInitial: 'M' }
   },
   {
     id: 'mug', category: 'home',
     titleEn: 'Mocca Enamel Mug', titleId: 'Cangkir Enamel Mocca',
     price: 119000, image: '/mocca_enamel_mug.png',
-    colors: ['cream']
+    colors: ['cream'],
+    creator: { name: 'deelestari', avatarInitial: 'D' }
   },
   {
     id: 'cap', category: 'accessories',
     titleEn: 'Mocca Logo Cap', titleId: 'Topi Mocca Logo',
     price: 179000, image: '/mocca_logo_cap.png',
-    colors: ['beige', 'black']
+    colors: ['beige', 'black'],
+    creator: { name: 'kolektix', avatarInitial: 'K' }
   },
   {
     id: 'sticker', category: 'accessories',
     titleEn: 'Mocca Sticker Pack', titleId: 'Paket Stiker Mocca',
     price: 49000, image: '/mocca_sticker_pack.png',
-    colors: ['cream']
+    colors: ['cream'],
+    creator: { name: 'kolektix', avatarInitial: 'K' }
   },
   {
     id: 'keychain', category: 'accessories',
     titleEn: 'Mocca Keychain', titleId: 'Gantungan Kunci Mocca',
     price: 59000, image: '/mocca_keychain.png',
-    colors: ['cream']
+    colors: ['cream'],
+    creator: { name: 'kolektix', avatarInitial: 'K' }
   },
   {
     id: 'hoodie', category: 'apparel',
     titleEn: 'Mocca Classic Hoodie', titleId: 'Jaket Hoodie Mocca',
     price: 349000, image: '/mocca_col_apparel.png',
-    colors: ['black', 'cream']
+    colors: ['black', 'cream'],
+    creator: { name: 'mocca', avatarInitial: 'M' }
   },
   {
     id: 'notebook', category: 'home',
     titleEn: 'Mocca Daily Notebook', titleId: 'Buku Catatan Mocca',
     price: 89000, image: '/mocca_col_everyday.png',
-    colors: ['beige']
+    colors: ['beige'],
+    creator: { name: 'deelestari', avatarInitial: 'D' }
   },
   {
     id: 'tumbler', category: 'home',
     titleEn: 'Mocca Tumbler', titleId: 'Tumbler Mocca',
     price: 159000, image: '/mocca_col_accessories.png',
-    colors: ['black', 'cream']
+    colors: ['black', 'cream'],
+    creator: { name: 'mocca', avatarInitial: 'M' }
   },
   {
     id: 'poster', category: 'accessories',
     titleEn: 'Mocca Poster Set', titleId: 'Set Poster Mocca',
     price: 99000, image: '/album_art.png',
-    colors: ['cream']
+    colors: ['cream'],
+    creator: { name: 'mocca', avatarInitial: 'M' }
   },
   {
     id: 'pin', category: 'accessories',
     titleEn: 'Mocca Signature Pin', titleId: 'Pin Logo Mocca',
     price: 39000, image: '/mocca_keychain.png',
-    colors: ['beige']
+    colors: ['beige'],
+    creator: { name: 'deelestari', avatarInitial: 'D' }
   },
   {
     id: 'bundle', category: 'bundles',
     titleEn: 'Mocca Ultimate Bundle', titleId: 'Paket Mocca Lengkap',
     price: 499000, image: '/mocca_collage.png',
-    colors: ['cream']
+    colors: ['cream'],
+    creator: { name: 'mocca', avatarInitial: 'M' }
   }
 ];
 
@@ -566,7 +592,7 @@ const t = (key) => {
 
 /* Card details styling - customized for 4 column smaller layout */
 .product-info-wrapper {
-  padding: 1rem;
+  padding: 0.85rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -577,14 +603,14 @@ const t = (key) => {
   font-size: 0.9rem; /* Smaller font for smaller card */
   font-weight: 500;
   color: var(--color-mocca-dark);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.2rem;
 }
 
 /* Price below title, right aligned */
 .product-price-row {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.35rem;
 }
 
 .product-price {
@@ -597,7 +623,7 @@ const t = (key) => {
 /* Colors left aligned */
 .product-colors-row {
   display: flex;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.45rem;
 }
 
 .color-swatches {
@@ -621,6 +647,56 @@ const t = (key) => {
 
 .swatch.active {
   box-shadow: 0 0 0 2px var(--color-mocca-dark);
+}
+
+/* Creator & Divider Section styling */
+.card-divider {
+  height: 1px;
+  background-color: var(--color-mocca-border);
+  width: 100%;
+}
+
+.card-creator-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  background-color: var(--color-bg-light);
+}
+
+.creator-avatar-wrapper {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.creator-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-mocca-border);
+  display: block;
+}
+
+.creator-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.creator-label {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--color-mocca-muted);
+}
+
+.creator-name {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-mocca-dark);
 }
 
 /* Qty button below colors, right aligned */
@@ -719,6 +795,20 @@ const t = (key) => {
   }
   .shop-search-bar.mobile-visible {
     display: flex;
+  }
+  .card-creator-section {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+  .creator-avatar {
+    width: 30px;
+    height: 30px;
+  }
+  .creator-label {
+    font-size: 0.65rem;
+  }
+  .creator-name {
+    font-size: 0.75rem;
   }
 }
 

@@ -67,6 +67,20 @@
               </div>
             </div>
           </div>
+
+          <!-- Divider Line -->
+          <div class="card-divider"></div>
+
+          <!-- Creator Section -->
+          <div class="card-creator-section" @click.stop="currentPage = 'creator'">
+            <div class="creator-avatar-wrapper">
+              <img :src="`/logo_${product.creator?.name || 'deelestari'}.png`" :alt="product.creator?.name" class="creator-avatar" />
+            </div>
+            <div class="creator-info">
+              <span class="creator-label">{{ currentLang === 'id' ? 'Partner Store' : 'Provided by' }}</span>
+              <span class="creator-name">{{ product.creator?.name || 'deelestari' }}</span>
+            </div>
+          </div>
         </div>
 
         <!-- Custom empty search state block -->
@@ -178,28 +192,32 @@ const products = [
     title: 'Mocca Group Tee',
     price: 199000,
     image: '/mocca_group_tee.png',
-    colors: ['cream', 'black']
+    colors: ['cream', 'black'],
+    creator: { name: 'mocca', avatarInitial: 'M' }
   },
   {
     id: 'tote',
     title: 'Mocca Logo Tote Bag',
     price: 149000,
     image: '/mocca_tote_bag.png',
-    colors: ['green', 'cream', 'black']
+    colors: ['green', 'cream', 'black'],
+    creator: { name: 'mocca', avatarInitial: 'M' }
   },
   {
     id: 'mug',
     title: 'Mocca Enamel Mug',
     price: 119000,
     image: '/mocca_enamel_mug.png',
-    colors: ['cream']
+    colors: ['cream'],
+    creator: { name: 'deelestari', avatarInitial: 'D' }
   },
   {
     id: 'cap',
     title: 'Mocca Logo Cap',
     price: 179000,
     image: '/mocca_logo_cap.png',
-    colors: ['beige', 'black']
+    colors: ['beige', 'black'],
+    creator: { name: 'kolektix', avatarInitial: 'K' }
   }
 ];
 
@@ -423,7 +441,7 @@ const t = (key) => {
 }
 
 .product-info {
-  padding: 1.5rem;
+  padding: 1rem 1.25rem 0.85rem 1.25rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -435,15 +453,15 @@ const t = (key) => {
   font-weight: 600;
   color: var(--color-mocca-dark);
   line-height: 1.35;
-  margin: 0 0 0.5rem 0;
-  min-height: 2.6rem; /* Ensures title-heavy cards stay perfectly aligned */
+  margin: 0 0 0.25rem 0;
+  min-height: 2.4rem; /* Ensures title-heavy cards stay perfectly aligned */
 }
 
 .product-price-row {
   display: flex;
   justify-content: flex-end; /* Price aligned right underneath title */
   width: 100%;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
 }
 
 .product-price {
@@ -459,7 +477,7 @@ const t = (key) => {
   display: flex;
   justify-content: flex-start; /* Swatches left below price */
   width: 100%;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .color-swatches {
@@ -506,6 +524,56 @@ const t = (key) => {
 
 .swatch-beige {
   background-color: #D9C5B2;
+}
+
+/* Creator & Divider Section styling */
+.card-divider {
+  height: 1px;
+  background-color: var(--color-mocca-border);
+  width: 100%;
+}
+
+.card-creator-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1.25rem;
+  background-color: var(--color-bg-light);
+}
+
+.creator-avatar-wrapper {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.creator-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-mocca-border);
+  display: block;
+}
+
+.creator-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.creator-label {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--color-mocca-muted);
+}
+
+.creator-name {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-mocca-dark);
 }
 
 .product-actions {
@@ -751,6 +819,21 @@ const t = (key) => {
 
   .thumbnail-image-wrapper {
     aspect-ratio: 1.6 / 1; /* Wider on mobile */
+  }
+
+  .card-creator-section {
+    padding: 0.85rem 1rem;
+    gap: 0.5rem;
+  }
+  .creator-avatar {
+    width: 30px;
+    height: 30px;
+  }
+  .creator-label {
+    font-size: 0.65rem;
+  }
+  .creator-name {
+    font-size: 0.75rem;
   }
 }
 
