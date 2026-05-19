@@ -1,6 +1,6 @@
 <template>
   <Transition name="slide-up">
-    <div v-if="totalItems === 0 || currentPage === 'payment' || currentPage === 'profile'" class="mobile-navbar">
+    <div v-if="!isMobileMenuOpen && (totalItems === 0 || currentPage === 'payment' || currentPage === 'profile')" class="mobile-navbar">
       <div class="nav-items-container">
         <!-- Home -->
         <button 
@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-import { currentPage, currentLang, isSearchOpen, isCartOpen, totalItems, triggerProfile } from '../store/cart.js';
+import { currentPage, currentLang, isSearchOpen, isCartOpen, totalItems, isMobileMenuOpen, triggerProfile } from '../store/cart.js';
 
 const navigateTo = (page) => {
   currentPage.value = page;
@@ -94,10 +94,6 @@ const navigateTo = (page) => {
 };
 
 const toggleSearchInput = () => {
-  // If not on shop, go to shop first so search works
-  if (currentPage.value !== 'shop') {
-    currentPage.value = 'shop';
-  }
   isSearchOpen.value = !isSearchOpen.value;
 };
 

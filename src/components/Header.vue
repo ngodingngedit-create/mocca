@@ -133,9 +133,9 @@
 
     <!-- Functional Slide-down Search Bar -->
     <Transition name="search-slide">
-      <div v-if="isSearchOpen" class="search-bar-dropdown">
-        <div class="search-input-wrapper">
-          <svg class="search-bar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <div v-if="isSearchOpen && currentPage !== 'shop'" class="search-bar-dropdown">
+        <div class="shop-search-bar">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
@@ -143,8 +143,9 @@
             ref="searchInput"
             v-model="searchQuery"
             type="text"
-            :placeholder="currentLang === 'id' ? 'Cari koleksi merch kami...' : 'Search our cozy merch collections...'"
-            class="search-input-field"
+            :placeholder="currentLang === 'id' ? 'Cari merchandise...' : 'Search merchandise...'"
+            class="shop-search-input"
+            @keyup.enter="handleSearchEnter"
           />
           <button v-if="searchQuery" class="clear-search-btn" @click="searchQuery = ''">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -160,15 +161,15 @@
     <div class="toast" :class="{ 'active': toastActive }">
       {{ toastMessage }}
     </div>
+
   </header>
 </template>
 
 <script setup>
 import { ref, computed, nextTick, watch, onMounted, onUnmounted } from 'vue';
-import { isCartOpen, totalItems, searchQuery, currentLang, currentPage, isSearchOpen, triggerProfile } from '../store/cart.js';
+import { isCartOpen, totalItems, searchQuery, currentLang, currentPage, isSearchOpen, isMobileMenuOpen, triggerProfile, isLoggedIn } from '../store/cart.js';
 
 const isLangDropdownOpen = ref(false);
-const isMobileMenuOpen = ref(false);
 const searchInput = ref(null);
 
 const activeSection = ref('home');
@@ -277,6 +278,13 @@ const toggleSearch = () => {
   }
 };
 
+const handleSearchEnter = () => {
+  if (searchQuery.value.trim() !== '') {
+    currentPage.value = 'shop';
+    isSearchOpen.value = false;
+  }
+};
+
 const toggleLangDropdown = () => {
   isLangDropdownOpen.value = !isLangDropdownOpen.value;
   if (isLangDropdownOpen.value) {
@@ -293,7 +301,11 @@ const triggerToast = (msg) => {
 };
 
 const openProfileToast = () => {
-  currentPage.value = 'login';
+  if (isLoggedIn.value) {
+    currentPage.value = 'profile';
+  } else {
+    currentPage.value = 'login';
+  }
 };
 
 const openCart = () => {
@@ -505,7 +517,7 @@ const getMenuLabel = (key) => {
   align-items: center;
 }
 
-.search-input-wrapper {
+.shop-search-bar {
   position: relative;
   width: 100%;
   max-width: 600px;
@@ -513,26 +525,26 @@ const getMenuLabel = (key) => {
   align-items: center;
 }
 
-.search-bar-icon {
+.search-icon {
   position: absolute;
-  left: 1rem;
+  left: 1.25rem;
   color: var(--color-mocca-muted);
 }
 
-.search-input-field {
+.shop-search-input {
   width: 100%;
-  padding: 0.65rem 3rem;
-  border: 1px solid var(--color-mocca-border);
-  border-radius: 20px;
+  padding: 0.85rem 3rem 0.85rem 3.5rem;
+  border: 1px solid rgba(59, 35, 20, 0.15);
+  border-radius: 25px;
   background-color: var(--color-bg-light);
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--color-mocca-dark);
   outline: none;
   transition: var(--transition-smooth);
 }
 
-.search-input-field:focus {
+.shop-search-input:focus {
   border-color: var(--color-mocca-dark);
   box-shadow: 0 0 0 3px rgba(59, 35, 20, 0.05);
 }

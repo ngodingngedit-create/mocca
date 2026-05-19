@@ -79,6 +79,43 @@
               </span>
               <span class="menu-label-text">{{ currentLang === 'id' ? 'Keluar' : 'Logout' }}</span>
             </button>
+
+            <!-- Sidebar Accordion (Mobile only) -->
+            <div class="sidebar-accordion mobile-only">
+              <button class="accordion-header" @click="isAccordionOpen = !isAccordionOpen" aria-label="Toggle Security Settings">
+                <span class="accordion-title">{{ currentLang === 'id' ? 'Pengaturan Keamanan' : 'Security Settings' }}</span>
+                <svg class="chevron-icon" :class="{ 'rotate': isAccordionOpen }" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <Transition name="accordion-slide">
+                <div v-if="isAccordionOpen" class="accordion-content">
+                  <div class="photo-action-buttons">
+                    <button class="photo-action-btn" @click="openModal('password')">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                      Ubah Kata Sandi
+                    </button>
+                    <button class="photo-action-btn" @click="openModal('pin')">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                      PIN Transaksi
+                    </button>
+                    <button class="photo-action-btn" @click="openModal('verification')">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10s10-4.477 10-10A10 10 0 0 0 12 2z"></path>
+                        <path d="M12 6a6 6 0 0 1 6 6M12 8a4 4 0 0 1 4 4M12 10a2 2 0 0 1 2 2"></path>
+                      </svg>
+                      Verifikasi Instan
+                    </button>
+                  </div>
+                </div>
+              </Transition>
+            </div>
           </nav>
         </aside>
 
@@ -150,31 +187,6 @@
                       Format JPG, JPEG, PNG. Ukuran maksimal 10MB.
                     </span>
                     <input type="file" ref="fileInput" class="hidden-file-input" @change="handleFileChange" accept="image/*" />
-
-                    <!-- Bottom Action Buttons inside left sub-column -->
-                    <div class="photo-action-buttons">
-                      <button class="photo-action-btn" @click="openModal('password')">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                          <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                        Ubah Kata Sandi
-                      </button>
-                      <button class="photo-action-btn" @click="openModal('pin')">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        PIN Transaksi
-                      </button>
-                      <button class="photo-action-btn" @click="openModal('verification')">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10s10-4.477 10-10A10 10 0 0 0 12 2z"></path>
-                          <path d="M12 6a6 6 0 0 1 6 6M12 8a4 4 0 0 1 4 4M12 10a2 2 0 0 1 2 2"></path>
-                        </svg>
-                        Verifikasi Instan
-                      </button>
-                    </div>
                   </div>
 
                   <!-- Sub-section: Information Blocks (Right) -->
@@ -318,12 +330,37 @@
                               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="inline-check">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                               </svg>
-                              Terverifikasi
                             </span>
                           </div>
                         </div>
                       </div>
                     </div>
+
+                    <!-- Action Buttons moved here -->
+                    <div class="photo-action-buttons desktop-only">
+                      <button class="photo-action-btn" @click="openModal('password')">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                          <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Ubah Kata Sandi
+                      </button>
+                      <button class="photo-action-btn" @click="openModal('pin')">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        PIN Transaksi
+                      </button>
+                      <button class="photo-action-btn" @click="openModal('verification')">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10s10-4.477 10-10A10 10 0 0 0 12 2z"></path>
+                          <path d="M12 6a6 6 0 0 1 6 6M12 8a4 4 0 0 1 4 4M12 10a2 2 0 0 1 2 2"></path>
+                        </svg>
+                        Verifikasi Instan
+                      </button>
+                    </div>
+
                   </div>
                 </div>
 
@@ -891,8 +928,9 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
-import { currentPage, currentLang, currentTheme } from '../store/cart.js';
+import { currentPage, currentLang, currentTheme, isLoggedIn } from '../store/cart.js';
 
+const isAccordionOpen = ref(true);
 const selectTheme = (theme) => {
   currentTheme.value = theme;
   const names = { cream: 'Light Cream (Default)', sepia: 'Vintage Sepia', cocoa: 'Cozy Dark Cocoa' };
@@ -1233,6 +1271,7 @@ const setAlamatUtamaDirect = (addr) => {
 const handleLogout = () => {
   showLogoutModal.value = false;
   triggerToast(currentLang.value === 'id' ? 'Berhasil keluar. Mengarahkan...' : 'Logout successful. Redirecting...');
+  isLoggedIn.value = false;
   setTimeout(() => {
     currentPage.value = 'home';
   }, 1200);
@@ -3563,5 +3602,78 @@ const handleLogout = () => {
     width: 100%;
     justify-content: center;
   }
+}
+
+/* Desktop & Mobile Responsive Utilities */
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+/* Sidebar Accordion Styles */
+.sidebar-accordion {
+  margin-top: 1.25rem;
+  border-top: 1.5px dashed rgba(90, 60, 40, 0.08);
+  padding-top: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.accordion-header {
+  background: none;
+  border: none;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0.5rem;
+  color: var(--color-mocca-dark);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border-radius: 6px;
+}
+
+.accordion-header:hover {
+  background-color: rgba(90, 60, 40, 0.03);
+}
+
+.accordion-header .chevron-icon {
+  transition: transform 0.25s ease;
+  color: var(--color-mocca-muted);
+}
+
+.accordion-header .chevron-icon.rotate {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  padding: 0.5rem 0;
+}
+
+.accordion-content .photo-action-buttons {
+  margin-top: 0.5rem;
+}
+
+/* Accordion Transition */
+.accordion-slide-enter-active,
+.accordion-slide-leave-active {
+  transition: max-height 0.3s ease-out, opacity 0.25s ease-out;
+  max-height: 250px;
+  overflow: hidden;
+}
+.accordion-slide-enter-from,
+.accordion-slide-leave-to {
+  max-height: 0;
+  opacity: 0;
 }
 </style>

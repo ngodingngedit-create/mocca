@@ -11,7 +11,7 @@
       <!-- Controls: Filters & Search -->
       <div class="shop-controls">
         <!-- Search Bar -->
-        <div class="shop-search-bar">
+        <div class="shop-search-bar" :class="{ 'mobile-visible': isSearchOpen }">
           <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -129,14 +129,22 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import ProductModal from './ProductModal.vue';
-import { addToCart, updateQuantity, getItemQuantity, currentLang } from '../store/cart.js';
+import { addToCart, updateQuantity, getItemQuantity, currentLang, isSearchOpen, searchQuery } from '../store/cart.js';
 
 const isModalOpen = ref(false);
 const activeModalProduct = ref(null);
 const activeCategory = ref('all');
-const localSearchQuery = ref('');
+const localSearchQuery = ref(searchQuery.value);
+
+watch(searchQuery, (newVal) => {
+  localSearchQuery.value = newVal;
+});
+
+watch(localSearchQuery, (newVal) => {
+  searchQuery.value = newVal;
+});
 
 const categories = [
   { id: 'all', nameId: 'Semua', nameEn: 'All' },
@@ -697,11 +705,20 @@ const t = (key) => {
     display: none !important; /* Mobile disables hover details overlay */
   }
   .shop-controls {
-    flex-direction: column-reverse;
+    flex-direction: column;
     align-items: stretch;
   }
   .shop-search-bar {
     max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .shop-search-bar {
+    display: none;
+  }
+  .shop-search-bar.mobile-visible {
+    display: flex;
   }
 }
 

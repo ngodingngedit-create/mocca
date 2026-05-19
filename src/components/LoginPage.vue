@@ -427,7 +427,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
-import { currentLang, currentPage, triggerProfile } from '../store/cart.js';
+import { currentLang, currentPage, triggerProfile, isLoggedIn } from '../store/cart.js';
 
 // Tabs Mode: 'login' or 'register'
 const activeMode = ref('login');
@@ -480,6 +480,7 @@ const submitLogin = () => {
     
     // Redirect to profile page after login
     setTimeout(() => {
+      isLoggedIn.value = true;
       currentPage.value = 'profile';
     }, 1000);
   }, 1200);

@@ -7,7 +7,9 @@ export const searchQuery = ref('');
 export const currentLang = ref('id');
 export const currentPage = ref('home');
 export const isSearchOpen = ref(false);
+export const isMobileMenuOpen = ref(false);
 export const triggerProfile = ref(false);
+export const isLoggedIn = ref(false);
 export const checkedCheckoutItems = ref([]);
 export const currentTheme = ref('cream'); // 'cream' | 'sepia' | 'cocoa'
 
