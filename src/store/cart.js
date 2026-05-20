@@ -12,6 +12,10 @@ export const triggerProfile = ref(false);
 export const isLoggedIn = ref(false);
 export const checkedCheckoutItems = ref([]);
 export const currentTheme = ref('cream'); // 'cream' | 'sepia' | 'cocoa'
+export const selectedEvent = ref(null);
+export const selectedTicket = ref(null);
+export const ticketQuantity = ref(1);
+export const selectedTickets = ref([]);
 
 // Format helper for ID
 const getCartKey = (id, color) => `${id}-${color}`;

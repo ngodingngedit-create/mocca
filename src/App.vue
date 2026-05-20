@@ -7,12 +7,16 @@
           <HeroSection />
           <FeaturesSection />
           <ShopSection />
+          <EventSection />
         </div>
         <div v-else-if="currentPage === 'shop'" key="shop">
           <ShopPage />
         </div>
         <div v-else-if="currentPage === 'checkout'" key="checkout">
           <CheckoutPage />
+        </div>
+        <div v-else-if="currentPage === 'event-checkout'" key="event-checkout">
+          <EventCheckoutPage />
         </div>
         <div v-else-if="currentPage === 'payment'" key="payment">
           <PaymentPage />
@@ -26,6 +30,9 @@
         <div v-else-if="currentPage === 'event'" key="event">
           <EventPage />
         </div>
+        <div v-else-if="currentPage === 'event-detail'" key="event-detail">
+          <EventDetailPage />
+        </div>
         <div v-else-if="currentPage === 'login'" key="login">
           <LoginPage />
         </div>
@@ -33,8 +40,8 @@
     </main>
     <Footer v-if="currentPage !== 'login'" />
     <CartDrawer v-if="currentPage !== 'login'" />
-    <BottomCartBar v-if="currentPage !== 'checkout' && currentPage !== 'payment' && currentPage !== 'login' && currentPage !== 'profile'" />
-    <MobileNavbar v-if="currentPage !== 'checkout' && currentPage !== 'login'" />
+    <BottomCartBar v-if="currentPage !== 'checkout' && currentPage !== 'event-checkout' && currentPage !== 'payment' && currentPage !== 'login' && currentPage !== 'profile' && currentPage !== 'event-detail'" />
+    <MobileNavbar v-if="currentPage !== 'checkout' && currentPage !== 'event-checkout' && currentPage !== 'login'" />
   </div>
 </template>
 
@@ -43,10 +50,13 @@ import Header from './components/Header.vue'
 import HeroSection from './components/sections/HeroSection.vue'
 import FeaturesSection from './components/sections/FeaturesSection.vue'
 import ShopSection from './components/sections/ShopSection.vue'
+import EventSection from './components/sections/EventSection.vue'
 import ShopPage from './components/ShopPage.vue'
 import CreatorPage from './components/CreatorPage.vue'
 import EventPage from './components/EventPage.vue'
+import EventDetailPage from './components/EventDetailPage.vue'
 import CheckoutPage from './components/CheckoutPage.vue'
+import EventCheckoutPage from './components/EventCheckoutPage.vue'
 import PaymentPage from './components/PaymentPage.vue'
 import ProfilePage from './components/ProfilePage.vue'
 import LoginPage from './components/LoginPage.vue'

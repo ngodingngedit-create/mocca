@@ -10,11 +10,9 @@
       <nav class="main-nav mobile-hidden">
         <ul>
           <li><a href="#" class="nav-item" :class="{ active: activeSection === 'home' }" @click.prevent="navigateToSection('home')">{{ getMenuLabel('home') }}</a></li>
-          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'shop' }" @click.prevent="navigateToSection('shop')">{{ getMenuLabel('shop') }}</a></li>
           <li><a href="#" class="nav-item" :class="{ active: activeSection === 'collections' }" @click.prevent="navigateToSection('collections')">{{ getMenuLabel('collections') }}</a></li>
           <li><a href="#" class="nav-item" :class="{ active: activeSection === 'event' }" @click.prevent="navigateToSection('event')">{{ getMenuLabel('event') }}</a></li>
-          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'about' }" @click.prevent="navigateToSection('about')">{{ getMenuLabel('about') }}</a></li>
-          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'faq' }" @click.prevent="navigateToSection('faq')">{{ getMenuLabel('faq') }}</a></li>
+          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'shop' }" @click.prevent="navigateToSection('shop')">{{ getMenuLabel('shop') }}</a></li>
         </ul>
       </nav>
 
@@ -108,11 +106,9 @@
         <div class="mobile-sidebar-content">
           <ul class="mobile-nav-list">
             <li><a href="#" :class="{ active: activeSection === 'home' }" @click.prevent="navigateToSection('home'); isMobileMenuOpen = false;">{{ getMenuLabel('home') }}</a></li>
-            <li><a href="#" :class="{ active: activeSection === 'shop' }" @click.prevent="navigateToSection('shop'); isMobileMenuOpen = false;">{{ getMenuLabel('shop') }}</a></li>
             <li><a href="#" :class="{ active: activeSection === 'collections' }" @click.prevent="navigateToSection('collections'); isMobileMenuOpen = false;">{{ getMenuLabel('collections') }}</a></li>
             <li><a href="#" :class="{ active: activeSection === 'event' }" @click.prevent="navigateToSection('event'); isMobileMenuOpen = false;">{{ getMenuLabel('event') }}</a></li>
-            <li><a href="#" :class="{ active: activeSection === 'about' }" @click.prevent="navigateToSection('about'); isMobileMenuOpen = false;">{{ getMenuLabel('about') }}</a></li>
-            <li><a href="#" :class="{ active: activeSection === 'faq' }" @click.prevent="navigateToSection('faq'); isMobileMenuOpen = false;">{{ getMenuLabel('faq') }}</a></li>
+            <li><a href="#" :class="{ active: activeSection === 'shop' }" @click.prevent="navigateToSection('shop'); isMobileMenuOpen = false;">{{ getMenuLabel('shop') }}</a></li>
           </ul>
           
           <div class="mobile-sidebar-actions">
@@ -262,7 +258,7 @@ const navigateToSection = (section) => {
 watch(currentPage, (val) => {
   if (val === 'shop' || val === 'checkout' || val === 'payment') {
     activeSection.value = 'shop';
-  } else if (val === 'event') {
+  } else if (val === 'event' || val === 'event-detail' || val === 'event-checkout') {
     activeSection.value = 'event';
   } else if (val === 'home') {
     // Check scroll after state transition

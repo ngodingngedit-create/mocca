@@ -30,38 +30,7 @@
           </p>
         </div>
 
-        <!-- Right Side: Subscription Banner Card -->
-        <div class="event-newsletter-card">
-          <div class="newsletter-card-header">
-            <div class="newsletter-envelope-icon">
-              <!-- Envelope SVG Icon -->
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-            </div>
-            <h3 class="newsletter-card-title">
-              {{ currentLang === 'id' ? 'Jangan Lewatkan Event Terbaru!' : 'Never Miss an Event!' }}
-            </h3>
-          </div>
-          <p class="newsletter-card-desc">
-            {{ currentLang === 'id' 
-                ? 'Dapatkan informasi event Mocca langsung di email kamu.' 
-                : 'Get the latest information about Mocca events straight to your inbox.' }}
-          </p>
-          <form @submit.prevent="handleSubscribe" class="newsletter-form-row">
-            <input 
-              type="email" 
-              v-model="subscribeEmail" 
-              :placeholder="currentLang === 'id' ? 'Masukkan email kamu...' : 'Enter your email...'" 
-              required 
-              class="newsletter-email-input" 
-            />
-            <button type="submit" class="newsletter-subscribe-btn">
-              {{ currentLang === 'id' ? 'Berlangganan' : 'Subscribe' }}
-            </button>
-          </form>
-        </div>
+        
       </div>
 
       <!-- Filter & Controls Bar -->
@@ -80,51 +49,7 @@
         </div>
 
         <!-- Right: Sort & Layout Views -->
-        <div class="filters-controls-right">
-          <!-- Sort Dropdown -->
-          <div class="event-sort-container">
-            <select v-model="sortBy" class="event-sort-select" aria-label="Sort events">
-              <option value="newest">{{ currentLang === 'id' ? 'Terbaru' : 'Newest' }}</option>
-              <option value="oldest">{{ currentLang === 'id' ? 'Terlama' : 'Oldest' }}</option>
-            </select>
-            <!-- Dropdown Arrow SVG -->
-            <svg class="event-sort-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </div>
-
-          <!-- Layout view toggle buttons -->
-          <div class="layout-toggle-group">
-            <button 
-              class="layout-btn" 
-              :class="{ active: viewLayout === 'grid' }" 
-              @click="viewLayout = 'grid'" 
-              aria-label="Grid View"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7"></rect>
-                <rect x="14" y="3" width="7" height="7"></rect>
-                <rect x="14" y="14" width="7" height="7"></rect>
-                <rect x="3" y="14" width="7" height="7"></rect>
-              </svg>
-            </button>
-            <button 
-              class="layout-btn" 
-              :class="{ active: viewLayout === 'list' }" 
-              @click="viewLayout = 'list'" 
-              aria-label="List View"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="8" y1="6" x2="21" y2="6"></line>
-                <line x1="8" y1="12" x2="21" y2="12"></line>
-                <line x1="8" y1="18" x2="21" y2="18"></line>
-                <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                <line x1="3" y1="18" x2="3.01" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-        </div>
+        
       </div>
 
       <!-- Event Cards Grid / List -->
@@ -133,61 +58,75 @@
           v-for="event in filteredAndSortedEvents" 
           :key="event.id" 
           class="event-card-item"
+          @click="openEventDetails(event)"
         >
           <!-- Card Image Section -->
           <div class="event-card-image-box">
             <img :src="event.image" :alt="event.title" class="event-card-img" />
-            <!-- Category Tag on Image -->
-            <span class="event-card-category-badge">{{ currentLang === 'id' ? event.categoryNameId : event.categoryNameEn }}</span>
           </div>
 
           <!-- Card Content Section -->
           <div class="event-card-body">
-            <div class="event-badge-row">
-              <span :class="['event-status-badge', event.statusClass]">
-                {{ currentLang === 'id' ? event.statusId : event.statusEn }}
-              </span>
+            <div class="event-card-title-container">
+              <h2 :class="['event-card-title', { 'animate-marquee': event.title.length > 20 }]" :data-title="event.title">{{ event.title }}</h2>
             </div>
-            
-            <h2 class="event-card-title">{{ event.title }}</h2>
 
             <!-- Card Metadata Rows -->
             <div class="event-meta-info-list">
               <!-- Calendar Date -->
-              <div class="event-meta-item">
-                <svg class="meta-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <div class="event-date-row">
+                <svg class="calendar-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                   <line x1="16" y1="2" x2="16" y2="6"></line>
                   <line x1="8" y1="2" x2="8" y2="6"></line>
                   <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
-                <span class="meta-label-text">{{ currentLang === 'id' ? event.dateId : event.dateEn }}</span>
+                <span class="event-date-text">{{ currentLang === 'id' ? event.dateId : event.dateEn }}</span>
               </div>
-              
-              <!-- Clock Time -->
-              <div class="event-meta-item">
-                <svg class="meta-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                <span class="meta-label-text">{{ event.time }}</span>
-              </div>
-
-              <!-- Map Pin Location -->
-              <div class="event-meta-item">
-                <svg class="meta-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Location Row -->
+              <div class="event-location-row">
+                <svg class="location-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                   <circle cx="12" cy="10" r="3"></circle>
                 </svg>
-                <span class="meta-label-text">{{ event.location }}</span>
+                <span class="event-location-text">{{ event.location }}</span>
               </div>
             </div>
 
-            <!-- Card Bottom Button -->
-            <div class="event-card-actions">
-              <button class="btn-event-detail" @click="openEventDetails(event)">
-                {{ currentLang === 'id' ? 'Lihat Detail' : 'View Details' }}
-              </button>
+            <!-- Price container -->
+            <div class="event-price-container">
+              <span class="event-price-value">{{ event.priceLabel }}</span>
+            </div>
+
+            <!-- Divider Line -->
+            <div class="card-divider"></div>
+
+            <!-- Creator Footer -->
+            <div class="card-creator-section">
+              <div class="creator-avatar-wrapper">
+                <template v-if="event.creatorLogo === 'plus'">
+                  <div class="creator-plus-logo">
+                    <svg viewBox="0 0 32 32" width="32" height="32">
+                      <rect width="32" height="32" rx="6" fill="#000000" />
+                      <path d="M16 8v16M8 16h16" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+                    </svg>
+                  </div>
+                </template>
+                <template v-else-if="event.creatorLogo">
+                  <img :src="event.creatorLogo" class="creator-avatar-img" />
+                </template>
+                <template v-else>
+                  <div class="creator-default-logo">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" />
+                    </svg>
+                  </div>
+                </template>
+              </div>
+              <div class="creator-name-container">
+                <span :class="['creator-name-text', { 'animate-marquee': event.creatorName.length > 22 }]" :data-name="event.creatorName">{{ event.creatorName }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -207,28 +146,7 @@
         <p>{{ currentLang === 'id' ? 'Silakan pilih kategori filter lainnya.' : 'Please select another filter category.' }}</p>
       </div>
 
-      <!-- Pagination Section -->
-      <div class="event-pagination-row" v-if="filteredAndSortedEvents.length > 0">
-        <button class="pag-arrow-btn" :disabled="currentPageNum === 1" @click="currentPageNum--" aria-label="Previous Page">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
-        <button 
-          v-for="page in 3" 
-          :key="page"
-          class="pag-num-btn"
-          :class="{ active: currentPageNum === page }"
-          @click="currentPageNum = page"
-        >
-          {{ page }}
-        </button>
-        <button class="pag-arrow-btn" :disabled="currentPageNum === 3" @click="currentPageNum++" aria-label="Next Page">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </button>
-      </div>
+      
     </div>
 
     <!-- Trust Footer Banner Section -->
@@ -329,11 +247,7 @@
             <!-- Left Side: Image -->
             <div class="modal-image-side">
               <img :src="selectedEvent.image" :alt="selectedEvent.title" class="modal-main-img" />
-              <div class="modal-img-overlay">
-                <span class="modal-badge-status" :class="selectedEvent.statusClass">
-                  {{ currentLang === 'id' ? selectedEvent.statusId : selectedEvent.statusEn }}
-                </span>
-              </div>
+              
             </div>
 
             <!-- Right Side: Details & Registration Form -->
@@ -397,7 +311,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { currentPage, currentLang } from '../store/cart.js';
+import { currentPage, currentLang, selectedEvent } from '../store/cart.js';
 
 // Subscription states
 const subscribeEmail = ref('');
@@ -412,7 +326,6 @@ const currentPageNum = ref(1);
 
 // Detail Modal states
 const isModalOpen = ref(false);
-const selectedEvent = ref(null);
 
 const filterTags = [
   { nameId: 'Semua Event', nameEn: 'All Events', value: 'all' },
@@ -427,23 +340,46 @@ const filterTags = [
 // High fidelity events database matching requirements
 const eventsData = ref([
   {
+    id: 13,
+    title: 'Jakarta Mods Mayday 2026',
+    image: '/event_mods_mayday.png',
+    category: 'others',
+    categoryNameId: 'Lainnya',
+    categoryNameEn: 'Others',
+    dateId: 'Minggu, 31 Mei 2026',
+    dateEn: 'Sunday, May 31, 2026',
+    time: '12:00 - 23:00 WIB',
+    location: 'Senayan Park (Island & Dome), Jakarta Pusat',
+    statusId: 'Tiket Tersedia',
+    statusEn: 'Tickets Available',
+    statusClass: 'status-available',
+    priceLabel: 'Rp150.000',
+    descriptionId: 'Jakarta Mods Mayday adalah perayaan tahunan subkultur mods yang diselenggarakan oleh Warriors Jakarta sejak 2011. Acara ini menggabungkan kecintaan pada scooter retro dengan musik indie pop, modern soul, ska, dan pameran karya seni.',
+    descriptionEn: 'Jakarta Mods Mayday is an annual subculture celebration organized by the Warriors Jakarta community since 2011, combining vintage scooters with live music, art exhibitions, and food market.',
+    timestamp: 1779951600000,
+    creatorName: 'Warriors Jakarta',
+    creatorLogo: 'plus'
+  },
+  {
     id: 1,
-    title: 'Mocca Live in Jakarta "Home" Concert',
+    title: 'Konser Berani Tambah Bahagia',
     image: '/event_concert.png',
     category: 'concert',
     categoryNameId: 'Konser',
     categoryNameEn: 'Concert',
-    dateId: 'Jumat, 12 Juni 2026',
-    dateEn: 'Friday, June 12, 2026',
-    time: '19:00 - 21:30 WIB',
-    location: 'The Kasablanka Hall, Jakarta',
+    dateId: '23 Mei 2026',
+    dateEn: 'May 23, 2026',
+    time: '17:00 WIB',
+    location: 'Asram Edupark, Yogyakarta',
     statusId: 'Tiket Tersedia',
     statusEn: 'Tickets Available',
     statusClass: 'status-available',
-    priceLabel: 'Rp 250.000',
-    descriptionId: 'Setelah sekian lama, Mocca kembali menghadirkan konser intim bertajuk "Home" di Jakarta. Nikmati aransemen lagu-lagu klasik Mocca seperti Secret Admirer, I Remember, dan On the Night Like This secara langsung dengan konsep panggung yang hangat dan dekorasi bernuansa vintage sepia.',
-    descriptionEn: 'After a long wait, Mocca returns with an intimate concert themed "Home" in Jakarta. Enjoy live performances of classic hits like Secret Admirer, I Remember, and On the Night Like This on a cozy, warm stage decorated with a beautiful vintage sepia theme.',
-    timestamp: 1781204400000
+    priceLabel: 'Rp60.000',
+    descriptionId: 'Setelah sekian lama, Mocca kembali menghadirkan konser intim bertajuk "Berani Tambah Bahagia". Nikmati aransemen lagu-lagu klasik Mocca secara langsung dengan konsep panggung yang hangat dan dekorasi bernuansa vintage sepia.',
+    descriptionEn: 'After a long wait, Mocca returns with an intimate concert themed "Berani Tambah Bahagia". Enjoy live performances of classic hits on a cozy, warm stage decorated with a beautiful vintage sepia theme.',
+    timestamp: 1781204400000,
+    creatorName: 'Konser Berani Tambah Bahagia',
+    creatorLogo: 'plus'
   },
   {
     id: 2,
@@ -459,10 +395,12 @@ const eventsData = ref([
     statusId: 'Tiket Tersedia',
     statusEn: 'Tickets Available',
     statusClass: 'status-available',
-    priceLabel: 'Gratis dengan Registrasi',
+    priceLabel: 'Rp80.000',
     descriptionId: 'Sesi ramah tamah eksklusif bersama seluruh personil band Mocca dalam rangka perilisan merchandise kolaborasi edisi spesial. Dapatkan kesempatan foto bersama, tanda tangan album, dan chit-chat santai mengenai karya terbaru Mocca.',
     descriptionEn: 'An exclusive meet and greet session with all members of Mocca to celebrate the release of their special edition collaboration merchandise. Get photos, signed albums, and a warm chat about their upcoming projects.',
-    timestamp: 1782313200000
+    timestamp: 1782313200000,
+    creatorName: 'Mocca',
+    creatorLogo: '/logo_mocca.png'
   },
   {
     id: 3,
@@ -478,10 +416,12 @@ const eventsData = ref([
     statusId: 'Kuota Terbatas',
     statusEn: 'Limited Spots',
     statusClass: 'status-limited',
-    priceLabel: 'Rp 150.000',
+    priceLabel: 'Rp150.000',
     descriptionId: 'Pelajari proses kreatif di balik penciptaan melodi-melodi manis khas Mocca. Dipandu langsung oleh para personil Mocca, workshop ini sangat cocok untuk kamu yang ingin memulai belajar menulis lagu, merangkai lirik, dan memoles aransemen musik indie pop.',
     descriptionEn: 'Learn the creative secrets behind writing Mocca\'s signature sweet pop melodies. Coached directly by the band members, this workshop is perfect for beginners who want to write songs, structure lyrics, and produce indie pop tunes.',
-    timestamp: 1783429200000
+    timestamp: 1783429200000,
+    creatorName: 'Mocca',
+    creatorLogo: '/logo_mocca.png'
   },
   {
     id: 4,
@@ -494,13 +434,183 @@ const eventsData = ref([
     dateEn: 'July 20 - July 26, 2026',
     time: '10:00 - 22:00 WIB',
     location: 'Senayan City, Jakarta',
-    statusId: 'Gratis Masuk',
-    statusEn: 'Free Entry',
-    statusClass: 'status-free',
-    priceLabel: 'Gratis Masuk',
+    statusId: 'Tiket Tersedia',
+    statusEn: 'Tickets Available',
+    statusClass: 'status-available',
+    priceLabel: 'Rp40.000',
     descriptionId: 'Jelajahi Mocca Pop-Up Store resmi di Senayan City lantai 2. Menghadirkan pameran memorabilia perjalanan musik Mocca, rilisan fisik eksklusif piringan hitam, serta aneka merchandise premium mulai dari kaos, tas kanvas, cangkir kopi, dan produk kolaborasi spesial.',
     descriptionEn: 'Explore the official Mocca Pop-Up Store located on the 2nd Floor of Senayan City. Featuring a mini-exhibition of Mocca\'s music journey memorabilia, exclusive physical vinyl records, and premium merch like t-shirts, tote bags, coffee mugs, and collaboration goodies.',
-    timestamp: 1784464800000
+    timestamp: 1784464800000,
+    creatorName: 'Mocca',
+    creatorLogo: '/logo_mocca.png'
+  },
+  {
+    id: 5,
+    title: 'Mocca Acoustic Cafe Session',
+    image: '/event_concert.png',
+    category: 'concert',
+    categoryNameId: 'Konser',
+    categoryNameEn: 'Concert',
+    dateId: 'Senin, 15 Juni 2026',
+    dateEn: 'Monday, June 15, 2026',
+    time: '20:00 - 22:00 WIB',
+    location: 'Hard Rock Cafe, Bali',
+    statusId: 'Tiket Tersedia',
+    statusEn: 'Tickets Available',
+    statusClass: 'status-available',
+    priceLabel: 'Rp120.000',
+    descriptionId: 'Nikmati malam yang syahdu bersama Mocca dalam sesi akustik eksklusif di Hard Rock Cafe Bali. Dapatkan suasana santai dengan hits pop retro klasik Mocca.',
+    descriptionEn: 'Enjoy a peaceful evening with Mocca in an exclusive acoustic session at Hard Rock Cafe Bali. Relax with their classic retro pop hits.',
+    timestamp: 1781464800000,
+    creatorName: 'Mocca',
+    creatorLogo: '/logo_mocca.png'
+  },
+  {
+    id: 6,
+    title: 'Mocca Fan Exhibition & Gallery',
+    image: '/event_popup.png',
+    category: 'popup_store',
+    categoryNameId: 'Pop-up Store',
+    categoryNameEn: 'Pop-up Store',
+    dateId: 'Sabtu, 01 Agustus 2026',
+    dateEn: 'Saturday, August 1, 2026',
+    time: '10:00 - 18:00 WIB',
+    location: 'Galeri Nasional, Jakarta',
+    statusId: 'Tiket Tersedia',
+    statusEn: 'Tickets Available',
+    statusClass: 'status-available',
+    priceLabel: 'Rp45.000',
+    descriptionId: 'Pameran memorabilia perjalanan musik Mocca selama dua dekade lebih. Lihat kostum panggung klasik, coretan lirik asli, alat musik bersejarah, dan galeri foto eksklusif.',
+    descriptionEn: 'An exhibition of Mocca\'s music journey memorabilia spanning over two decades. See classic stage outfits, original handwritten lyrics, historical instruments, and an exclusive photo gallery.',
+    timestamp: 1785501600000,
+    creatorName: 'Mocca',
+    creatorLogo: '/logo_mocca.png'
+  },
+  {
+    id: 7,
+    title: 'Mocca Intimate Dinner & Acoustic',
+    image: '/event_meet_greet.png',
+    category: 'meet_greet',
+    categoryNameId: 'Meet & Greet',
+    categoryNameEn: 'Meet & Greet',
+    dateId: 'Senin, 10 Agustus 2026',
+    dateEn: 'Monday, August 10, 2026',
+    time: '19:00 - 21:30 WIB',
+    location: 'Hotel Tentrem, Yogyakarta',
+    statusId: 'Kuota Terbatas',
+    statusEn: 'Limited Spots',
+    statusClass: 'status-limited',
+    priceLabel: 'Rp350.000',
+    descriptionId: 'Sesi makan malam eksklusif yang intim dilanjutkan pertunjukan musik akustik interaktif bersama personil Mocca. Kuota terbatas hanya untuk 50 penonton.',
+    descriptionEn: 'An exclusive, intimate dinner session followed by an interactive acoustic performance with the members of Mocca. Limited to 50 guests only.',
+    timestamp: 1786279200000,
+    creatorName: 'Mocca',
+    creatorLogo: '/logo_mocca.png'
+  },
+  {
+    id: 8,
+    title: 'Mocca Collaboration Launch with Local Brands',
+    image: '/event_workshop.png',
+    category: 'workshop',
+    categoryNameId: 'Workshop',
+    categoryNameEn: 'Workshop',
+    dateId: 'Kamis, 20 Agustus 2026',
+    dateEn: 'Thursday, August 20, 2026',
+    time: '15:00 - 18:00 WIB',
+    location: 'M Bloc Space, Jakarta',
+    statusId: 'Tiket Tersedia',
+    statusEn: 'Tickets Available',
+    statusClass: 'status-available',
+    priceLabel: 'Rp75.000',
+    descriptionId: 'Peluncuran resmi kolaborasi produk fashion dan merchandise edisi terbatas Mocca bersama brand lokal favorit. Hadiri talkshow mini dan pertunjukan pembuka.',
+    descriptionEn: 'Official launch of Mocca\'s limited edition collaboration fashion and merch products with top local brands. Join the mini talkshow and acoustic opening.',
+    timestamp: 1787142000000,
+    creatorName: 'Mocca',
+    creatorLogo: '/logo_mocca.png'
+  },
+  {
+    id: 9,
+    title: 'Mocca Live',
+    image: '/event_concert.png',
+    category: 'concert',
+    categoryNameId: 'Konser',
+    categoryNameEn: 'Concert',
+    dateId: 'Sabtu, 05 September 2026',
+    dateEn: 'Saturday, September 5, 2026',
+    time: '19:30 - 21:00 WIB',
+    location: 'Live Space, Jakarta',
+    statusId: 'Tiket Tersedia',
+    statusEn: 'Tickets Available',
+    statusClass: 'status-available',
+    priceLabel: 'Rp110.000',
+    descriptionId: 'Pertunjukan musik langsung edisi spesial Mocca Live di Jakarta.',
+    descriptionEn: 'Mocca Live special edition live concert in Jakarta.',
+    timestamp: 1788550000000,
+    creatorName: 'Mocca',
+    creatorLogo: '/logo_mocca.png'
+  },
+  {
+    id: 10,
+    title: 'Mocca Talk',
+    image: '/event_workshop.png',
+    category: 'talkshow',
+    categoryNameId: 'Talkshow',
+    categoryNameEn: 'Talkshow',
+    dateId: 'Sabtu, 12 September 2026',
+    dateEn: 'Saturday, September 12, 2026',
+    time: '14:00 - 16:00 WIB',
+    location: 'Kopi Kalyan, Jakarta',
+    statusId: 'Tiket Tersedia',
+    statusEn: 'Tickets Available',
+    statusClass: 'status-available',
+    priceLabel: 'Rp65.000',
+    descriptionId: 'Sesi bincang santai dan sharing session Mocca Talk bersama penggemar.',
+    descriptionEn: 'Mocca Talk casual discussion and sharing session with fans.',
+    timestamp: 1789154400000,
+    creatorName: 'Mocca',
+    creatorLogo: '/logo_mocca.png'
+  },
+  {
+    id: 11,
+    title: 'Mocca Shop',
+    image: '/event_popup.png',
+    category: 'popup_store',
+    categoryNameId: 'Pop-up Store',
+    categoryNameEn: 'Pop-up Store',
+    dateId: 'Jumat, 18 September 2026',
+    dateEn: 'Friday, September 18, 2026',
+    time: '10:00 - 22:00 WIB',
+    location: 'Paskal 23, Bandung',
+    statusId: 'Tiket Tersedia',
+    statusEn: 'Tickets Available',
+    statusClass: 'status-available',
+    priceLabel: 'Rp30.000',
+    descriptionId: 'Kunjungi Mocca Shop Bandung untuk mendapatkan rilisan fisik dan cinderamata resmi band.',
+    descriptionEn: 'Visit Mocca Shop Bandung to purchase band official physical releases and goodies.',
+    timestamp: 1789672800000,
+    creatorName: 'Mocca',
+    creatorLogo: '/logo_mocca.png'
+  },
+  {
+    id: 12,
+    title: 'Mocca Show',
+    image: '/event_meet_greet.png',
+    category: 'meet_greet',
+    categoryNameId: 'Meet & Greet',
+    categoryNameEn: 'Meet & Greet',
+    dateId: 'Jumat, 25 September 2026',
+    dateEn: 'Friday, September 25, 2026',
+    time: '16:00 - 18:00 WIB',
+    location: 'Paris Van Java, Bandung',
+    statusId: 'Tiket Tersedia',
+    statusEn: 'Tickets Available',
+    statusClass: 'status-available',
+    priceLabel: 'Rp95.000',
+    descriptionId: 'Sesi ramah tamah interaktif dan showcase spesial Mocca Show.',
+    descriptionEn: 'Mocca Show interactive meet-up session and special showcase.',
+    timestamp: 1790277600000,
+    creatorName: 'Mocca',
+    creatorLogo: '/logo_mocca.png'
   }
 ]);
 
@@ -539,7 +649,8 @@ const handleSubscribe = () => {
 // Modal handlers
 const openEventDetails = (event) => {
   selectedEvent.value = event;
-  isModalOpen.value = true;
+  currentPage.value = 'event-detail';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 const closeModal = () => {
@@ -850,18 +961,20 @@ const triggerToastNotification = (msg) => {
 .event-items-container.grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  gap: 1.75rem; /* slightly wider gap */
 }
 
 .event-card-item {
   background-color: var(--color-bg-light);
-  border-radius: 16px;
+  border-radius: 8px; /* Changed to 8px */
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(59, 35, 20, 0.03);
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   height: 100%;
+  padding: 0; /* Remove padding so banner is full at top, left, and right */
+  cursor: pointer;
 }
 
 .event-card-item:hover {
@@ -872,8 +985,9 @@ const triggerToastNotification = (msg) => {
 .event-card-image-box {
   position: relative;
   width: 100%;
-  padding-top: 62%; /* widescreen ratio */
+  padding-top: 45%; /* Very wide aspect ratio matching mockup */
   overflow: hidden;
+  border-radius: 0; /* Clipped by card border-radius: 8px */
   background-color: var(--color-bg-cream);
 }
 
@@ -886,109 +1000,175 @@ const triggerToastNotification = (msg) => {
   object-fit: cover;
 }
 
-.event-card-category-badge {
-  position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
-  background-color: rgba(59, 35, 20, 0.85);
-  color: var(--color-bg-light);
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.3rem 0.75rem;
-  border-radius: 20px;
-  backdrop-filter: blur(4px);
-}
-
 .event-card-body {
-  padding: 1.5rem;
+  padding: 1.25rem; /* Applied padding inside card body instead of card container */
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
-.event-badge-row {
-  margin-bottom: 0.75rem;
-}
-
-.event-status-badge {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-}
-
-.event-status-badge.status-available {
-  background-color: rgba(40, 167, 69, 0.08);
-  color: #28a745;
-}
-
-.event-status-badge.status-limited {
-  background-color: rgba(230, 161, 0, 0.08);
-  color: #d97706;
-}
-
-.event-status-badge.status-free {
-  background-color: rgba(13, 59, 122, 0.08);
-  color: #0D3B7A;
+.event-card-title-container {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  margin-bottom: 0.5rem;
 }
 
 .event-card-title {
+  display: block;
   font-family: var(--font-heading);
-  font-size: 1.25rem;
+  font-size: 1.1rem; /* Smaller font size */
   font-weight: 600;
   line-height: 1.3;
-  margin-bottom: 1rem;
   color: var(--color-mocca-dark);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
+.event-card-title.animate-marquee {
+  display: inline-block;
+  overflow: visible;
+  text-overflow: clip;
+  animation: marquee-text 8s linear infinite;
+}
+
+.event-card-title.animate-marquee::after {
+  content: attr(data-title);
+  padding-left: 2rem;
+  display: inline;
+}
+
+@keyframes marquee-text {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-50% - 1rem)); }
+}
+
+/* Date & Location Row Styling */
 .event-meta-info-list {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  margin-bottom: 1.5rem;
-  flex-grow: 1;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
 }
 
-.event-meta-item {
+.event-date-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--color-mocca-muted);
-  font-size: 0.85rem;
+  gap: 0.4rem;
 }
 
-.meta-svg-icon {
-  flex-shrink: 0;
+.event-location-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.calendar-svg-icon,
+.location-svg-icon {
   stroke: var(--color-mocca-muted);
+  flex-shrink: 0;
 }
 
-.meta-label-text {
-  line-height: 1.2;
+.event-date-text,
+.event-location-text {
+  font-family: var(--font-body);
+  font-size: 0.75rem; /* Smaller date and location text */
+  font-weight: 500;
+  color: var(--color-mocca-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.event-card-actions {
-  margin-top: auto;
+/* Price Styling */
+.event-price-container {
+  margin-bottom: 0.25rem;
 }
 
-.btn-event-detail {
-  width: 100%;
-  background-color: transparent;
+.event-price-value {
+  font-family: var(--font-body);
+  font-size: 1.15rem; /* Smaller price text */
+  font-weight: 700;
   color: var(--color-mocca-dark);
+}
+
+/* Divider & Creator styling */
+.card-divider {
+  border-top: 1px solid #E2DCD5; /* thin solid line */
+  width: 100%;
+  margin: 0.35rem 0 0.5rem 0; /* closer gap */
+}
+
+.card-creator-section {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: auto;
+  overflow: hidden; /* clip long creator names */
+}
+
+.creator-avatar-wrapper {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.creator-plus-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.creator-avatar-img {
+  width: 32px; /* Increased size */
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
   border: 1px solid var(--color-mocca-border);
-  padding: 0.65rem;
-  border-radius: 8px;
+}
+
+.creator-default-logo {
+  color: var(--color-mocca-muted);
+}
+
+.creator-name-container {
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  flex-grow: 1;
+  height: 1.25rem;
+}
+
+.creator-name-text {
+  display: block;
   font-family: var(--font-body);
   font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
+  font-weight: 500;
+  color: #5C6B8D; /* Slate/gray-blue from mockup */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.btn-event-detail:hover {
-  background-color: var(--color-mocca-dark);
-  color: var(--color-bg-light);
-  border-color: var(--color-mocca-dark);
+.creator-name-text.animate-marquee {
+  display: inline-block;
+  overflow: visible;
+  text-overflow: clip;
+  animation: marquee-creator 10s linear infinite;
+}
+
+.creator-name-text.animate-marquee::after {
+  content: attr(data-name);
+  padding-left: 2rem;
+  display: inline;
+}
+
+@keyframes marquee-creator {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-50% - 1rem)); }
 }
 
 /* List view modifications */
@@ -1000,44 +1180,94 @@ const triggerToastNotification = (msg) => {
 
 .event-items-container.list .event-card-item {
   flex-direction: row;
-  height: 200px;
+  height: 220px;
+  padding: 1rem;
 }
 
 .event-items-container.list .event-card-image-box {
   width: 320px;
   padding-top: 0;
-  flex-shrink: 0;
   height: 100%;
+  flex-shrink: 0;
+  border-radius: 6px;
 }
 
 .event-items-container.list .event-card-body {
-  padding: 1.5rem 2rem;
+  padding: 0.25rem 1.5rem;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
-.event-items-container.list .event-badge-row {
+.event-items-container.list .event-card-title-container {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex: 1;
   margin-bottom: 0;
 }
 
 .event-items-container.list .event-card-title {
+  font-size: 1.15rem;
   margin-bottom: 0;
-  font-size: 1.4rem;
-  max-width: 340px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+  animation: none;
+}
+
+.event-items-container.list .event-card-title::after {
+  content: none;
 }
 
 .event-items-container.list .event-meta-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
   margin-bottom: 0;
-  flex-grow: 0;
-  width: 240px;
+  width: 200px;
 }
 
-.event-items-container.list .event-card-actions {
+.event-items-container.list .event-date-row {
+  margin-bottom: 0;
+}
+
+.event-items-container.list .event-price-container {
+  margin-bottom: 0;
+}
+
+.event-items-container.list .card-divider {
+  display: none; /* Hide vertical/horizontal line in list row structure */
+}
+
+.event-items-container.list .card-creator-section {
   margin-top: 0;
-  width: 160px;
-  flex-shrink: 0;
+  width: 240px;
+  justify-content: flex-end;
+}
+
+.event-items-container.list .creator-name-container {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex: none;
+  max-width: 180px;
+}
+
+.event-items-container.list .creator-name-text {
+  font-size: 0.85rem;
+  margin-bottom: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+  animation: none;
+}
+
+.event-items-container.list .creator-name-text::after {
+  content: none;
 }
 
 /* No events status styling */
@@ -1070,14 +1300,7 @@ const triggerToastNotification = (msg) => {
   font-size: 0.95rem;
 }
 
-/* Pagination Control row */
-.event-pagination-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 3.5rem;
-}
+
 
 .pag-arrow-btn {
   width: 40px;
@@ -1487,12 +1710,40 @@ const triggerToastNotification = (msg) => {
   }
 
   .event-title-main {
-    font-size: 2.5rem;
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .event-subtitle {
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
 
   .event-filters-bar {
     flex-direction: column;
     align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .filters-tags-list {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none; /* Hide scrollbar in Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
+    gap: 0.5rem;
+  }
+
+  .filters-tags-list::-webkit-scrollbar {
+    display: none; /* Hide scrollbar in Chrome/Safari */
+  }
+
+  .filter-tag-btn {
+    flex-shrink: 0;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.75rem;
   }
 
   .filters-controls-right {
