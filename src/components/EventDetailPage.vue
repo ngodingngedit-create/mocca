@@ -779,16 +779,146 @@
 
     <!-- Bottom Action Bar (Sticky at viewport bottom) -->
     <div class="bottom-action-bar">
-      <div class="bottom-bar-container">
+      <!-- Desktop Only Bottom Bar (remains identical to original design) -->
+      <div class="bottom-bar-container desktop-only-bottom-bar">
         <div class="bottom-price-info">
           <span class="bottom-label">{{ activeTab === 'tiket' ? (currentLang === 'id' ? `TOTAL (${totalSelectedTicketsCount} TIKET)` : `TOTAL (${totalSelectedTicketsCount} TICKETS)`) : (currentLang === 'id' ? 'Harga mulai dari' : 'Price starting from') }}</span>
           <span class="bottom-price">{{ activeTab === 'tiket' ? formatCurrency(computedTotalPayment) : displayEvent.priceLabel }}</span>
         </div>
-        <button class="bottom-action-btn" @click="handleBeliTiket">
-          {{ activeTab === 'deskripsi' ? (currentLang === 'id' ? 'Lihat Tiket' : 'View Tickets') : (currentLang === 'id' ? 'Beli Tiket' : 'Buy Ticket') }}
-        </button>
+        <div class="desktop-action-buttons-group">
+          <button class="bottom-action-btn" @click="handleBeliTiket">
+            {{ activeTab === 'deskripsi' ? (currentLang === 'id' ? 'Lihat Tiket' : 'View Tickets') : (currentLang === 'id' ? 'Beli Tiket' : 'Buy Ticket') }}
+          </button>
+          <button class="desktop-chat-icon-btn" @click="handleChat" :title="currentLang === 'id' ? 'Chat' : 'Chat'">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 12a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Only Bottom Bar -->
+      <div class="bottom-bar-container mobile-only-bottom-bar" :class="{ 'has-details-row': activeTab === 'tiket' }">
+        <!-- Top Row: Price and Detail toggle (Only when activeTab === 'tiket') -->
+        <div v-if="activeTab === 'tiket'" class="mobile-bottom-top-row">
+          <div class="bottom-price-info">
+            <span class="bottom-label">{{ currentLang === 'id' ? 'TOTAL HARGA' : 'TOTAL PRICE' }}</span>
+            <span class="bottom-price">{{ formatCurrency(computedTotalPayment) }}</span>
+          </div>
+          <button class="mobile-detail-toggle-btn" @click="showMobileSummary = !showMobileSummary">
+            ({{ totalSelectedTicketsCount }}) {{ currentLang === 'id' ? 'Detail' : 'Details' }}
+            <span class="detail-arrow">{{ showMobileSummary ? '▼' : '▲' }}</span>
+          </button>
+        </div>
+
+        <!-- Bottom Row: Action button and Chat icon -->
+        <div class="mobile-bottom-main-row">
+          <!-- Price display on description tab inline -->
+          <div v-if="activeTab !== 'tiket'" class="bottom-price-info mobile-price-info-inline">
+            <span class="bottom-label">{{ currentLang === 'id' ? 'Harga mulai dari' : 'Price starting from' }}</span>
+            <span class="bottom-price">{{ displayEvent.priceLabel }}</span>
+          </div>
+
+          <div class="mobile-action-buttons-group" :class="{ 'full-width': activeTab === 'tiket' }">
+            <button class="bottom-action-btn mobile-action-btn" @click="handleBeliTiket">
+              {{ activeTab === 'deskripsi' ? (currentLang === 'id' ? 'Lihat Tiket' : 'View Tickets') : (currentLang === 'id' ? 'Beli Tiket Sekarang' : 'Buy Ticket Now') }}
+            </button>
+            <button class="mobile-chat-icon-btn" @click="handleChat" :title="currentLang === 'id' ? 'Chat' : 'Chat'">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 12a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Mobile Order Summary Bottom Sheet -->
+    <transition name="slide-up">
+      <div v-if="showMobileSummary && activeTab === 'tiket'" class="mobile-summary-bottom-sheet">
+        <div class="sheet-header">
+          <div class="sheet-drag-handle"></div>
+          <div class="sheet-header-title-row">
+            <h3 class="sheet-title">{{ currentLang === 'id' ? 'Ringkasan Pemesanan' : 'Order Summary' }}</h3>
+            <button class="sheet-close-btn" @click="showMobileSummary = false">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <div class="sheet-body">
+          <!-- Empty State -->
+          <div v-if="selectedTickets.length === 0" class="summary-empty-state">
+            <div class="summary-empty-icon-box">
+               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                 <path d="M21 9a3 3 0 0 0-3-3h-16a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h16a3 3 0 0 0 3-3V9z"></path>
+                 <line x1="12" y1="6" x2="12" y2="18" stroke-dasharray="3 3"></line>
+               </svg>
+            </div>
+            <h3 class="summary-empty-title">{{ currentLang === 'id' ? 'Belum ada tiket dipilih' : 'No tickets selected' }}</h3>
+            <p class="summary-empty-text">{{ currentLang === 'id' ? 'Pilih jenis tiket untuk melihat ringkasan pemesanan.' : 'Choose a ticket type to see the order summary.' }}</p>
+          </div>
+          
+          <!-- Selected State -->
+          <div v-else class="summary-selected-state">
+            <div v-for="item in selectedTickets" :key="item.id" class="selected-ticket-info-row">
+              <div class="selected-ticket-left-col">
+                <div class="ticket-name-row-wrapper">
+                  <svg class="ticket-icon-summary" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 9a3 3 0 0 0-3-3h-16a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h16a3 3 0 0 0 3-3V9z"></path>
+                    <line x1="12" y1="6" x2="12" y2="18" stroke-dasharray="3 3"></line>
+                  </svg>
+                  <div class="ticket-name-marquee-container">
+                    <span class="scrolling-text">{{ item.name }}</span>
+                  </div>
+                  <span class="selected-ticket-qty-tag">x{{ item.quantity }}</span>
+                </div>
+              </div>
+              <div class="selected-ticket-right-col">
+                <span class="selected-ticket-price-unit">{{ formatCurrency(item.price) }}</span>
+              </div>
+            </div>
+            
+            <div class="summary-price-divider"></div>
+            
+            <div class="summary-price-breakdown">
+              <div class="price-breakdown-row">
+                <span class="breakdown-lbl">Subtotal</span>
+                <span class="breakdown-val">{{ formatCurrency(computedSubtotal) }}</span>
+              </div>
+              <div class="price-breakdown-row">
+                <span class="breakdown-lbl">
+                  {{ currentLang === 'id' ? 'Biaya Layanan' : 'Service Fee' }}
+                  <span class="info-icon-tooltip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                  </span>
+                </span>
+                <span class="breakdown-val">{{ formatCurrency(computedServiceFee) }}</span>
+              </div>
+            </div>
+            
+            <div class="summary-price-divider"></div>
+            
+            <div class="summary-total-payment-row">
+              <span class="total-payment-label">{{ currentLang === 'id' ? 'Total Pembayaran' : 'Total Payment' }}</span>
+              <span class="total-payment-val text-coffee">{{ formatCurrency(computedTotalPayment) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+    
+    <!-- Mobile Summary Overlay Backdrop -->
+    <transition name="fade">
+      <div v-if="showMobileSummary && activeTab === 'tiket'" class="mobile-summary-overlay" @click="showMobileSummary = false"></div>
+    </transition>
 
     <!-- Toast Notification -->
     <div class="toast-popup" :class="{ active: toastActive }">
@@ -806,6 +936,7 @@ const isSaved = ref(false);
 const toastActive = ref(false);
 const toastMessage = ref('');
 const isAccordionOpen = ref(false);
+const showMobileSummary = ref(false);
 
 const expandedTicketId = ref('early-wave-normal');
 
@@ -2382,7 +2513,43 @@ watch(displayEvent, () => {
   box-shadow: 0 6px 16px rgba(59, 35, 20, 0.2);
 }
 
+.desktop-action-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.desktop-chat-icon-btn {
+  background-color: var(--color-mocca-dark);
+  color: var(--color-bg-light);
+  border: none;
+  border-radius: 8px;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(59, 35, 20, 0.15);
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.desktop-chat-icon-btn:hover {
+  background-color: #55331C;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 35, 20, 0.2);
+}
+
+.desktop-chat-icon-btn:active {
+  transform: translateY(0);
+}
+
 /* Visibility classes for mobile and desktop */
+.mobile-only-bottom-bar {
+  display: none !important;
+}
+
 .mobile-only-bottom-row {
   display: none !important;
 }
@@ -3963,31 +4130,241 @@ watch(displayEvent, () => {
   }
   .info-banner-text { font-size: 0.78rem; }
 
-  /* ── Bottom action bar ── */
-  .bottom-action-bar {
-    padding: 0.75rem 1rem;
-    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
-    border-top: 1px solid rgba(59, 35, 20, 0.1);
-    box-shadow: 0 -8px 30px rgba(59, 35, 20, 0.08);
+  /* Hide desktop summary card on mobile */
+  .summary-ticket-card {
+    display: none !important;
   }
-  .bottom-bar-container {
+
+  /* ── Bottom action bar mobile styles ── */
+  .bottom-action-bar {
+    background-color: #ffffff !important;
+    padding: 0.85rem 1.25rem;
+    padding-bottom: calc(0.85rem + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--color-mocca-border) !important;
+    box-shadow: 0 -10px 30px rgba(59, 35, 20, 0.1) !important;
+  }
+  
+  .desktop-only-bottom-bar {
+    display: none !important;
+  }
+
+  .mobile-only-bottom-bar {
+    display: flex !important;
+    flex-direction: column;
     width: 100%;
+    gap: 0.85rem;
+    padding: 0 !important;
+  }
+
+  .mobile-bottom-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+  }
+
+  .mobile-bottom-main-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-    padding: 0;
+    width: 100%;
+    gap: 0.75rem;
   }
-  .bottom-label { font-size: 0.5rem; letter-spacing: 0.03em; font-weight: 700; }
-  .bottom-price { font-size: 1.1rem; }
-  .bottom-action-btn {
+
+  .mobile-price-info-inline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .mobile-action-buttons-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     flex-grow: 1;
-    max-width: 120px;
-    padding: 0.6rem 0.8rem;
-    font-size: 0.8rem;
-    border-radius: 8px;
+    justify-content: flex-end;
+  }
+
+  .mobile-action-buttons-group.full-width {
+    width: 100%;
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .mobile-action-buttons-group.full-width .bottom-action-btn.mobile-action-btn {
+    flex-grow: 1;
+    max-width: none;
+  }
+
+  .mobile-action-buttons-group:not(.full-width) .bottom-action-btn.mobile-action-btn {
+    max-width: 165px;
+  }
+
+  .mobile-detail-toggle-btn {
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-mocca-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0;
+    text-decoration: none;
+  }
+
+  .detail-arrow {
+    font-size: 0.7rem;
+    margin-left: 2px;
+  }
+
+  .bottom-price-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .bottom-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    color: var(--color-mocca-muted);
+    text-transform: uppercase;
+  }
+
+  .bottom-price {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--color-mocca-dark);
+    line-height: 1.2;
+  }
+  
+  .bottom-action-btn.mobile-action-btn {
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border-radius: 14px;
     background-color: var(--color-mocca-dark);
+    color: #ffffff;
+    border: none;
     box-shadow: 0 4px 12px rgba(59, 35, 20, 0.15);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .bottom-action-btn.mobile-action-btn:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+
+  .mobile-chat-icon-btn {
+    background-color: var(--color-mocca-dark);
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(59, 35, 20, 0.15);
+    flex-shrink: 0;
+    box-sizing: border-box;
+  }
+
+  .mobile-chat-icon-btn:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+
+  /* ── Mobile Summary Bottom Sheet ── */
+  .mobile-summary-bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-shadow: 0 -10px 40px rgba(59, 35, 20, 0.15);
+    z-index: 10000;
+    padding: 1.5rem;
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+    max-height: 75vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    box-sizing: border-box;
+  }
+
+  .sheet-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sheet-drag-handle {
+    width: 40px;
+    height: 4px;
+    background-color: rgba(59, 35, 20, 0.15);
+    border-radius: 2px;
+    align-self: center;
+  }
+
+  .sheet-header-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .sheet-title {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-mocca-dark);
+    margin: 0;
+  }
+
+  .sheet-close-btn {
+    background: none;
+    border: none;
+    color: var(--color-mocca-muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sheet-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+  }
+
+  .mobile-summary-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
   }
 
   /* Visibility overrides for desktop elements inside mobile media query */
@@ -4003,6 +4380,25 @@ watch(displayEvent, () => {
   .desktop-price-container {
     display: none !important;
   }
+}
+
+/* Transitions for bottom sheet & backdrop */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 /* Ticket marquee on mobile — already handled in main block above */
