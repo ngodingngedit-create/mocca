@@ -10,10 +10,7 @@
           aria-label="Home"
         >
           <span class="active-indicator"></span>
-          <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-          </svg>
+          <img class="nav-icon" src="/mobileNavbar/home.png" alt="Home" width="28" height="28" />
           <span class="nav-label">{{ currentLang === 'id' ? 'Beranda' : 'Home' }}</span>
         </button>
 
@@ -235,6 +232,13 @@ const toggleSearchInput = () => {
   color: var(--color-mocca-muted);
   transition: transform 0.25s ease, color 0.25s ease;
   margin-bottom: 0.25rem;
+}
+
+img.nav-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: inline-block;
 }
 
 .nav-item.active .nav-icon {
