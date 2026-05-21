@@ -180,112 +180,113 @@
 
           <!-- Description Tab Content -->
           <div v-show="activeTab === 'deskripsi'" class="tab-content-block">
-            <!-- General overview -->
-            <p class="event-desc-main">{{ currentLang === 'id' ? displayEvent.descriptionId : displayEvent.descriptionEn }}</p>
+            <div class="desc-section-card">
+              <!-- General overview -->
+              <p class="event-desc-main">{{ currentLang === 'id' ? displayEvent.descriptionId : displayEvent.descriptionEn }}</p>
 
-
-            <!-- Informasi Penting Section (Moved to Description) -->
-            <div class="content-section info-penting-inline-section">
-              <h3 class="section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="title-icon">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="16" x2="12" y2="12"></line>
-                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                </svg>
-                {{ currentLang === 'id' ? 'Informasi Penting' : 'Important Info' }}
-              </h3>
-              
-              <div class="info-facts-horizontal-grid">
-                <!-- Usia Minimum -->
-                <div class="fact-item-inline">
-                  <svg class="fact-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                  <div class="fact-text">
-                    <span class="fact-label">{{ currentLang === 'id' ? 'Usia Minimum' : 'Minimum Age' }}</span>
-                    <span class="fact-value">{{ displayEvent.minAge || 'Semua umur' }}</span>
-                  </div>
-                </div>
-
-                <!-- Kategori Event -->
-                <div class="fact-item-inline">
-                  <svg class="fact-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                  </svg>
-                  <div class="fact-text">
-                    <span class="fact-label">{{ currentLang === 'id' ? 'Kategori Event' : 'Event Category' }}</span>
-                    <span class="fact-value">{{ displayEvent.categoriesLabel || `${displayEvent.categoryNameId || 'Festival'} • Musik` }}</span>
-                  </div>
-                </div>
-
-                <!-- Durasi -->
-                <div class="fact-item-inline">
-                  <svg class="fact-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Informasi Penting Section (Moved to Description) -->
+              <div class="desc-sub-section info-penting-inline-section">
+                <h3 class="section-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="title-icon">
                     <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
                   </svg>
-                  <div class="fact-text">
-                    <span class="fact-label">{{ currentLang === 'id' ? 'Durasi' : 'Duration' }}</span>
-                    <span class="fact-value">{{ displayEvent.duration || '11 Jam' }}</span>
+                  {{ currentLang === 'id' ? 'Informasi Penting' : 'Important Info' }}
+                </h3>
+                
+                <div class="info-facts-horizontal-grid">
+                  <!-- Usia Minimum -->
+                  <div class="fact-item-inline">
+                    <svg class="fact-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <div class="fact-text">
+                      <span class="fact-label">{{ currentLang === 'id' ? 'Usia Minimum' : 'Minimum Age' }}</span>
+                      <span class="fact-value">{{ displayEvent.minAge || 'Semua umur' }}</span>
+                    </div>
                   </div>
-                </div>
 
-                <!-- Bahasa -->
-                <div class="fact-item-inline">
-                  <svg class="fact-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                  </svg>
-                  <div class="fact-text">
-                    <span class="fact-label">{{ currentLang === 'id' ? 'Bahasa' : 'Language' }}</span>
-                    <span class="fact-value">{{ displayEvent.language || 'Indonesia' }}</span>
+                  <!-- Kategori Event -->
+                  <div class="fact-item-inline">
+                    <svg class="fact-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                    </svg>
+                    <div class="fact-text">
+                      <span class="fact-label">{{ currentLang === 'id' ? 'Kategori Event' : 'Event Category' }}</span>
+                      <span class="fact-value">{{ displayEvent.categoriesLabel || `${displayEvent.categoryNameId || 'Festival'} • Musik` }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Durasi -->
+                  <div class="fact-item-inline">
+                    <svg class="fact-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <div class="fact-text">
+                      <span class="fact-label">{{ currentLang === 'id' ? 'Durasi' : 'Duration' }}</span>
+                      <span class="fact-value">{{ displayEvent.duration || '11 Jam' }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Bahasa -->
+                  <div class="fact-item-inline">
+                    <svg class="fact-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <div class="fact-text">
+                      <span class="fact-label">{{ currentLang === 'id' ? 'Bahasa' : 'Language' }}</span>
+                      <span class="fact-value">{{ displayEvent.language || 'Indonesia' }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Highlight Event Grid -->
-            <div class="content-section">
-              <h3 class="section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="title-icon">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                </svg>
-                Highlight Event
-              </h3>
-              <div class="highlight-grid">
-                <div v-for="hl in displayEvent.highlights" :key="hl.title" class="highlight-item">
-                  <div class="hl-icon-box" v-html="hl.icon"></div>
-                  <div class="hl-text-box">
-                    <span class="hl-title">{{ hl.title }}</span>
-                    <span class="hl-desc">{{ hl.desc }}</span>
+              <!-- Highlight Event Grid -->
+              <div class="desc-sub-section">
+                <h3 class="section-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="title-icon">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  Highlight Event
+                </h3>
+                <div class="highlight-grid">
+                  <div v-for="hl in displayEvent.highlights" :key="hl.title" class="highlight-item">
+                    <div class="hl-icon-box" v-html="hl.icon"></div>
+                    <div class="hl-text-box">
+                      <span class="hl-title">{{ hl.title }}</span>
+                      <span class="hl-desc">{{ hl.desc }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Lineup & Program -->
-            <div class="content-section">
-              <h3 class="section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="title-icon">
-                  <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
-                  <line x1="7" y1="2" x2="7" y2="22"></line>
-                  <line x1="17" y1="2" x2="17" y2="22"></line>
-                  <line x1="2" y1="12" x2="22" y2="12"></line>
-                  <line x1="2" y1="7" x2="7" y2="7"></line>
-                  <line x1="2" y1="17" x2="7" y2="17"></line>
-                  <line x1="17" y1="17" x2="22" y2="17"></line>
-                  <line x1="17" y1="7" x2="22" y2="7"></line>
-                </svg>
-                Lineup & Program
-              </h3>
-              <div class="program-grid">
-                <div v-for="item in displayEvent.program" :key="item.title" class="program-card">
-                  <div class="program-img-box">
-                    <img :src="item.image" :alt="item.title" class="program-img" />
-                  </div>
-                  <div class="program-meta">
-                    <span class="program-name">{{ item.title }}</span>
-                    <span class="program-sub">{{ item.sub }}</span>
+              <!-- Lineup & Program -->
+              <div class="desc-sub-section">
+                <h3 class="section-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="title-icon">
+                    <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                    <line x1="7" y1="2" x2="7" y2="22"></line>
+                    <line x1="17" y1="2" x2="17" y2="22"></line>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <line x1="2" y1="7" x2="7" y2="7"></line>
+                    <line x1="2" y1="17" x2="7" y2="17"></line>
+                    <line x1="17" y1="17" x2="22" y2="17"></line>
+                    <line x1="17" y1="7" x2="22" y2="7"></line>
+                  </svg>
+                  Lineup & Program
+                </h3>
+                <div class="program-grid">
+                  <div v-for="item in displayEvent.program" :key="item.title" class="program-card">
+                    <div class="program-img-box">
+                      <img :src="item.image" :alt="item.title" class="program-img" />
+                    </div>
+                    <div class="program-meta">
+                      <span class="program-name">{{ item.title }}</span>
+                      <span class="program-sub">{{ item.sub }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -293,20 +294,22 @@
           </div>
 
           <!-- Terms and conditions Tab Content -->
-          <div v-show="activeTab === 'syarat' || activeTab === 'deskripsi'" class="content-section terms-section">
-            <h3 class="section-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="title-icon">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
-              </svg>
-              {{ currentLang === 'id' ? 'Syarat & Ketentuan' : 'Terms & Conditions' }}
-            </h3>
-            <ol class="terms-list">
-              <li v-for="(rule, idx) in displayEvent.rules" :key="idx">{{ rule }}</li>
-            </ol>
+          <div v-show="activeTab === 'syarat' || activeTab === 'deskripsi'" class="terms-tab-block">
+            <div class="terms-section-card">
+              <h3 class="section-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="title-icon">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                {{ currentLang === 'id' ? 'Syarat & Ketentuan' : 'Terms & Conditions' }}
+              </h3>
+              <ol class="terms-list">
+                <li v-for="(rule, idx) in displayEvent.rules" :key="idx">{{ rule }}</li>
+              </ol>
+            </div>
           </div>
 
           <!-- Ticket Tab Content -->
@@ -343,7 +346,11 @@
 
                   <!-- Header Right: Price & Chevron -->
                   <div class="ticket-header-right">
-                    <div class="ticket-price-container">
+                    <div class="ticket-price-container desktop-price-container">
+                      <span class="ticket-price-label-top">{{ currentLang === 'id' ? 'Harga' : 'Price' }}</span>
+                      <span class="ticket-price-value-top">{{ formatCurrency(ticket.price) }}</span>
+                    </div>
+                    <div class="ticket-price-container mobile-price-container">
                       <span class="ticket-price-label-top">{{ currentLang === 'id' ? 'Harga' : 'Price' }}</span>
                       <span class="ticket-price-value-top">{{ formatCurrency(ticket.price) }}</span>
                     </div>
@@ -430,17 +437,68 @@
                   <div class="ticket-divider-line"></div>
                 </div>
 
-                <!-- Ticket Bottom Row -->
-                <div class="ticket-item-bottom">
+                <!-- Ticket Bottom Row (Desktop View) -->
+                <div class="ticket-item-bottom desktop-only-bottom-row">
                   <!-- Left: Validity/Expiration -->
-                  <div class="ticket-bottom-left">
-                    <span class="bottom-info-label">{{ currentLang === 'id' ? 'Berakhir Pada' : 'Ends On' }}</span>
-                    <span class="bottom-info-val">{{ eventCalendarInfo.expiration }}</span>
+                  <div class="ticket-bottom-left-desktop">
+                    <span class="bottom-info-label-desktop">{{ currentLang === 'id' ? 'Berakhir Pada' : 'Ends On' }}</span>
+                    <span class="bottom-info-val-desktop">{{ eventCalendarInfo.expiration }}</span>
                   </div>
 
                   <!-- Right: Add Button or Qty adjuster + Total -->
-                  <div class="ticket-bottom-right">
+                  <div class="ticket-bottom-right-desktop">
                     <!-- Add Button or Adjuster -->
+                    <div class="ticket-action-wrapper-desktop">
+                      <template v-if="ticket.status === 'sold-out'">
+                        <button class="add-ticket-btn-card-desktop disabled" disabled>
+                          {{ currentLang === 'id' ? 'Habis' : 'Sold Out' }}
+                        </button>
+                      </template>
+                      <template v-else-if="isTicketSelected(ticket.id)">
+                        <div class="ticket-qty-adjuster-card-desktop">
+                          <button class="qty-adjust-btn-card-desktop minus" @click.stop="adjustTicketQtyCard(ticket, -1)">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                              <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                          </button>
+                          <span class="qty-val-card-desktop">{{ getSelectedTicketQty(ticket.id) }}</span>
+                          <button class="qty-adjust-btn-card-desktop plus" @click.stop="adjustTicketQtyCard(ticket, 1)">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                              <line x1="12" y1="5" x2="12" y2="19"></line>
+                              <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                          </button>
+                        </div>
+                      </template>
+                      <template v-else>
+                        <button class="add-ticket-btn-card-desktop" @click.stop="selectTicketCard(ticket)">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="btn-plus-icon">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                          </svg>
+                          <span>{{ currentLang === 'id' ? 'Tambah' : 'Add' }}</span>
+                        </button>
+                      </template>
+                    </div>
+
+                    <!-- Total Price details -->
+                    <div class="ticket-total-wrapper-card-desktop">
+                      <span class="total-pax-label-card-desktop">
+                        {{ currentLang === 'id' 
+                           ? `Total (${getSelectedTicketQty(ticket.id)} pax)` 
+                           : `Total (${getSelectedTicketQty(ticket.id)} pax)` }}
+                      </span>
+                      <span class="total-price-val-card-desktop">
+                        {{ formatCurrency(ticket.price * getSelectedTicketQty(ticket.id)) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ticket Bottom Row (Mobile View) -->
+                <div class="ticket-item-bottom mobile-only-bottom-row">
+                  <!-- Action row for button / adjuster -->
+                  <div class="ticket-bottom-action-row">
                     <div class="ticket-action-wrapper">
                       <template v-if="ticket.status === 'sold-out'">
                         <button class="add-ticket-btn-card disabled" disabled>
@@ -473,8 +531,17 @@
                         </button>
                       </template>
                     </div>
+                  </div>
 
-                    <!-- Total Price details -->
+                  <!-- Meta row for expiration and total pax -->
+                  <div class="ticket-bottom-meta-row">
+                    <!-- Left: Validity/Expiration -->
+                    <div class="ticket-bottom-left">
+                      <span class="bottom-info-label">{{ currentLang === 'id' ? 'Berakhir Pada' : 'Ends On' }}</span>
+                      <span class="bottom-info-val">{{ eventCalendarInfo.expiration }}</span>
+                    </div>
+
+                    <!-- Right: Total Price details -->
                     <div class="ticket-total-wrapper-card">
                       <span class="total-pax-label-card">
                         {{ currentLang === 'id' 
@@ -1607,12 +1674,29 @@ watch(displayEvent, () => {
   padding-top: 1.5rem;
 }
 
+.desc-section-card,
+.terms-section-card {
+  background: #ffffff;
+  border: 1px solid rgba(59, 35, 20, 0.08);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(59, 35, 20, 0.111);
+  margin-bottom: 2rem;
+  box-sizing: border-box;
+}
+
+.desc-sub-section {
+  border-top: 1px solid rgba(59, 35, 20, 0.08);
+  padding-top: 2rem;
+  margin-top: 2rem;
+}
+
 .event-desc-main {
   font-family: var(--font-body);
   font-size: 1rem;
   line-height: 1.7;
   color: var(--color-mocca-dark);
-  margin-bottom: 2rem;
+  margin-bottom: 0;
   text-align: justify;
 }
 
@@ -1749,6 +1833,10 @@ watch(displayEvent, () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.terms-tab-block {
+  margin-top: 0;
 }
 
 /* Terms List */
@@ -2294,541 +2382,135 @@ watch(displayEvent, () => {
   box-shadow: 0 6px 16px rgba(59, 35, 20, 0.2);
 }
 
-/* ================= RESPONSIVE MEDIA QUERIES ================= */
-@media (max-width: 1024px) {
-  .hero-banner-body-grid {
-    grid-template-columns: 1fr 300px;
-    gap: 2rem;
-  }
-  .event-detail-grid {
-    grid-template-columns: 1fr 300px;
-    gap: 2rem;
-  }
+/* Visibility classes for mobile and desktop */
+.mobile-only-bottom-row {
+  display: none !important;
 }
 
-@media (max-width: 768px) {
-  /* ── Page & Container ── */
-  .event-detail-page {
-    padding: 1rem 0 5.5rem !important;
-  }
-  .event-detail-container {
-    padding: 0 1rem;
-  }
-
-  /* ── Breadcrumb ── */
-  .breadcrumb-nav {
-    margin-bottom: 1rem;
-    overflow-x: auto;
-    white-space: nowrap;
-    padding-bottom: 0.25rem;
-    scrollbar-width: none;
-    font-size: 0.75rem;
-  }
-  .breadcrumb-nav::-webkit-scrollbar { display: none; }
-  .breadcrumb-current { max-width: 180px; }
-
-  /* ────────── MOBILE BANNER: clean image-only, no blurred overlay ────────── */
-
-  /* 1. Remove the blurred pseudo-background */
-  .hero-event-banner::before {
-    display: none;
-  }
-
-  /* 2. Banner wrapper: white bg, show only image + white info below */
-  .hero-event-banner {
-    height: auto;
-    margin-bottom: 1.5rem;
-    border-radius: 12px;
-    background: #ffffff;
-    overflow: hidden;
-    box-shadow: 0 4px 16px rgba(59, 35, 20, 0.08);
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* 3. Header: positioned relatively, Title & Countdown stacked */
-  .hero-banner-header {
-    order: 2; /* below the image */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    position: static;
-    height: auto;
-    padding: 1.25rem 1.25rem 0.5rem 1.25rem;
-    z-index: 1;
-    pointer-events: auto;
-    box-sizing: border-box;
-  }
-
-  .event-banner-title {
-    font-size: 1.35rem;
-    line-height: 1.3;
-    font-weight: 700;
-    color: var(--color-mocca-dark) !important; /* Matches our website's premium theme color */
-    max-width: 100%;
-    text-shadow: none;
-    margin-bottom: 0.5rem;
-  }
-
-  .banner-countdown-wrapper {
-    top: auto;
-    position: relative;
-    pointer-events: auto;
-    background: rgba(59, 35, 20, 0.05); /* subtle mocha/brown background */
-    backdrop-filter: none;
-    border-radius: 6px;
-    padding: 0.4rem 0.6rem;
-    width: 100%;
-    box-sizing: border-box;
-    margin-top: 0.25rem;
-  }
-
-  .countdown-label {
-    font-size: 0.6rem;
-    color: var(--color-mocca-muted);
-    text-align: left;
-  }
-
-  .countdown-timer {
-    gap: 0.3rem;
-  }
-
-  .countdown-num {
-    font-size: 0.8rem;
-    padding: 0.2rem 0.3rem;
-    min-width: 22px;
-    color: var(--color-mocca-dark);
-    background-color: #ffffff;
-    border: 1px solid var(--color-mocca-border);
-    border-radius: 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .countdown-unit {
-    font-size: 0.5rem;
-    color: var(--color-mocca-muted);
-  }
-
-  .countdown-divider {
-    font-size: 0.8rem;
-    color: var(--color-mocca-muted);
-    margin-top: 0.25rem;
-  }
-
-  .countdown-segment {
-    min-width: 22px;
-  }
-
-  /* 4. Body grid: disappears, lets left & right be direct column children of hero-event-banner */
-  .hero-banner-body-grid {
-    display: contents;
-  }
-
-  /* 5. Image container: full width, auto height */
-  .hero-banner-left {
-    order: 1; /* at the very top */
-    position: relative;
-    height: auto;
-    max-height: 240px;
-    padding: 0;
-    top: 0;
-    overflow: hidden;
-    border-radius: 0;
-  }
-
-  /* 6. Image: fills container */
-  .hero-banner-img {
-    width: 100%;
-    height: auto;
-    max-height: 240px;
-    object-fit: cover;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  /* 7. Remove gradient overlay on mobile image */
-  .hero-banner-left::after {
-    display: none;
-  }
-
-  /* 9. Right column (meta info): show below title in white */
-  .hero-banner-right {
-    order: 3; /* below header */
-    padding: 0.5rem 1.25rem 1.5rem 1.25rem;
-    height: auto;
-    top: 0;
-    background: #ffffff;
-    border-top: none;
-  }
-
-  /* 10. Meta items: dark text, aligned like premium list in image */
-  .banner-meta-list {
-    gap: 0.85rem;
-  }
-
-  .banner-meta-item {
-    color: #333333 !important;
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-  }
-
-  .share-meta-item {
-    display: flex !important;
-  }
-
-  .meta-icon {
-    width: 20px;
-    height: 20px;
-    color: var(--color-mocca-dark) !important; /* Premium signature mocca theme color */
-    opacity: 1;
-  }
-
-  .share-text-link {
-    color: var(--color-mocca-dark) !important;
-    font-weight: 600;
-  }
-
-  .meta-main-info {
-    font-size: 0.95rem;
-    color: #333333 !important;
-    font-weight: 500;
-  }
-
-  .meta-sub-info {
-    font-size: 0.8rem;
-    color: #666666 !important;
-    opacity: 1 !important;
-  }
-
-  /* 11. Organizer row: adapt to match the provided image with dashed top border */
-  .banner-creator-row {
-    position: static;
-    top: 0;
-    background: none;
-    border: none;
-    border-top: 1px dashed rgba(59, 35, 20, 0.15); /* Dashed divider exactly like image */
-    padding: 1.25rem 0 0 0;
-    margin-top: 1.25rem;
-    max-width: 100%;
-    border-radius: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .ticket-creator-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .creator-avatar-img,
-  .creator-plus-logo-small,
-  .creator-default-logo-small {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-  }
-
-  .banner-creator-row .ticket-creator-label {
-    color: #888888 !important;
-    font-size: 0.8rem;
-    font-weight: 400;
-    text-transform: none;
-    letter-spacing: normal;
-  }
-
-  .banner-creator-row .ticket-creator-name {
-    color: #111111 !important;
-    font-size: 1rem;
-    font-weight: 700;
-  }
-
-  /* ── Two-column grid → single column ── */
-  .event-detail-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  /* ── Left column: remove desktop-only left padding ── */
-  .event-info-left-col {
-    padding-left: 0;
-    gap: 1.5rem;
-    order: 1; /* Left column comes first */
-  }
-
-  .tab-content-block {
-    padding-top: 1rem;
-  }
-  /* ── Tabs Bar ── */
-  .tabs-bar {
-    top: 60px;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem 0;
-    margin: 0 -1rem 1.25rem -1rem; /* Negative margin to span full viewport width */
-    background-color: #ffffff;
-    border-bottom: 1px solid var(--color-mocca-border);
-    display: flex;
-    justify-content: space-between;
-    width: calc(100% + 2rem);
-    box-sizing: border-box;
-    z-index: 100;
-  }
-  .tab-btn {
-    font-size: 0.82rem;
-    font-weight: 700;
-    padding: 0.85rem 0.25rem;
-    flex: 1;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.35rem;
-  }
-  .tab-icon {
-    width: 14px;
-    height: 14px;
-  }
-
-  /* ── Description tab text ── */
-  .event-desc-main {
-    font-size: 0.9rem;
-    line-height: 1.65;
-    margin-bottom: 1.25rem;
-  }
-  .section-title {
-    font-size: 1.05rem;
-    margin-bottom: 0.85rem;
-  }
-  .content-section {
-    padding-bottom: 1.5rem;
-  }
-
-  /* ── Info facts grid ── */
-  .info-facts-horizontal-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    padding: 1rem;
-    margin: 0.75rem 0 1.25rem;
-  }
-  .fact-item-inline .fact-label {
-    font-size: 0.65rem;
-  }
-  .fact-item-inline .fact-value {
-    font-size: 0.8rem;
-  }
-
-  /* ── Highlight grid ── */
-  .highlight-grid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-  .highlight-item {
-    padding: 1rem;
-  }
-
-  /* ── Program grid ── */
-  .program-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-  }
-
-  /* ── Organizer card ── */
-  .organizer-card {
-    flex-direction: column;
-    padding: 1.25rem;
-    align-items: center;
-    text-align: center;
-    gap: 1rem;
-  }
-  .org-footer {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-  }
-  .org-name { font-size: 1.1rem; }
-  .org-bio { font-size: 0.8rem; }
-
-  /* ── Recommendation section ── */
-  .recommendation-section {
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  .recommendation-title { font-size: 1rem; }
-  .rec-event-card { flex: 0 0 140px; }
-  .rec-card-img-box { height: 80px; }
-  .rec-card-title { font-size: 0.75rem; }
-  .rec-card-date, .rec-card-location { font-size: 0.6rem; }
-  .rec-card-price { font-size: 0.75rem; }
-  .rec-card-info { padding: 0.6rem; }
-
-  /* ── Right sidebar → bottom on mobile ── */
-  .event-sidebar-right-col {
-    order: 2; /* Positioned below left column content */
-    margin-top: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  .sticky-sidebar-container {
-    position: static;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  .sidebar-card {
-    padding: 1.25rem;
-    border-radius: 12px;
-  }
-  .ticket-card {
-    display: none !important; /* Hide desktop buy panel on mobile */
-  }
-
-  /* Price/ticket card */
-  .ticket-label { font-size: 0.65rem; }
-  .ticket-price-value {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  .buy-ticket-btn {
-    padding: 0.85rem;
-    font-size: 0.9rem;
-    border-radius: 10px;
-  }
-  .chat-event-btn {
-    padding: 0.7rem;
-    font-size: 0.8rem;
-  }
-
-  /* Order summary card */
-  .summary-card-title { font-size: 1.05rem; }
-  .summary-empty-state { padding: 1.25rem 0.5rem; }
-  .summary-empty-title { font-size: 0.85rem; }
-  .summary-empty-text { font-size: 0.75rem; }
-  .edit-summary-btn { font-size: 0.75rem; }
-  .breakdown-lbl, .breakdown-val { font-size: 0.8rem; }
-  .total-payment-val { font-size: 1.25rem; }
-  .total-payment-label { font-size: 0.8rem; }
-
-  /* Share section */
-  .share-label { font-size: 0.8rem; }
-
-  /* ── Ticket selection tab ── */
-  .ticket-main-title { font-size: 1.15rem; }
-  .ticket-sub-title { font-size: 0.82rem; }
-  .ticket-selection-block { gap: 1rem; margin-top: 0.75rem; }
-  .ticket-list-container { gap: 0.85rem; }
-
-  .ticket-item-header {
-    padding: 1rem;
-    gap: 0.75rem;
-  }
-  .ticket-item-title {
-    font-size: 0.85rem;
-    line-height: 1.35;
-    white-space: normal;
-    word-break: break-word;
-  }
-  .ticket-header-separator { display: none; }
-  .ticket-header-right {
-    min-width: auto;
-    gap: 0.75rem;
-  }
-  .ticket-price-label-top { font-size: 0.65rem; }
-  .ticket-price-value-top { font-size: 1.05rem; }
-
-  .ticket-expanded-body {
-    padding: 1rem;
-    gap: 1rem;
-  }
-  .expanded-section-title { font-size: 0.68rem; }
-  
-  .date-validity-info {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.15rem;
-  }
-
-  .ticket-info-grid-mini {
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-  .info-text-mini { font-size: 0.78rem; }
-
-  .ticket-description-text {
-    font-size: 0.8rem;
-    line-height: 1.5;
-  }
-  .benefit-text-mini {
-    font-size: 0.8rem;
-    line-height: 1.4;
-  }
-
-  .ticket-item-bottom {
-    padding: 0.85rem 1rem;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.85rem;
-  }
-  .ticket-bottom-right {
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0;
-  }
-  .ticket-total-wrapper-card {
-    align-items: flex-start;
-    min-width: auto;
-  }
-  .total-pax-label-card { font-size: 0.65rem; }
-  .total-price-val-card { font-size: 1rem; }
-
-  .add-ticket-btn-card {
-    padding: 0.5rem 1.25rem;
-    font-size: 0.85rem;
-    border-radius: 8px;
-  }
-  .ticket-info-banner {
-    padding: 0.85rem;
-    gap: 0.6rem;
-  }
-  .info-banner-text { font-size: 0.78rem; }
-
-  /* ── Bottom action bar ── */
-  .bottom-action-bar {
-    padding: 0.75rem 1rem;
-    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
-    border-top: 1px solid rgba(59, 35, 20, 0.1);
-    box-shadow: 0 -8px 30px rgba(59, 35, 20, 0.08);
-  }
-  .bottom-bar-container {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    padding: 0;
-  }
-  .bottom-label { font-size: 0.65rem; letter-spacing: 0.03em; font-weight: 700; }
-  .bottom-price { font-size: 1.25rem; }
-  .bottom-action-btn {
-    flex-grow: 1;
-    max-width: 180px;
-    padding: 0.9rem 1.5rem;
-    font-size: 0.95rem;
-    border-radius: 10px;
-    background-color: var(--color-mocca-dark);
-    box-shadow: 0 4px 12px rgba(59, 35, 20, 0.15);
-  }
+.mobile-price-container {
+  display: none !important;
 }
+
+/* Desktop-specific styling for bottom row elements */
+.desktop-only-bottom-row {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ticket-bottom-left-desktop {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.bottom-info-label-desktop {
+  font-family: var(--font-body);
+  font-size: 0.75rem; /* Larger than 0.5rem label */
+  color: var(--color-mocca-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.bottom-info-val-desktop {
+  font-family: var(--font-body);
+  font-size: 0.95rem; /* Larger than 0.65rem val */
+  font-weight: 700;
+  color: var(--color-mocca-dark);
+}
+
+.ticket-bottom-right-desktop {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.8rem;
+}
+
+.add-ticket-btn-card-desktop {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--color-mocca-dark);
+  color: var(--color-bg-light);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(59, 35, 20, 0.12);
+}
+
+.add-ticket-btn-card-desktop:hover {
+  background-color: #55331C;
+}
+
+.add-ticket-btn-card-desktop.disabled {
+  background-color: #efece8;
+  color: var(--color-mocca-muted);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.ticket-qty-adjuster-card-desktop {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--color-mocca-dark);
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+  box-shadow: 0 2px 6px rgba(59, 35, 20, 0.12);
+}
+
+.qty-adjust-btn-card-desktop {
+  background: none;
+  border: none;
+  color: var(--color-bg-light);
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+
+.qty-adjust-btn-card-desktop:hover {
+  opacity: 0.8;
+}
+
+.qty-val-card-desktop {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-bg-light);
+  min-width: 14px;
+  text-align: center;
+}
+
+.ticket-total-wrapper-card-desktop {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 90px;
+}
+
+.total-pax-label-card-desktop {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--color-mocca-muted);
+}
+
+.total-price-val-card-desktop {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-mocca-dark);
+}
+
 
 /* Organizer Row (Banner Event overlay) */
 .banner-creator-row {
@@ -3007,7 +2689,7 @@ watch(displayEvent, () => {
   flex-direction: column;
   overflow: visible;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 12px rgba(59, 35, 20, 0.111);
+  box-shadow: 0 4px 12px rgba(59, 35, 20, 0.174);
 }
 
 .ticket-card-item:hover:not(.sold-out) {
@@ -3085,6 +2767,12 @@ watch(displayEvent, () => {
 }
 
 .ticket-price-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.desktop-price-container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -3310,6 +2998,7 @@ watch(displayEvent, () => {
 }
 
 /* Bottom Row styling */
+/* Bottom Row styling */
 .ticket-item-bottom {
   padding: 1.25rem 1.5rem;
   display: flex;
@@ -3325,7 +3014,7 @@ watch(displayEvent, () => {
 
 .bottom-info-label {
   font-family: var(--font-body);
-  font-size: 0.7rem;
+  font-size: 0.5rem;
   color: var(--color-mocca-muted);
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -3333,7 +3022,7 @@ watch(displayEvent, () => {
 
 .bottom-info-val {
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 0.65rem;
   font-weight: 700;
   color: var(--color-mocca-dark);
 }
@@ -3428,6 +3117,8 @@ watch(displayEvent, () => {
   font-weight: 800;
   color: var(--color-mocca-dark);
 }
+
+
 
 .ticket-info-banner {
   display: flex;
@@ -3698,6 +3389,620 @@ watch(displayEvent, () => {
   font-size: 1.40rem;
   font-weight: 700;
   color: var(--color-mocca-dark);
+}
+
+/* ================= RESPONSIVE MEDIA QUERIES ================= */
+@media (max-width: 1024px) {
+  .hero-banner-body-grid {
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+  }
+  .event-detail-grid {
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  /* ── Page & Container ── */
+  .event-detail-page {
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    padding: 1rem 0 5.5rem !important;
+    overflow-x: hidden;
+  }
+  .event-detail-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0 1.25rem;
+  }
+
+  /* ── Breadcrumb ── */
+  .breadcrumb-nav {
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 0.25rem;
+    scrollbar-width: none;
+    font-size: 0.75rem;
+  }
+  .breadcrumb-nav::-webkit-scrollbar { display: none; }
+  .breadcrumb-current { max-width: 180px; }
+
+  /* ────────── MOBILE BANNER: clean image-only, no blurred overlay ────────── */
+
+  /* 1. Remove the blurred pseudo-background */
+  .hero-event-banner::before {
+    display: none;
+  }
+
+  /* 2. Banner wrapper: white bg, show only image + white info below */
+  .hero-event-banner {
+    width: 100%;
+    height: auto;
+    margin: 0 0 1.5rem 0;
+    border-radius: 12px;
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(59, 35, 20, 0.08);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  /* 3. Header: positioned relatively, Title & Countdown stacked */
+  .hero-banner-header {
+    order: 2; /* below the image */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    position: static;
+    height: auto;
+    padding: 1rem 1rem 0.25rem 1rem;
+    z-index: 1;
+    pointer-events: auto;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .event-banner-title {
+    font-size: 1.35rem;
+    line-height: 1.3;
+    font-weight: 700;
+    color: var(--color-mocca-dark) !important; /* Matches our website's premium theme color */
+    max-width: 100%;
+    text-shadow: none;
+    margin-bottom: 0.5rem;
+  }
+
+  .banner-countdown-wrapper {
+    display: none !important; /* Hidden on mobile — saves space */
+  }
+
+  .countdown-label {
+    font-size: 0.6rem;
+    color: var(--color-mocca-muted);
+    text-align: left;
+  }
+
+  .countdown-timer {
+    gap: 0.3rem;
+  }
+
+  .countdown-num {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.3rem;
+    min-width: 22px;
+    color: var(--color-mocca-dark);
+    background-color: #ffffff;
+    border: 1px solid var(--color-mocca-border);
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .countdown-unit {
+    font-size: 0.5rem;
+    color: var(--color-mocca-muted);
+  }
+
+  .countdown-divider {
+    font-size: 0.8rem;
+    color: var(--color-mocca-muted);
+    margin-top: 0.25rem;
+  }
+
+  .countdown-segment {
+    min-width: 22px;
+  }
+
+  /* 4. Body grid: disappears, lets left & right be direct column children of hero-event-banner */
+  .hero-banner-body-grid {
+    display: contents;
+  }
+
+  /* 5. Image container: full width, auto height */
+  .hero-banner-left {
+    order: 1; /* at the very top */
+    position: relative;
+    width: 100%;
+    height: auto;
+    max-height: 240px;
+    padding: 0;
+    top: 0;
+    overflow: hidden;
+    border-radius: 0;
+    display: block; /* Override flex on mobile to support standard block image flow */
+  }
+
+  /* 6. Image: fills container */
+  .hero-banner-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    max-height: 240px;
+    object-fit: cover;
+    border-radius: 0;
+    box-shadow: none;
+    display: block;
+  }
+
+  /* 7. Remove gradient overlay on mobile image */
+  .hero-banner-left::after {
+    display: none;
+  }
+
+  /* 9. Right column (meta info): show below title in white */
+  .hero-banner-right {
+    order: 3; /* below header */
+    padding: 0.25rem 1rem 1rem 1rem;
+    height: auto;
+    top: 0;
+    background: #ffffff;
+    border-top: none;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  /* 10. Meta items: dark text, aligned like premium list in image */
+  .banner-meta-list {
+    gap: 0.85rem;
+  }
+
+  .banner-meta-item {
+    color: #333333 !important;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .share-meta-item {
+    display: flex !important;
+  }
+
+  .meta-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--color-mocca-dark) !important; /* Premium signature mocca theme color */
+    opacity: 1;
+  }
+
+  .share-text-link {
+    color: var(--color-mocca-dark) !important;
+    font-weight: 600;
+  }
+
+  .meta-main-info {
+    font-size: 0.95rem;
+    color: #333333 !important;
+    font-weight: 500;
+  }
+
+  .meta-sub-info {
+    font-size: 0.8rem;
+    color: #666666 !important;
+    opacity: 1 !important;
+  }
+
+  /* 11. Organizer row: adapt to match the provided image with dashed top border */
+  .banner-creator-row {
+    position: static;
+    top: 0;
+    background: none;
+    border: none;
+    border-top: 1px dashed rgba(59, 35, 20, 0.15); /* Dashed divider exactly like image */
+    padding: 1.25rem 0 0 0;
+    margin-top: 1.25rem;
+    max-width: 100%;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .ticket-creator-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .creator-avatar-img,
+  .creator-plus-logo-small,
+  .creator-default-logo-small {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  .banner-creator-row .ticket-creator-label {
+    color: #888888 !important;
+    font-size: 0.8rem;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  .banner-creator-row .ticket-creator-name {
+    color: #111111 !important;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  /* ── Two-column grid → single column ── */
+  .event-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    width: 100%;
+  }
+
+  /* ── Left column: remove desktop-only left padding ── */
+  .event-info-left-col {
+    padding-left: 0;
+    gap: 1.5rem;
+    order: 1;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .tab-content-block {
+    padding-top: 1rem;
+  }
+  /* ── Tabs Bar ── */
+  .tabs-bar {
+    top: 60px;
+    padding: 0.5rem 0 0;
+    margin: 0 0 1.25rem 0;
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--color-mocca-border);
+    display: flex;
+    justify-content: flex-start;
+    gap: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 100;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .tab-btn {
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.85rem 1rem;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .tab-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ── Description tab text ── */
+  .desc-section-card,
+  .terms-section-card {
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .desc-sub-section {
+    padding-top: 1.25rem;
+    margin-top: 1.25rem;
+  }
+  .event-desc-main {
+    font-size: 0.9rem;
+    line-height: 1.65;
+    margin-bottom: 1.25rem;
+  }
+  .section-title {
+    font-size: 1.05rem;
+    margin-bottom: 0.85rem;
+  }
+  .content-section {
+    padding-bottom: 1.5rem;
+  }
+
+  /* ── Info facts grid ── */
+  .info-facts-horizontal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    padding: 1rem;
+    margin: 0.75rem 0 1.25rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .fact-item-inline {
+    min-width: 0;
+    overflow: hidden;
+  }
+  .fact-item-inline .fact-label {
+    font-size: 0.65rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .fact-item-inline .fact-value {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── Highlight grid ── */
+  .highlight-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+    width: 100%;
+  }
+  .highlight-item {
+    padding: 1rem;
+    min-width: 0;
+  }
+
+  /* ── Program grid ── */
+  .program-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  /* ── Organizer card ── */
+  .organizer-card {
+    flex-direction: column;
+    padding: 1.25rem;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+  .org-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  .org-name { font-size: 1.1rem; }
+  .org-bio { font-size: 0.8rem; }
+
+  /* ── Recommendation section ── */
+  .recommendation-section {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .recommendation-title { font-size: 1rem; }
+  .rec-event-card { flex: 0 0 140px; }
+  .rec-card-img-box { height: 80px; }
+  .rec-card-title { font-size: 0.75rem; }
+  .rec-card-date, .rec-card-location { font-size: 0.6rem; }
+  .rec-card-price { font-size: 0.75rem; }
+  .rec-card-info { padding: 0.6rem; }
+
+  /* ── Right sidebar → bottom on mobile ── */
+  .event-sidebar-right-col {
+    order: 2; /* Positioned below left column content */
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .sticky-sidebar-container {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .sidebar-card {
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+  .ticket-card {
+    display: none !important; /* Hide desktop buy panel on mobile */
+  }
+
+  /* Price/ticket card */
+  .ticket-label { font-size: 0.65rem; }
+  .ticket-price-value {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .buy-ticket-btn {
+    padding: 0.85rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
+  }
+  .chat-event-btn {
+    padding: 0.7rem;
+    font-size: 0.8rem;
+  }
+
+  /* Order summary card */
+  .summary-card-title { font-size: 1.05rem; }
+  .summary-empty-state { padding: 1.25rem 0.5rem; }
+  .summary-empty-title { font-size: 0.85rem; }
+  .summary-empty-text { font-size: 0.75rem; }
+  .edit-summary-btn { font-size: 0.75rem; }
+  .breakdown-lbl, .breakdown-val { font-size: 0.8rem; }
+  .total-payment-val { font-size: 1.25rem; }
+  .total-payment-label { font-size: 0.8rem; }
+
+  /* Share section */
+  .share-label { font-size: 0.8rem; }
+
+  .terms-tab-block {
+    margin-top: 0;
+  }
+
+  /* ── Ticket selection tab ── */
+  .ticket-main-title { font-size: 1.15rem; }
+  .ticket-sub-title { font-size: 0.82rem; }
+  .ticket-selection-block { gap: 1rem; margin-top: 0.75rem; }
+  .ticket-list-container { gap: 0.85rem; }
+
+  .ticket-item-header {
+    padding: 1rem;
+    gap: 0.5rem;
+    flex-direction: column; /* stack left/right vertically */
+    align-items: stretch;
+  }
+  .ticket-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 100%;
+  }
+  .ticket-item-title {
+    font-size: 0.85rem;
+    line-height: 1.35;
+    white-space: normal;
+    word-break: break-word;
+    font-family: var(--font-body);
+    font-weight: 600;
+  }
+  .ticket-header-separator { display: none; }
+  .ticket-header-right {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-width: unset;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(59, 35, 20, 0.08);
+  }
+  .ticket-price-label-top { font-size: 0.65rem; }
+  .ticket-price-value-top { font-size: 1.05rem; }
+
+  .ticket-expanded-body {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .expanded-section-title { font-size: 0.68rem; }
+  
+  .date-validity-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+  }
+
+  .ticket-info-grid-mini {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .info-text-mini { font-size: 0.78rem; }
+
+  .ticket-description-text {
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+  .benefit-text-mini {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .ticket-item-bottom {
+    padding: 0.85rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+  .ticket-bottom-action-row {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+  .ticket-bottom-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+  }
+  .total-pax-label-card { font-size: 0.65rem; }
+  .total-price-val-card { font-size: 1rem; }
+
+  .add-ticket-btn-card {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+  .ticket-info-banner {
+    padding: 0.85rem;
+    gap: 0.6rem;
+  }
+  .info-banner-text { font-size: 0.78rem; }
+
+  /* ── Bottom action bar ── */
+  .bottom-action-bar {
+    padding: 0.75rem 1rem;
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid rgba(59, 35, 20, 0.1);
+    box-shadow: 0 -8px 30px rgba(59, 35, 20, 0.08);
+  }
+  .bottom-bar-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0;
+  }
+  .bottom-label { font-size: 0.5rem; letter-spacing: 0.03em; font-weight: 700; }
+  .bottom-price { font-size: 1.1rem; }
+  .bottom-action-btn {
+    flex-grow: 1;
+    max-width: 120px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    background-color: var(--color-mocca-dark);
+    box-shadow: 0 4px 12px rgba(59, 35, 20, 0.15);
+  }
+
+  /* Visibility overrides for desktop elements inside mobile media query */
+  .mobile-only-bottom-row {
+    display: flex !important;
+  }
+  .mobile-price-container {
+    display: flex !important;
+  }
+  .desktop-only-bottom-row {
+    display: none !important;
+  }
+  .desktop-price-container {
+    display: none !important;
+  }
 }
 
 /* Ticket marquee on mobile — already handled in main block above */

@@ -3,7 +3,8 @@
     <div class="header-container">
       <!-- Left: Logo -->
       <div class="logo">
-        <a href="#" class="logo-text">Mocca</a>
+        <img src="/logo/logo.png" alt="Logo" class="logo-img" />
+
       </div>
 
       <!-- Center: Menu -->
@@ -414,18 +415,16 @@ const getMenuLabel = (key) => {
 .header-container {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 1.5rem 6rem;
+  padding: 0.6rem 6rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.logo-text {
-  font-family: var(--font-heading);
-  font-size: 2.25rem;
-  font-weight: 500;
-  color: var(--color-mocca-dark);
-  letter-spacing: -0.01em;
+.logo-img {
+  width: 120px;
+  height: auto;
+  margin-right: 1rem;
 }
 
 .main-nav ul {
@@ -923,7 +922,7 @@ const getMenuLabel = (key) => {
   }
   
   .header-container {
-    padding: 1rem 1.25rem;
+    padding: 0.5rem 1.25rem;
   }
   
   .mobile-hidden {
@@ -932,6 +931,10 @@ const getMenuLabel = (key) => {
   
   .hamburger-btn {
     display: flex;
+  }
+  
+  .logo-img {
+    width: 80px;
   }
   
   .logo-text {

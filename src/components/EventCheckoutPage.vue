@@ -26,25 +26,8 @@
           <p class="checkout-subtitle-text">
             {{ currentLang === 'id' ? 'Lengkapi data diri untuk proses pemesanan tiket Anda.' : 'Complete your personal data to proceed with ticket booking.' }}
           </p>
-        </div>
-
-        <!-- Horizontal Stepper -->
-        <div class="stepper-horizontal">
-          <div class="step-item active">
-            <span class="step-num">1</span>
-            <span class="step-label">{{ currentLang === 'id' ? 'Data Diri' : 'Personal Info' }}</span>
-          </div>
-          <div class="step-line"></div>
-          <div class="step-item">
-            <span class="step-num">2</span>
-            <span class="step-label">{{ currentLang === 'id' ? 'Metode Pembayaran' : 'Payment Method' }}</span>
-          </div>
-          <div class="step-line"></div>
-          <div class="step-item">
-            <span class="step-num">3</span>
-            <span class="step-label">{{ currentLang === 'id' ? 'Konfirmasi' : 'Confirmation' }}</span>
-          </div>
-        </div>
+        </div>  
+        
       </div>
 
       <!-- Two-Column Checkout Layout -->
@@ -53,306 +36,138 @@
         <!-- Left Column: Registration Forms -->
         <div class="checkout-forms-column">
           
-          <!-- Data Pemesan Box -->
-          <div class="form-block-card">
-            <h2 class="form-block-title">{{ currentLang === 'id' ? 'Data Pemesan' : 'Orderer Data' }}</h2>
-            <p class="form-block-desc">
-              {{ currentLang === 'id' ? 'Data ini akan digunakan untuk keperluan pemesanan dan pengiriman e-ticket.' : 'This information will be used for ticket booking and e-ticket delivery.' }}
-            </p>
+          <!-- Section Heading -->
+          <h2 class="personal-info-heading">{{ currentLang === 'id' ? 'Personal Informasi' : 'Personal Information' }}</h2>
 
-            <div class="fields-grid-2col">
+          <!-- Data Pemesan Accordion Card -->
+          <div class="accordion-card" :class="{ open: ordererOpen }">
+            <div class="accordion-header" @click="ordererOpen = !ordererOpen">
+              <span class="accordion-title">{{ currentLang === 'id' ? 'Data Pemesan' : 'Orderer Data' }}</span>
+              <svg class="accordion-chevron" :class="{ rotated: !ordererOpen }" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="18 15 12 9 6 15"></polyline>
+              </svg>
+            </div>
+
+            <div v-show="ordererOpen" class="accordion-body">
               <!-- Nama Lengkap -->
-              <div class="form-group">
-                <label class="input-field-label">
-                  {{ currentLang === 'id' ? 'Nama Lengkap' : 'Full Name' }} <span class="required-asterisk">*</span>
-                </label>
-                <input 
-                  type="text" 
-                  class="form-text-input" 
-                  v-model="formData.fullName"
-                  :placeholder="currentLang === 'id' ? 'Contoh: Andi Pratama' : 'e.g. John Doe'" 
-                />
-              </div>
-
-              <!-- KTP / Identity Number -->
-              <div class="form-group">
-                <label class="input-field-label">
-                  {{ currentLang === 'id' ? 'Nomor Identitas (KTP)' : 'ID Number (KTP/Passport)' }} <span class="required-asterisk">*</span>
-                </label>
-                <input 
-                  type="text" 
-                  class="form-text-input" 
-                  v-model="formData.idCard"
-                  maxlength="16"
-                  :placeholder="currentLang === 'id' ? '16 digit angka' : '16-digit ID number'" 
-                />
+              <div class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Nama Lengkap' : 'Full Name' }}</label>
+                <input type="text" class="field-input" v-model="formData.fullName" :placeholder="currentLang === 'id' ? 'Nama Lengkap' : 'Full Name'" />
               </div>
 
               <!-- Email -->
-              <div class="form-group">
-                <label class="input-field-label">
-                  Email <span class="required-asterisk">*</span>
-                </label>
-                <input 
-                  type="email" 
-                  class="form-text-input" 
-                  v-model="formData.email"
-                  placeholder="Contoh: andi.pratama@email.com" 
-                />
+              <div class="form-field-group">
+                <label class="field-label">Email</label>
+                <input type="email" class="field-input" v-model="formData.email" placeholder="Contoh: example@example.com" />
               </div>
 
-              <!-- Phone Number with Country Flag Code Picker -->
-              <div class="form-group">
-                <label class="input-field-label">
-                  {{ currentLang === 'id' ? 'Nomor Telepon' : 'Phone Number' }} <span class="required-asterisk">*</span>
-                </label>
-                <div class="phone-input-group">
-                  <div class="country-flag-selector" @click="toggleCountryDropdown">
-                    <img src="https://flagcdn.com/w20/id.png" alt="ID Flag" class="flag-icon-img" />
-                    <span class="country-code-val">+62</span>
-                    <svg class="dropdown-caret-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                      <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
+              <!-- No Telepon -->
+              <div class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'No Telepon' : 'Phone Number' }}</label>
+                <div class="phone-field-wrapper">
+                  <div class="phone-country-btn">
+                    <span class="phone-code">+62</span>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </div>
-                  <input 
-                    type="tel" 
-                    class="phone-text-input" 
-                    v-model="formData.phone"
-                    placeholder="812-3456-7890" 
-                  />
-                </div>
-              </div>
-
-              <!-- Date of Birth -->
-              <div class="form-group">
-                <label class="input-field-label">
-                  {{ currentLang === 'id' ? 'Tanggal Lahir' : 'Date of Birth' }} <span class="required-asterisk">*</span>
-                </label>
-                <div class="date-input-wrapper">
-                  <input 
-                    type="date" 
-                    class="form-text-input date-picker-input" 
-                    v-model="formData.birthDate"
-                  />
-                </div>
-              </div>
-
-              <!-- Gender -->
-              <div class="form-group">
-                <label class="input-field-label">
-                  {{ currentLang === 'id' ? 'Jenis Kelamin' : 'Gender' }} <span class="required-asterisk">*</span>
-                </label>
-                <div class="gender-radio-group">
-                  <label class="gender-radio-label">
-                    <input 
-                      type="radio" 
-                      name="gender" 
-                      value="Laki-laki" 
-                      v-model="formData.gender" 
-                      class="gender-radio-native"
-                    />
-                    <span class="gender-radio-custom"></span>
-                    <span class="gender-text-lbl">{{ currentLang === 'id' ? 'Laki-laki' : 'Male' }}</span>
-                  </label>
-
-                  <label class="gender-radio-label">
-                    <input 
-                      type="radio" 
-                      name="gender" 
-                      value="Perempuan" 
-                      v-model="formData.gender" 
-                      class="gender-radio-native"
-                    />
-                    <span class="gender-radio-custom"></span>
-                    <span class="gender-text-lbl">{{ currentLang === 'id' ? 'Perempuan' : 'Female' }}</span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- Nationality -->
-              <div class="form-group select-wrapper-group">
-                <label class="input-field-label">
-                  {{ currentLang === 'id' ? 'Kewarganegaraan' : 'Nationality' }} <span class="required-asterisk">*</span>
-                </label>
-                <div class="custom-select-container">
-                  <select class="form-select-input" v-model="formData.nationality">
-                    <option value="" disabled selected>{{ currentLang === 'id' ? 'Pilih kewarganegaraan' : 'Select nationality' }}</option>
-                    <option value="WNI">{{ currentLang === 'id' ? 'Warga Negara Indonesia (WNI)' : 'Indonesian Citizen (WNI)' }}</option>
-                    <option value="WNA">{{ currentLang === 'id' ? 'Warga Negara Asing (WNA)' : 'Foreign Citizen (WNA)' }}</option>
-                  </select>
-                  <svg class="select-caret-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
+                  <input type="tel" class="phone-field-input" v-model="formData.phone" :placeholder="currentLang === 'id' ? 'Contoh: 81234567890' : 'e.g. 81234567890'" />
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Alamat Domisili Box -->
-          <div class="form-block-card">
-            <h2 class="form-block-title">{{ currentLang === 'id' ? 'Alamat Domisili' : 'Residential Address' }}</h2>
-
-            <!-- Full Address Textarea -->
-            <div class="form-group full-width-field">
-              <label class="input-field-label">
-                {{ currentLang === 'id' ? 'Alamat Lengkap' : 'Full Address' }} <span class="required-asterisk">*</span>
-              </label>
-              <textarea 
-                class="form-textarea-input" 
-                v-model="formData.address"
-                rows="3"
-                :placeholder="currentLang === 'id' ? 'Contoh: Jl. Kemang Raya No. 72, Bangka, Mampang Prapatan' : 'e.g. 72nd Kemang Road, Mampang'"
-              ></textarea>
+          <!-- Per-Ticket Attendee Cards -->
+          <div
+            v-for="(ticket, tIdx) in ticketAttendees"
+            :key="ticket.id"
+            class="accordion-card"
+            :class="{ open: ticket.open }"
+          >
+            <div class="accordion-header ticket-accordion-header" @click="ticket.open = !ticket.open">
+              <div class="ticket-header-left-info">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ticket-icon-acc">
+                  <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"></path>
+                </svg>
+                <div>
+                  <p class="ticket-acc-name">{{ tIdx + 1 }}. {{ currentLang === 'id' ? 'Pemilik Tiket' : 'Ticket Owner' }} {{ ticket.typeName }}</p>
+                  <p class="ticket-acc-price">1 {{ currentLang === 'id' ? 'Tiket' : 'Ticket' }} x {{ formatPrice(ticket.price) }}</p>
+                </div>
+              </div>
+              <svg class="accordion-chevron" :class="{ rotated: !ticket.open }" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="18 15 12 9 6 15"></polyline>
+              </svg>
             </div>
 
-            <!-- Address dropdown grid -->
-            <div class="fields-grid-2col">
-              <!-- Provinsi -->
-              <div class="form-group select-wrapper-group">
-                <label class="input-field-label">
-                  {{ currentLang === 'id' ? 'Provinsi' : 'Province' }} <span class="required-asterisk">*</span>
-                </label>
-                <div class="custom-select-container">
-                  <select class="form-select-input" v-model="formData.province" @change="onProvinceChange">
-                    <option value="" disabled selected>{{ currentLang === 'id' ? 'Pilih provinsi' : 'Select province' }}</option>
-                    <option v-for="prov in provincesList" :key="prov" :value="prov">{{ prov }}</option>
-                  </select>
-                  <svg class="select-caret-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </div>
+            <div v-show="ticket.open" class="accordion-body">
+              <!-- Toggle: Gunakan Data Pemesan -->
+              <div class="use-orderer-toggle-row">
+                <span class="toggle-label-text">{{ currentLang === 'id' ? 'Gunakan Data Pemesan' : 'Use Orderer Data' }}</span>
+                <button
+                  type="button"
+                  class="toggle-switch"
+                  :class="{ active: ticket.useOrdererData }"
+                  @click="toggleUseOrdererData(tIdx)"
+                  :aria-checked="ticket.useOrdererData"
+                  role="switch"
+                >
+                  <span class="toggle-thumb"></span>
+                </button>
               </div>
 
-              <!-- Kota / Kabupaten -->
-              <div class="form-group select-wrapper-group">
-                <label class="input-field-label">
-                  {{ currentLang === 'id' ? 'Kota / Kabupaten' : 'City / Regency' }} <span class="required-asterisk">*</span>
-                </label>
-                <div class="custom-select-container">
-                  <select class="form-select-input" v-model="formData.city" :disabled="!formData.province" @change="onCityChange">
-                    <option value="" disabled selected>{{ currentLang === 'id' ? 'Pilih kota / kabupaten' : 'Select city / regency' }}</option>
-                    <option v-for="city in availableCities" :key="city" :value="city">{{ city }}</option>
-                  </select>
-                  <svg class="select-caret-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </div>
+              <!-- Nama Lengkap -->
+              <div class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Nama Lengkap' : 'Full Name' }}</label>
+                <input type="text" class="field-input" v-model="ticket.fullName" :disabled="ticket.useOrdererData" :placeholder="currentLang === 'id' ? 'Nama Lengkap' : 'Full Name'" />
               </div>
 
-              <!-- Kecamatan -->
-              <div class="form-group select-wrapper-group">
-                <label class="input-field-label">
-                  {{ currentLang === 'id' ? 'Kecamatan' : 'District' }} <span class="required-asterisk">*</span>
-                </label>
-                <div class="custom-select-container">
-                  <select class="form-select-input" v-model="formData.district" :disabled="!formData.city">
-                    <option value="" disabled selected>{{ currentLang === 'id' ? 'Pilih kecamatan' : 'Select district' }}</option>
-                    <option v-for="dist in availableDistricts" :key="dist" :value="dist">{{ dist }}</option>
-                  </select>
-                  <svg class="select-caret-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </div>
+              <!-- Email -->
+              <div class="form-field-group">
+                <label class="field-label">Email</label>
+                <input type="email" class="field-input" v-model="ticket.email" :disabled="ticket.useOrdererData" placeholder="Contoh: example@example.com" />
               </div>
 
-              <!-- Postal Code -->
-              <div class="form-group">
-                <label class="input-field-label">
-                  {{ currentLang === 'id' ? 'Kode Pos' : 'Postal Code' }} <span class="required-asterisk">*</span>
-                </label>
-                <input 
-                  type="text" 
-                  class="form-text-input" 
-                  v-model="formData.postalCode"
-                  maxlength="5"
-                  :placeholder="currentLang === 'id' ? 'Contoh: 12730' : 'e.g. 12730'" 
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Informasi Tambahan Box -->
-          <div class="form-block-card">
-            <h2 class="form-block-title">{{ currentLang === 'id' ? 'Informasi Tambahan' : 'Additional Info' }}</h2>
-
-            <div class="fields-grid-2col">
-              <!-- Pekerjaan -->
-              <div class="form-group select-wrapper-group">
-                <label class="input-field-label">
-                  {{ currentLang === 'id' ? 'Pekerjaan' : 'Occupation' }}
-                </label>
-                <div class="custom-select-container">
-                  <select class="form-select-input" v-model="formData.job">
-                    <option value="" disabled selected>{{ currentLang === 'id' ? 'Pilih pekerjaan (opsional)' : 'Select occupation (optional)' }}</option>
-                    <option value="Karyawan Swasta">{{ currentLang === 'id' ? 'Karyawan Swasta' : 'Private Employee' }}</option>
-                    <option value="PNS">{{ currentLang === 'id' ? 'Pegawai Negeri Sipil (PNS)' : 'Civil Servant' }}</option>
-                    <option value="Mahasiswa / Pelajar">{{ currentLang === 'id' ? 'Mahasiswa / Pelajar' : 'Student' }}</option>
-                    <option value="Wiraswasta">{{ currentLang === 'id' ? 'Wiraswasta' : 'Entrepreneur' }}</option>
-                    <option value="Lainnya">{{ currentLang === 'id' ? 'Lainnya' : 'Other' }}</option>
-                  </select>
-                  <svg class="select-caret-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </div>
-              </div>
-
-              <!-- Instagram -->
-              <div class="form-group">
-                <label class="input-field-label">
-                  Instagram ({{ currentLang === 'id' ? 'opsional' : 'optional' }})
-                </label>
-                <div class="instagram-input-wrapper">
-                  <span class="instagram-at-prefix">@</span>
-                  <input 
-                    type="text" 
-                    class="instagram-text-input" 
-                    v-model="formData.instagram"
-                    placeholder="username" 
-                  />
+              <!-- No Telepon -->
+              <div class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'No Telepon' : 'Phone Number' }}</label>
+                <div class="phone-field-wrapper" :class="{ disabled: ticket.useOrdererData }">
+                  <div class="phone-country-btn">
+                    <span class="phone-code">+62</span>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </div>
+                  <input type="tel" class="phone-field-input" v-model="ticket.phone" :disabled="ticket.useOrdererData" :placeholder="currentLang === 'id' ? 'Contoh: 81234567890' : 'e.g. 81234567890'" />
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Kebijakan Privasi Box -->
-          <div class="form-block-card privacy-policy-card">
-            <h2 class="form-block-title">{{ currentLang === 'id' ? 'Kebijakan Privasi' : 'Privacy Policy' }}</h2>
-            
-            <div class="checkbox-row-list">
-              <!-- Privacy Checkbox 1 -->
-              <label class="custom-checkbox-row">
-                <input type="checkbox" v-model="formData.privacyChecked1" />
-                <span class="custom-check-box"></span>
-                <span class="checkbox-label-text">
-                  {{ currentLang === 'id' 
-                      ? 'Saya menyatakan bahwa data yang saya berikan adalah benar dan dapat dipertanggungjawabkan.' 
-                      : 'I declare that the information provided is correct and accountable.' }}
-                </span>
-              </label>
-
-              <!-- Privacy Checkbox 2 -->
-              <label class="custom-checkbox-row">
-                <input type="checkbox" v-model="formData.privacyChecked2" />
-                <span class="custom-check-box"></span>
-                <span class="checkbox-label-text">
-                  {{ currentLang === 'id' 
-                      ? 'Saya telah membaca dan menyetujui Syarat & Ketentuan serta Kebijakan Privasi.' 
-                      : 'I have read and agree to the Terms & Conditions and Privacy Policy.' }}
-                </span>
-              </label>
+          <!-- Privacy Policy Card -->
+          <div class="accordion-card open">
+            <div class="accordion-body">
+              <div class="checkbox-row-list">
+                <label class="custom-checkbox-row">
+                  <input type="checkbox" v-model="formData.privacyChecked1" />
+                  <span class="custom-check-box"></span>
+                  <span class="checkbox-label-text">
+                    {{ currentLang === 'id' 
+                        ? 'Saya menyatakan bahwa data yang saya berikan adalah benar dan dapat dipertanggungjawabkan.' 
+                        : 'I declare that the information provided is correct and accountable.' }}
+                  </span>
+                </label>
+                <label class="custom-checkbox-row">
+                  <input type="checkbox" v-model="formData.privacyChecked2" />
+                  <span class="custom-check-box"></span>
+                  <span class="checkbox-label-text">
+                    {{ currentLang === 'id' 
+                        ? 'Saya telah membaca dan menyetujui Syarat & Ketentuan serta Kebijakan Privasi.' 
+                        : 'I have read and agree to the Terms & Conditions and Privacy Policy.' }}
+                  </span>
+                </label>
+              </div>
             </div>
           </div>
 
-          <!-- Form Navigation Actions -->
-          <div class="checkout-navigation-buttons">
-            <button class="back-outline-btn" @click="goToEventDetail">
-              ← {{ currentLang === 'id' ? 'Kembali ke Event' : 'Back to Event' }}
-            </button>
-            <button class="continue-solid-btn" @click="proceedToPayment">
-              {{ currentLang === 'id' ? 'Lanjutkan ke Pembayaran →' : 'Proceed to Payment →' }}
-            </button>
-          </div>
+          
         </div>
+
 
         <!-- Right Column: Sticky Order Summary Card -->
         <div class="checkout-summary-column">
@@ -486,25 +301,8 @@
 
       </div>
 
-      <!-- Bottom Trust Banner -->
-      <div class="bottom-trust-banner-checkout">
-        <div class="trust-banner-card">
-          <div class="trust-card-icon-box">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              <polyline points="9 11 11 13 15 9"></polyline>
-            </svg>
-          </div>
-          <div class="trust-card-text">
-            <h4 class="trust-card-title">{{ currentLang === 'id' ? 'Data Anda aman bersama kami' : 'Your data is safe with us' }}</h4>
-            <p class="trust-card-desc">
-              {{ currentLang === 'id' 
-                  ? 'Informasi yang Anda berikan hanya akan digunakan untuk keperluan pemesanan tiket dan tidak akan dibagikan ke pihak ketiga.' 
-                  : 'The information you provide will only be used for ticket booking purposes and will not be shared with third parties.' }}
-            </p>
-          </div>
-        </div>
-      </div>
+
+      
 
     </div>
 
@@ -523,14 +321,17 @@
             <span class="countdown-digits">{{ formattedTime }}</span>
           </div>
 
-          <!-- Price & Ticket Info -->
-          <div class="bottom-price-info-checkout">
-            <span class="bottom-label-checkout">
-              {{ currentLang === 'id' 
-                 ? `Total Pembayaran (${totalTicketCount} Tiket)` 
-                 : `Total Payment (${totalTicketCount} Tickets)` }}
-            </span>
-            <span class="bottom-price-checkout">{{ formatPrice(grandTotalPrice) }}</span>
+          <!-- Kolektix Branding Info -->
+          <div class="bottom-kolektix-brand-checkout">
+            <div class="kolektix-avatar-wrapper">
+              <img src="/logo/logoKolektix.png" alt="Kolektix Logo" class="kolektix-brand-logo" />
+            </div>
+            <div class="kolektix-brand-info">
+              <span class="kolektix-brand-label">Kolektix Secure</span>
+              <span class="kolektix-brand-text">
+                {{ currentLang === 'id' ? 'Pembayaran ini akan diproses melalui Kolektix.' : 'This payment will be processed through Kolektix.' }}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -633,9 +434,53 @@ onUnmounted(() => {
   }
 });
 
-// Toast notification states
-const toastActive = ref(false);
-const toastMessage = ref('');
+// Accordion open states
+const ordererOpen = ref(true);
+
+// Build per-ticket attendee list as reactive array (not computed, so state persists)
+const buildAttendees = () => {
+  const list = [];
+  if (selectedTickets.value && selectedTickets.value.length > 0) {
+    selectedTickets.value.forEach((t) => {
+      for (let i = 0; i < t.quantity; i++) {
+        list.push({
+          id: `${t.id}-${i}`,
+          typeName: t.name,
+          price: t.price,
+          open: true,
+          useOrdererData: false,
+          fullName: '',
+          email: '',
+          phone: '',
+        });
+      }
+    });
+  } else {
+    list.push({
+      id: 'default-0',
+      typeName: selectedTicket.value ? selectedTicket.value.name : 'Presale 2 - Sesi 1',
+      price: selectedTicket.value ? selectedTicket.value.price : 45000,
+      open: true,
+      useOrdererData: false,
+      fullName: '',
+      email: '',
+      phone: '',
+    });
+  }
+  return list;
+};
+
+const ticketAttendees = ref(buildAttendees());
+
+const toggleUseOrdererData = (idx) => {
+  const t = ticketAttendees.value[idx];
+  t.useOrdererData = !t.useOrdererData;
+  if (t.useOrdererData) {
+    t.fullName = formData.value.fullName;
+    t.email = formData.value.email;
+    t.phone = formData.value.phone;
+  }
+};
 
 // Registration Form Reactive State
 const formData = ref({
@@ -654,7 +499,7 @@ const formData = ref({
   job: '',
   instagram: '',
   privacyChecked1: false,
-  privacyChecked2: true // checked by default to match image spec
+  privacyChecked2: true
 });
 
 // Dynamic location selector data
@@ -715,6 +560,10 @@ const validateForm = () => {
   }
   return null;
 };
+
+// Toast notification states
+const toastActive = ref(false);
+const toastMessage = ref('');
 
 // Navigation events
 const goToHome = () => {
@@ -909,12 +758,256 @@ const formatPrice = (price) => {
   align-items: start;
 }
 
+.checkout-summary-column {
+  align-self: stretch;
+}
+
 /* Form Cards styling */
 .checkout-forms-column {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
+
+/* ── Section Heading ── */
+.personal-info-heading {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-mocca-dark);
+  margin-bottom: 0.5rem;
+}
+
+/* ── Accordion Card ── */
+.accordion-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(59, 35, 20, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(59, 35, 20, 0.04);
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.25rem;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.accordion-card.open .accordion-header {
+  border-bottom-color: rgba(59, 35, 20, 0.1);
+}
+
+.accordion-header:hover {
+  background-color: rgba(59, 35, 20, 0.01);
+}
+
+.accordion-title {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-mocca-dark);
+}
+
+.accordion-chevron {
+  color: var(--color-mocca-muted);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+
+.accordion-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+.accordion-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ── Ticket Accordion Header ── */
+.ticket-accordion-header {
+  background-color: rgba(59, 35, 20, 0.025);
+}
+
+.ticket-header-left-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.ticket-icon-acc {
+  color: var(--color-mocca-muted);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ticket-acc-name {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-mocca-dark);
+  line-height: 1.3;
+}
+
+.ticket-acc-price {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-mocca-muted);
+  margin-top: 0.2rem;
+}
+
+/* ── Toggle Switch: Gunakan Data Pemesan ── */
+.use-orderer-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(59, 35, 20, 0.08);
+  margin-bottom: 0.25rem;
+}
+
+.toggle-label-text {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--color-mocca-muted);
+  font-weight: 500;
+}
+
+.toggle-switch {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: rgba(59, 35, 20, 0.15);
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  flex-shrink: 0;
+  border: none;
+  outline: none;
+  padding: 0;
+}
+
+.toggle-switch.active {
+  background-color: var(--color-mocca-dark);
+}
+
+.toggle-thumb {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.toggle-switch.active .toggle-thumb {
+  transform: translateX(20px);
+}
+
+/* ── Form Field Groups ── */
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field-label {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-mocca-muted);
+}
+
+.field-input {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border: 1px solid rgba(59, 35, 20, 0.18);
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--color-mocca-dark);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field-input:focus {
+  border-color: var(--color-mocca-dark);
+  box-shadow: 0 0 0 3px rgba(59, 35, 20, 0.06);
+}
+
+.field-input:disabled {
+  background-color: rgba(59, 35, 20, 0.04);
+  color: var(--color-mocca-muted);
+  cursor: not-allowed;
+}
+
+/* ── Phone field in accordion ── */
+.phone-field-wrapper {
+  display: flex;
+  border: 1px solid rgba(59, 35, 20, 0.18);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.phone-field-wrapper:focus-within {
+  border-color: var(--color-mocca-dark);
+  box-shadow: 0 0 0 3px rgba(59, 35, 20, 0.06);
+}
+
+.phone-field-wrapper.disabled {
+  background-color: rgba(59, 35, 20, 0.04);
+}
+
+.phone-country-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.85rem;
+  background-color: rgba(59, 35, 20, 0.03);
+  border-right: 1px solid rgba(59, 35, 20, 0.12);
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--color-mocca-muted);
+}
+
+.phone-code {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-mocca-dark);
+}
+
+.phone-field-input {
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  padding: 0.7rem 0.85rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--color-mocca-dark);
+  outline: none;
+  min-width: 0;
+}
+
+.phone-field-input:disabled {
+  color: var(--color-mocca-muted);
+  cursor: not-allowed;
+}
+
 
 .form-block-card {
   background-color: #ffffff;
@@ -1265,13 +1358,7 @@ const formatPrice = (price) => {
   font-weight: 700;
 }
 
-/* Form Action Buttons */
-.checkout-navigation-buttons {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
-}
+
 
 .back-outline-btn {
   background: transparent;
@@ -1507,15 +1594,7 @@ const formatPrice = (price) => {
   width: 100%;
 }
 
-.trust-banner-card {
-  background-color: transparent;
-  border: 1px solid rgba(59, 35, 20, 0.1);
-  border-radius: 8px;
-  padding: 1.25rem 1.5rem;
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-}
+
 
 .trust-card-icon-box {
   color: var(--color-mocca-muted);
@@ -1576,6 +1655,10 @@ const formatPrice = (price) => {
 
 /* ================= RESPONSIVE MEDIA QUERIES ================= */
 @media (max-width: 1024px) {
+  .breadcrumbs-container-checkout {
+    display: none !important;
+  }
+
   .checkout-container {
     padding: 0 1rem;
   }
@@ -1618,11 +1701,7 @@ const formatPrice = (price) => {
     padding: 1.25rem;
   }
 
-  .checkout-navigation-buttons {
-    flex-direction: column-reverse;
-    gap: 1rem;
-    width: 100%;
-  }
+  
 
   .back-outline-btn,
   .continue-solid-btn {
@@ -1636,10 +1715,7 @@ const formatPrice = (price) => {
     padding-bottom: 0.5rem;
   }
   
-  .trust-banner-card {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+  
 }
 
 /* Fixed Bottom Action Bar for Checkout */
@@ -1669,7 +1745,7 @@ const formatPrice = (price) => {
 .bottom-left-checkout {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 0.85rem;
 }
 
 /* Circular Countdown Timer Styling */
@@ -1699,26 +1775,54 @@ const formatPrice = (price) => {
   color: var(--color-mocca-dark);
 }
 
-.bottom-price-info-checkout {
+.bottom-kolektix-brand-checkout {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.kolektix-avatar-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 8%;
+  /* border: 1.5px solid var(--color-mocca-border); */
+  overflow: hidden;
+  /* background-color: #FFFFFF; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(59, 35, 20, 0.05);
+}
+
+.kolektix-brand-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kolektix-brand-info {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  line-height: 1.3;
 }
 
-.bottom-label-checkout {
+.kolektix-brand-label {
   font-family: var(--font-body);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
+  font-weight: 700;
   color: var(--color-mocca-muted);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-weight: 600;
+  letter-spacing: 0.05em;
 }
 
-.bottom-price-checkout {
+.kolektix-brand-text {
   font-family: var(--font-body);
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: 0.78rem;
+  font-weight: 600;
   color: var(--color-mocca-dark);
+  max-width: 200px;
 }
 
 .bottom-action-btn-checkout {
@@ -1741,19 +1845,186 @@ const formatPrice = (price) => {
   box-shadow: 0 6px 16px rgba(59, 35, 20, 0.2);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .bottom-bar-container-checkout {
     padding: 0 1rem;
   }
   .bottom-left-checkout {
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
-  .bottom-price-checkout {
-    font-size: 1.15rem;
+  .kolektix-avatar-wrapper {
+    width: 28px;
+    height: 28px;
+  }
+  .kolektix-brand-label {
+    font-size: 0.55rem;
+  }
+  .kolektix-brand-text {
+    font-size: 0.7rem;
+    max-width: 180px;
+    line-height: 1.3;
+  }
+  .circular-countdown {
+    transform: scale(0.85);
+    transform-origin: center left;
   }
   .bottom-action-btn-checkout {
     padding: 0.65rem 1.25rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .bottom-action-bar-checkout {
+    padding: 0.65rem 0;
+  }
+  .bottom-bar-container-checkout {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    padding: 0 1rem;
+  }
+  .bottom-left-checkout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0.5rem;
+  }
+  .bottom-kolektix-brand-checkout {
+    flex: 1;
+    justify-content: flex-start;
+    gap: 0.35rem;
+  }
+  .kolektix-avatar-wrapper {
+    width: 24px;
+    height: 24px;
+  }
+  .kolektix-brand-label {
+    font-size: 0.52rem;
+  }
+  .kolektix-brand-text {
+    max-width: 170px;
+    font-size: 0.65rem;
+  }
+  .bottom-action-btn-checkout {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    text-align: center;
+    border-radius: 8px;
+  }
+}
+
+
+/* ═══════════════════════════════════════
+   RESPONSIVE — Checkout Page (Mobile)
+═══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .event-checkout-page {
+    padding: 1rem 0 7rem 0;
+  }
+
+  .checkout-container {
+    padding: 0 1.1rem;
+  }
+
+  .breadcrumbs-container-checkout {
+    display: none;
+  }
+
+  /* ── Header: stack title above stepper ── */
+  .checkout-header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .checkout-title-heading {
+    font-size: 1.6rem;
+  }
+
+  .stepper-horizontal {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .step-label {
+    font-size: 0.7rem;
+  }
+
+  .step-line {
+    flex: 1;
+  }
+
+  /* ── Layout: single column on mobile ── */
+  .checkout-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  /* ── Summary column goes below forms ── */
+  .checkout-summary-column {
+    order: 2;
+  }
+
+  .checkout-forms-column {
+    order: 1;
+    gap: 0.85rem;
+  }
+
+  /* ── Accordion Cards ── */
+  .personal-info-heading {
+    font-size: 1.5rem;
+  }
+
+  .accordion-header {
+    padding: 0.95rem 1rem;
+  }
+
+  .accordion-title {
+    font-size: 0.92rem;
+  }
+
+  .accordion-body {
+    padding: 1rem;
+    gap: 0.85rem;
+  }
+
+  .ticket-acc-name {
+    font-size: 0.88rem;
+  }
+
+  /* ── Fields ── */
+  .field-input {
     font-size: 0.85rem;
+    padding: 0.65rem 0.8rem;
+  }
+
+  .phone-field-input {
+    font-size: 0.85rem;
+  }
+
+  /* ── Toggle row ── */
+  .use-orderer-toggle-row {
+    justify-content: space-between;
+  }
+
+ 
+
+  .back-outline-btn,
+  .continue-solid-btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* ── Order Summary Card ── */
+  .sticky-summary-card {
+    position: static;
+    top: auto;
   }
 }
 </style>

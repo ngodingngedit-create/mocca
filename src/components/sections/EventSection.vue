@@ -156,6 +156,22 @@ const featuredEvents = ref([
     timestamp: 1782313200000,
     creatorName: 'Kopi Toko Djawa',
     creatorLogo: '/logo_kolektix.png'
+  },
+  {
+    id: 3,
+    title: 'Mocca Songwriting Workshop',
+    image: '/event_workshop.png',
+    category: 'workshop',
+    dateId: 'Rabu, 08 Juli 2026',
+    dateEn: 'Wednesday, July 8, 2026',
+    time: '13:00 - 16:00 WIB',
+    location: 'M Bloc Space, Jakarta',
+    priceLabel: 'Rp150.000',
+    descriptionId: 'Pelajari proses kreatif di balik penciptaan melodi-melodi manis khas Mocca. Dipandu langsung oleh para personil Mocca.',
+    descriptionEn: 'Learn the creative secrets behind writing Mocca\'s signature sweet pop melodies. Coached directly by the band members.',
+    timestamp: 1783429200000,
+    creatorName: 'Mocca Official',
+    creatorLogo: '/logo_mocca.png'
   }
 ]);
 
@@ -248,7 +264,7 @@ const openEventDetails = (event) => {
 /* Events Grid matching event listings page */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
 }
 
@@ -467,7 +483,25 @@ const openEventDetails = (event) => {
     padding: 3rem 1.5rem;
   }
   .section-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
     margin-bottom: 1.5rem;
+    gap: 0.5rem;
+  }
+  .section-title {
+    font-size: 1.15rem !important;
+    white-space: nowrap;
+  }
+  .section-subtitle {
+    font-size: 0.7rem !important;
+    white-space: nowrap;
+  }
+  .view-all-link {
+    font-size: 0.78rem !important;
+    white-space: nowrap;
   }
   .events-grid {
     grid-template-columns: 1fr;

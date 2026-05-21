@@ -81,10 +81,14 @@ watch(currentTheme, (theme) => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  overflow-x: clip;
 }
 
 main {
   flex-grow: 1;
+  min-width: 0;
+  width: 100%;
 }
 
 main.no-padding {
@@ -97,7 +101,7 @@ body {
   background-color: var(--color-bg-cream);
   color: var(--color-mocca-dark);
   font-family: var(--font-body);
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
 }
 
@@ -115,6 +119,10 @@ body {
   main {
     padding-top: 4.5rem; /* account for fixed header */
     padding-bottom: 5.5rem; /* account for fixed bottom nav or cart bar */
+  }
+  /* Event-detail page manages its own bottom spacing — no double padding */
+  main:has(.event-detail-page) {
+    padding-bottom: 0;
   }
 }
 </style>

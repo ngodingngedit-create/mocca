@@ -182,8 +182,8 @@ const toggleSearchInput = () => {
   border-radius: 28px 28px 0 0;
   box-shadow: 0 -12px 36px rgba(59, 35, 20, 0.16), 0 -3px 12px rgba(59, 35, 20, 0.08);
   z-index: 9998;
-  padding: 0.65rem 0;
-  padding-bottom: calc(0.65rem + env(safe-area-inset-bottom, 0px));
+  padding: 0.45rem 0;
+  padding-bottom: calc(0.45rem + env(safe-area-inset-bottom, 0px));
   display: none; /* Hidden on desktop */
 }
 
@@ -204,7 +204,7 @@ const toggleSearchInput = () => {
   justify-content: center;
   background: none;
   border: none;
-  padding: 0.5rem 0;
+  padding: 0.35rem 0;
   color: var(--color-mocca-muted);
   cursor: pointer;
   position: relative;

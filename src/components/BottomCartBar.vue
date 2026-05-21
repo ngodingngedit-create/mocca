@@ -101,7 +101,7 @@ const formatPrice = (price) => {
   border-top: 1px solid rgba(59, 35, 20, 0.1);
   box-shadow: 0 -4px 20px rgba(59, 35, 20, 0.08);
   z-index: 1000;
-  padding: 0.65rem 0;
+  padding: 0.45rem 0;
 }
 
 .bottom-bar-container {
@@ -408,8 +408,8 @@ const formatPrice = (price) => {
 /* Responsive */
 @media (max-width: 768px) {
   .bottom-cart-bar {
-    padding: 0.35rem 0;
-    padding-bottom: calc(0.35rem + env(safe-area-inset-bottom, 0px));
+    padding: 0.25rem 0;
+    padding-bottom: calc(0.25rem + env(safe-area-inset-bottom, 0px));
     z-index: 9999;
     display: block;
     position: fixed;
@@ -418,7 +418,7 @@ const formatPrice = (price) => {
   .bottom-bar-container {
     padding: 0 1.25rem;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: 0.25rem;
   }
   .cart-info-left {
     display: flex;
