@@ -502,7 +502,7 @@ const t = (key) => {
 .shop-products-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem; /* Slightly tighter gap for smaller cards */
+  gap: 0.85rem; /* Slightly tighter gap for smaller cards */
 }
 
 /* Clean, thin outline product card */

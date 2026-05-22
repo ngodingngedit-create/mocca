@@ -500,8 +500,12 @@ const openEventDetails = (event) => {
     white-space: nowrap;
   }
   .view-all-link {
-    font-size: 0.78rem !important;
+    font-size: 0.72rem !important;
     white-space: nowrap;
+  }
+  .view-all-link .arrow-icon {
+    width: 12px;
+    height: 12px;
   }
   .events-grid {
     grid-template-columns: 1fr;

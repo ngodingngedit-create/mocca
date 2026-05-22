@@ -1,15 +1,20 @@
 :root {
   --color-bg-light: #FFFFFF;
-  --color-bg-cream: #FFFFFF; /* Pure white background */
-  --color-bg-shop: #FFFFFF;  /* Pure white background */
-  --color-mocca-dark: #3B2314; /* Beautiful uniform dark brown */
-  --color-mocca-muted: #8E7D73; /* Muted brown for subtext and meta labels */
-  --color-mocca-border: #E8E2D9; /* Warm grey/cream border */
+  --color-bg-cream: #FFFFFF;
+  /* Pure white background */
+  --color-bg-shop: #FFFFFF;
+  /* Pure white background */
+  --color-mocca-dark: #3B2314;
+  /* Beautiful uniform dark brown */
+  --color-mocca-muted: #8E7D73;
+  /* Muted brown for subtext and meta labels */
+  --color-mocca-border: #E8E2D9;
+  /* Warm grey/cream border */
   --color-mocca-active: #3B2314;
-  
-  --font-heading: 'Playfair Display', serif;
-  --font-body: 'Inter', sans-serif;
-  
+
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+
   --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
@@ -51,7 +56,11 @@ body {
   overflow-x: clip;
 }
 
-h1, h2, h3, h4, .serif-font {
+h1,
+h2,
+h3,
+h4,
+.serif-font {
   font-family: var(--font-heading);
   font-weight: 500;
   color: var(--color-mocca-dark);
@@ -75,13 +84,16 @@ button {
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--color-bg-cream);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--color-mocca-muted);
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-mocca-dark);
 }

@@ -2,7 +2,7 @@
   <div class="event-detail-page">
     <div class="event-detail-container">
       <!-- Breadcrumb Navigation -->
-      <nav class="breadcrumb-nav">
+      <!-- <nav class="breadcrumb-nav">
         <a href="#" class="breadcrumb-link" @click.prevent="goBackToEvents">
           <svg class="breadcrumb-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -16,16 +16,16 @@
         </a>
         <span class="breadcrumb-separator">></span>
         <span class="breadcrumb-current">{{ displayEvent.title }}</span>
-      </nav>
+      </nav> -->
 
       <!-- Hero Event Banner Card -->
-      <div class="hero-event-banner" :style="{ '--banner-bg-img': `url(${displayEvent.image})` }">
+      <div class="hero-event-banner" style="--banner-bg-img: url('/banner/bannerevent.webp')">
         <!-- Top Header Row (Title & Countdown side-by-side) -->
         <div class="hero-banner-header">
           <h1 class="event-banner-title">{{ displayEvent.title }}</h1>
           <!-- Real-time Event Countdown Widget -->
           <div class="banner-countdown-wrapper">
-            <span class="countdown-label">{{ currentLang === 'id' ? 'Event Dimulai Dalam :' : 'Event Starts In :' }}</span>
+            <span class="countdown-label">{{ currentLang === 'id' ? 'Event Dimulai Dalam' : 'Event Starts In :' }}</span>
             <div class="countdown-timer">
               <div class="countdown-segment">
                 <span class="countdown-num">{{ countdownTime.days }}</span>
@@ -54,7 +54,7 @@
         <div class="hero-banner-body-grid">
           <!-- Left Side: Image / Artwork -->
           <div class="hero-banner-left">
-            <img :src="displayEvent.image" :alt="displayEvent.title" class="hero-banner-img" />
+            <img src="/banner/bannerevent.webp" alt="" class="hero-banner-img" />
             <!-- Gritty overlay text if it is the Mods Mayday event -->
             <div v-if="displayEvent.id === 13" class="mods-banner-overlay">
               <!-- Content already embedded in generated image, but we can overlay additional if needed -->
@@ -1476,6 +1476,7 @@ watch(displayEvent, () => {
   background-color: #ffffff;
   min-height: 100vh;
   padding: 2.5rem 0 6.5rem;
+  overflow-x: clip;
 }
 
 .event-detail-container {
@@ -1552,6 +1553,48 @@ watch(displayEvent, () => {
   z-index: -1;
 }
 
+@media (min-width: 1025px) {
+  .hero-event-banner {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 0;
+    margin-top: -1.5rem;
+  }
+
+  .hero-banner-header {
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0.75rem 8rem 0.75rem 8.5rem;
+  }
+
+  .hero-banner-header .event-banner-title {
+    margin-left: 6rem;
+  }
+
+  .hero-banner-body-grid {
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 6rem;
+  }
+
+  .hero-banner-left {
+    padding-left: 1rem;
+    justify-content: flex-start;
+  }
+
+  .hero-banner-img {
+    width: auto;
+    object-position: left center;
+    position: relative;
+    right: 15px;
+    border-radius: 8px;
+  }
+}
+
 .hero-banner-header {
   display: flex;
   justify-content: space-between;
@@ -1585,11 +1628,13 @@ watch(displayEvent, () => {
 
 .hero-banner-img {
   width: 100%;
-  height: 240px; /* Fixed height to prevent stretching when the banner stretches */
-  object-fit: cover;
+  height: 266px;
+  object-fit: contain;
+  object-position: center;
   display: block;
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: none;
+  margin-top: -1rem;
 }
 
 .hero-banner-right {
@@ -1609,10 +1654,11 @@ watch(displayEvent, () => {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.3rem;
   max-width: fit-content;
   position: relative;
   top: 10px;
+  right:65px;
 }
 
 .countdown-label {
@@ -1713,7 +1759,7 @@ watch(displayEvent, () => {
 .meta-text {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.18rem;
 }
 
 .meta-main-info {
@@ -1749,7 +1795,7 @@ watch(displayEvent, () => {
 /* Tabs Bar */
 .tabs-bar {
   position: sticky;
-  top: 85px; /* aligns right under the site header */
+  top: 95px; /* aligns right under the site header */
   background-color: #ffffff; /* covers text scrolling underneath */
   z-index: 100;
   padding-top: 0.5rem;
@@ -2098,7 +2144,7 @@ watch(displayEvent, () => {
 
 .sticky-sidebar-container {
   position: sticky;
-  top: 110px; /* sticky offset header */
+  top: 120px; /* sticky offset header */
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -2109,7 +2155,7 @@ watch(displayEvent, () => {
   border: 1px solid rgba(59, 35, 20, 0.08);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 8px 30px rgba(59, 35, 20, 0.03);
+  box-shadow: 0 8px 30px rgba(59, 35, 20, 0.11);
 }
 
 /* Ticket Card styling */
@@ -2520,19 +2566,7 @@ watch(displayEvent, () => {
 }
 
 .desktop-chat-icon-btn {
-  background-color: var(--color-mocca-dark);
-  color: var(--color-bg-light);
-  border: none;
-  border-radius: 8px;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(59, 35, 20, 0.15);
-  transition: all 0.25s ease;
-  box-sizing: border-box;
+  display: none !important;
 }
 
 .desktop-chat-icon-btn:hover {
@@ -2684,14 +2718,13 @@ watch(displayEvent, () => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   padding: 0.5rem 1rem;
   margin-top: 0.85rem;
   max-width: fit-content;
   position: relative;
   top: 15px;
+  right:20px;
 }
 
 .banner-creator-row .ticket-creator-label {
@@ -3587,14 +3620,7 @@ watch(displayEvent, () => {
   }
 
   /* ── Breadcrumb ── */
-  .breadcrumb-nav {
-    margin-bottom: 1rem;
-    overflow-x: auto;
-    white-space: nowrap;
-    padding-bottom: 0.25rem;
-    scrollbar-width: none;
-    font-size: 0.75rem;
-  }
+  
   .breadcrumb-nav::-webkit-scrollbar { display: none; }
   .breadcrumb-current { max-width: 180px; }
 

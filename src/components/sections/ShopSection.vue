@@ -807,6 +807,23 @@ const t = (key) => {
     padding: 4rem 2rem;
   }
 
+  .section-header {
+    margin-bottom: 1.5rem;
+    align-items: center;
+  }
+  .section-title {
+    font-size: 1.15rem;
+    white-space: nowrap;
+  }
+  .view-all-link {
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+  .view-all-link .arrow-icon {
+    width: 12px;
+    height: 12px;
+  }
+
   .products-grid {
     grid-template-columns: 1fr; /* 1 column on mobile */
     gap: 1.5rem;

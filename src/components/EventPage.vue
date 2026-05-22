@@ -1,21 +1,5 @@
 <template>
   <div class="event-page-container">
-    <!-- Breadcrumbs Navigation -->
-    <div class="breadcrumbs-container">
-      <div class="breadcrumbs-content">
-        <a href="#" class="breadcrumb-link" @click.prevent="currentPage = 'home'">
-          <!-- Tiny House SVG Icon -->
-          <svg class="breadcrumb-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-          </svg>
-          {{ currentLang === 'id' ? 'Beranda' : 'Home' }}
-        </a>
-        <span class="breadcrumb-separator">></span>
-        <span class="breadcrumb-current">Event</span>
-      </div>
-    </div>
-
     <!-- Main Content wrapper -->
     <div class="event-main-content">
       <!-- Title & Newsletter Banner Section -->
@@ -961,7 +945,7 @@ const triggerToastNotification = (msg) => {
 .event-items-container.grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.75rem; /* slightly wider gap */
+  gap: 0.85rem; /* tighter gap */
 }
 
 .event-card-item {
