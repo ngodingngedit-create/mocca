@@ -1203,7 +1203,7 @@ const displayEvent = computed(() => {
   const base = selectedEvent.value || {
     id: 13,
     title: 'Jakarta Mods Mayday 2026',
-    image: '/event_mods_mayday.png',
+    image: '/banner/bannerevent.webp',
     dateId: 'Minggu, 31 Mei 2026',
     dateEn: 'Sunday, May 31, 2026',
     time: '12:00 - 23:00 WIB',
@@ -1255,7 +1255,7 @@ const displayEvent = computed(() => {
     ],
     program: [
       {
-        image: base.image || '/event_concert.png',
+        image: base.image || '/banner/bannerevent.webp',
         title: base.title,
         sub: 'Main Show Session'
       },
@@ -1316,7 +1316,7 @@ const recommendedEvents = computed(() => {
     {
       id: 1,
       title: 'Konser Berani Tambah Bahagia',
-      image: '/event_concert.png',
+      image: '/banner/bannerevent.webp',
       date: currentLang.value === 'id' ? 'Jumat, 18 Sep 2026' : 'Friday, Sep 18, 2026',
       location: 'Paskal 23, Bandung',
       price: 'Rp30.000'
@@ -1324,7 +1324,7 @@ const recommendedEvents = computed(() => {
     {
       id: 2,
       title: 'Meet & Greet Acoustic Showcase',
-      image: '/event_meet_greet.png',
+      image: '/banner/bannerevent.webp',
       date: currentLang.value === 'id' ? 'Jumat, 25 Sep 2026' : 'Friday, Sep 25, 2026',
       location: 'Dago Tea House, Bandung',
       price: 'Rp50.000'
@@ -1332,7 +1332,7 @@ const recommendedEvents = computed(() => {
     {
       id: 3,
       title: 'Mocca Songwriting Workshop',
-      image: '/event_workshop.png',
+      image: '/banner/bannerevent.webp',
       date: currentLang.value === 'id' ? 'Sabtu, 02 Okt 2026' : 'Saturday, Oct 2, 2026',
       location: 'Creative Hub, Bandung',
       price: 'Rp75.000'
@@ -1340,7 +1340,7 @@ const recommendedEvents = computed(() => {
     {
       id: 4,
       title: 'Mocca Pop-Up Store & Showcase',
-      image: '/event_popup.png',
+      image: '/banner/bannerevent.webp',
       date: currentLang.value === 'id' ? 'Sabtu, 10 Okt 2026' : 'Saturday, Oct 10, 2026',
       location: 'Senayan Park, Jakarta',
       price: 'Gratis'
@@ -1348,7 +1348,7 @@ const recommendedEvents = computed(() => {
     {
       id: 5,
       title: 'Mocca Acoustic Cafe Tour',
-      image: '/event_concert.png',
+      image: '/banner/bannerevent.webp',
       date: currentLang.value === 'id' ? 'Minggu, 18 Okt 2026' : 'Sunday, Oct 18, 2026',
       location: 'Common Grounds, Surabaya',
       price: 'Rp40.000'

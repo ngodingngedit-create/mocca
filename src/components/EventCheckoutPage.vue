@@ -359,7 +359,7 @@ const displayEvent = computed(() => {
   return selectedEvent.value || {
     id: 13,
     title: 'Jakarta Mods Mayday 2026',
-    image: '/event_mods_mayday.png',
+    image: '/banner/bannerevent.webp',
     dateId: 'Minggu, 31 Mei 2026',
     dateEn: 'Sunday, May 31, 2026',
     time: '12:00 - 23:00 WIB',

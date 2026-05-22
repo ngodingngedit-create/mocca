@@ -112,7 +112,7 @@ const featuredEvents = ref([
   {
     id: 13,
     title: 'Jakarta Mods Mayday 2026',
-    image: '/event_mods_mayday.png',
+    image: '/banner/bannerevent.webp',
     category: 'others',
     dateId: 'Minggu, 31 Mei 2026',
     dateEn: 'Sunday, May 31, 2026',
@@ -128,7 +128,7 @@ const featuredEvents = ref([
   {
     id: 1,
     title: 'Konser Berani Tambah Bahagia',
-    image: '/event_concert.png',
+    image: '/banner/bannerevent.webp',
     category: 'concert',
     dateId: 'Sabtu, 30 Mei 2026',
     dateEn: 'Saturday, May 30, 2026',
@@ -144,7 +144,7 @@ const featuredEvents = ref([
   {
     id: 2,
     title: 'Mocca Acoustic Showcase',
-    image: '/event_meet_greet.png',
+    image: '/banner/bannerevent.webp',
     category: 'meet_greet',
     dateId: 'Jumat, 5 Juni 2026',
     dateEn: 'Friday, June 5, 2026',
@@ -160,7 +160,7 @@ const featuredEvents = ref([
   {
     id: 3,
     title: 'Mocca Songwriting Workshop',
-    image: '/event_workshop.png',
+    image: '/banner/bannerevent.webp',
     category: 'workshop',
     dateId: 'Rabu, 08 Juli 2026',
     dateEn: 'Wednesday, July 8, 2026',

@@ -326,7 +326,7 @@ const eventsData = ref([
   {
     id: 13,
     title: 'Jakarta Mods Mayday 2026',
-    image: '/event_mods_mayday.png',
+    image: '/banner/bannerevent.webp',
     category: 'others',
     categoryNameId: 'Lainnya',
     categoryNameEn: 'Others',
@@ -347,7 +347,7 @@ const eventsData = ref([
   {
     id: 1,
     title: 'Konser Berani Tambah Bahagia',
-    image: '/event_concert.png',
+    image: '/banner/bannerevent.webp',
     category: 'concert',
     categoryNameId: 'Konser',
     categoryNameEn: 'Concert',
@@ -368,7 +368,7 @@ const eventsData = ref([
   {
     id: 2,
     title: 'Mocca Meet & Greet Session',
-    image: '/event_meet_greet.png',
+    image: '/banner/bannerevent.webp',
     category: 'meet_greet',
     categoryNameId: 'Meet & Greet',
     categoryNameEn: 'Meet & Greet',
@@ -389,7 +389,7 @@ const eventsData = ref([
   {
     id: 3,
     title: 'Mocca Songwriting Workshop',
-    image: '/event_workshop.png',
+    image: '/banner/bannerevent.webp',
     category: 'workshop',
     categoryNameId: 'Workshop',
     categoryNameEn: 'Workshop',
@@ -410,7 +410,7 @@ const eventsData = ref([
   {
     id: 4,
     title: 'Mocca Pop-Up Store at Senayan City',
-    image: '/event_popup.png',
+    image: '/banner/bannerevent.webp',
     category: 'popup_store',
     categoryNameId: 'Pop-up Store',
     categoryNameEn: 'Pop-up Store',
@@ -431,7 +431,7 @@ const eventsData = ref([
   {
     id: 5,
     title: 'Mocca Acoustic Cafe Session',
-    image: '/event_concert.png',
+    image: '/banner/bannerevent.webp',
     category: 'concert',
     categoryNameId: 'Konser',
     categoryNameEn: 'Concert',
@@ -452,7 +452,7 @@ const eventsData = ref([
   {
     id: 6,
     title: 'Mocca Fan Exhibition & Gallery',
-    image: '/event_popup.png',
+    image: '/banner/bannerevent.webp',
     category: 'popup_store',
     categoryNameId: 'Pop-up Store',
     categoryNameEn: 'Pop-up Store',
@@ -473,7 +473,7 @@ const eventsData = ref([
   {
     id: 7,
     title: 'Mocca Intimate Dinner & Acoustic',
-    image: '/event_meet_greet.png',
+    image: '/banner/bannerevent.webp',
     category: 'meet_greet',
     categoryNameId: 'Meet & Greet',
     categoryNameEn: 'Meet & Greet',
@@ -494,7 +494,7 @@ const eventsData = ref([
   {
     id: 8,
     title: 'Mocca Collaboration Launch with Local Brands',
-    image: '/event_workshop.png',
+    image: '/banner/bannerevent.webp',
     category: 'workshop',
     categoryNameId: 'Workshop',
     categoryNameEn: 'Workshop',
@@ -515,7 +515,7 @@ const eventsData = ref([
   {
     id: 9,
     title: 'Mocca Live',
-    image: '/event_concert.png',
+    image: '/banner/bannerevent.webp',
     category: 'concert',
     categoryNameId: 'Konser',
     categoryNameEn: 'Concert',
@@ -536,7 +536,7 @@ const eventsData = ref([
   {
     id: 10,
     title: 'Mocca Talk',
-    image: '/event_workshop.png',
+    image: '/banner/bannerevent.webp',
     category: 'talkshow',
     categoryNameId: 'Talkshow',
     categoryNameEn: 'Talkshow',
@@ -557,7 +557,7 @@ const eventsData = ref([
   {
     id: 11,
     title: 'Mocca Shop',
-    image: '/event_popup.png',
+    image: '/banner/bannerevent.webp',
     category: 'popup_store',
     categoryNameId: 'Pop-up Store',
     categoryNameEn: 'Pop-up Store',
@@ -578,7 +578,7 @@ const eventsData = ref([
   {
     id: 12,
     title: 'Mocca Show',
-    image: '/event_meet_greet.png',
+    image: '/banner/bannerevent.webp',
     category: 'meet_greet',
     categoryNameId: 'Meet & Greet',
     categoryNameEn: 'Meet & Greet',
