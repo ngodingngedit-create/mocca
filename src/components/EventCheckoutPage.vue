@@ -344,15 +344,19 @@
     </div>
 
     <!-- Error/Success Toast Popup -->
-    <div class="toast-popup" :class="{ active: toastActive }">
-      {{ toastMessage }}
-    </div>
+    <ToastAlert
+      :show="toastActive"
+      :title="toastTitle"
+      :description="toastDescription"
+      @close="toastActive = false"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { currentPage, currentLang, selectedEvent, selectedTicket, ticketQuantity, selectedTickets } from '../store/cart.js';
+import ToastAlert from './ToastAlert.vue';
 
 // Fallback mods mayday details
 const displayEvent = computed(() => {
@@ -543,6 +547,10 @@ const onCityChange = () => {
 // Form validation
 const validateForm = () => {
   const data = formData.value;
+  // Mock validation for seat mismatch
+  if (data.fullName.toLowerCase().trim() === 'seat') {
+    return 'Jumlah seat tidak sesuai qty';
+  }
   if (!data.fullName.trim()) return currentLang.value === 'id' ? 'Nama Lengkap wajib diisi.' : 'Full Name is required.';
   if (!data.idCard.trim() || data.idCard.length < 16) return currentLang.value === 'id' ? 'Nomor Identitas (KTP) harus 16 digit.' : 'ID Card number must be 16 digits.';
   if (!data.email.trim() || !data.email.includes('@')) return currentLang.value === 'id' ? 'Format email tidak valid.' : 'Invalid email format.';
@@ -563,7 +571,9 @@ const validateForm = () => {
 
 // Toast notification states
 const toastActive = ref(false);
-const toastMessage = ref('');
+const toastTitle = ref('');
+const toastDescription = ref('');
+let toastTimeout = null;
 
 // Navigation events
 const goToHome = () => {
@@ -588,19 +598,33 @@ const proceedToPayment = () => {
     return;
   }
 
-  triggerToast(currentLang.value === 'id' ? 'Menghubungkan ke sistem pembayaran...' : 'Redirecting to payment gateway...');
+  triggerToast(
+    currentLang.value === 'id' ? 'Koneksi Sukses' : 'Connection Success',
+    currentLang.value === 'id' ? 'Menghubungkan ke sistem pembayaran...' : 'Redirecting to payment gateway...'
+  );
   setTimeout(() => {
     currentPage.value = 'payment';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, 1200);
 };
 
-const triggerToast = (msg) => {
-  toastMessage.value = msg;
+const triggerToast = (msg, desc = '') => {
+  if (msg === 'Jumlah seat tidak sesuai qty' || msg === 'Seat quantity mismatch') {
+    toastTitle.value = currentLang.value === 'id' ? 'Jumlah seat tidak sesuai qty' : 'Seat quantity mismatch';
+    toastDescription.value = currentLang.value === 'id' ? 'Silakan periksa kembali jumlah seat yang dipilih.' : 'Please check the number of seats selected.';
+  } else if (desc) {
+    toastTitle.value = msg;
+    toastDescription.value = desc;
+  } else {
+    toastTitle.value = currentLang.value === 'id' ? 'Kesalahan Validasi' : 'Validation Error';
+    toastDescription.value = msg;
+  }
   toastActive.value = true;
-  setTimeout(() => {
+  
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
     toastActive.value = false;
-  }, 3500);
+  }, 4000);
 };
 
 // Format currency standard
@@ -1627,31 +1651,7 @@ const formatPrice = (price) => {
   margin: 0;
 }
 
-/* Toast popup notifications */
-.toast-popup {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background-color: var(--color-mocca-dark);
-  color: var(--color-bg-light);
-  padding: 0.85rem 1.75rem;
-  border-radius: 30px;
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  font-weight: 500;
-  box-shadow: 0 8px 30px rgba(59, 35, 20, 0.2);
-  z-index: 20000;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
-  opacity: 0;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.toast-popup.active {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
-}
+/* Toast popup notifications removed for ToastAlert component */
 
 /* ================= RESPONSIVE MEDIA QUERIES ================= */
 @media (max-width: 1024px) {

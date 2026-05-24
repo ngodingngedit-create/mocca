@@ -921,20 +921,26 @@
     </transition>
 
     <!-- Toast Notification -->
-    <div class="toast-popup" :class="{ active: toastActive }">
-      {{ toastMessage }}
-    </div>
+    <ToastAlert
+      :show="toastActive"
+      :title="toastTitle"
+      :description="toastDescription"
+      @close="toastActive = false"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import { currentPage, currentLang, selectedEvent, selectedTicket, ticketQuantity, selectedTickets } from '../store/cart.js';
+import ToastAlert from './ToastAlert.vue';
 
 const activeTab = ref('deskripsi');
 const isSaved = ref(false);
 const toastActive = ref(false);
-const toastMessage = ref('');
+const toastTitle = ref('');
+const toastDescription = ref('');
+let toastTimeout = null;
 const isAccordionOpen = ref(false);
 const showMobileSummary = ref(false);
 
@@ -1393,12 +1399,29 @@ const triggerShare = (platform) => {
   triggerToast(msg);
 };
 
-const triggerToast = (msg) => {
-  toastMessage.value = msg;
+const triggerToast = (msg, desc = '') => {
+  if (msg.includes('favorit') || msg.includes('favorite')) {
+    toastTitle.value = currentLang.value === 'id' ? 'Favorit' : 'Favorites';
+    toastDescription.value = msg;
+  } else if (msg.includes('bagikan') || msg.includes('shared')) {
+    toastTitle.value = currentLang.value === 'id' ? 'Bagikan' : 'Share';
+    toastDescription.value = msg;
+  } else if (msg === 'Jumlah seat tidak sesuai qty' || msg === 'Seat quantity mismatch') {
+    toastTitle.value = currentLang.value === 'id' ? 'Jumlah seat tidak sesuai qty' : 'Seat quantity mismatch';
+    toastDescription.value = currentLang.value === 'id' ? 'Silakan periksa kembali jumlah seat yang dipilih.' : 'Please check the number of seats selected.';
+  } else if (desc) {
+    toastTitle.value = msg;
+    toastDescription.value = desc;
+  } else {
+    toastTitle.value = currentLang.value === 'id' ? 'Pemberitahuan' : 'Notification';
+    toastDescription.value = msg;
+  }
   toastActive.value = true;
-  setTimeout(() => {
+  
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
     toastActive.value = false;
-  }, 3000);
+  }, 4000);
 };
 
 // Real-time Event Countdown Timer
@@ -2467,31 +2490,7 @@ watch(displayEvent, () => {
   color: var(--color-mocca-dark);
 }
 
-/* Toast Popups */
-.toast-popup {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background-color: var(--color-mocca-dark);
-  color: var(--color-bg-light);
-  padding: 0.85rem 1.75rem;
-  border-radius: 30px;
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  font-weight: 500;
-  box-shadow: 0 8px 30px rgba(59, 35, 20, 0.2);
-  z-index: 20000;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
-  opacity: 0;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.toast-popup.active {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
-}
+/* Toast Popups removed for ToastAlert component */
 
 /* Bottom Action Bar (Visible on desktop and mobile) */
 .bottom-action-bar {

@@ -3,7 +3,7 @@
     <div class="footer-container">
       <!-- Left Column: Brand, Description, & Socials -->
       <div class="footer-brand">
-        <h2 class="footer-logo">Mocca</h2>
+        <img src="/logo/logo.png" alt="Logo" class="logo-img-footer" />
         <p class="footer-description">{{ t('description') }}</p>
         <div class="social-links">
           <!-- Instagram -->
@@ -144,6 +144,13 @@ const t = (key) => {
 </script>
 
 <style scoped>
+.logo-img-footer {
+  width: 40%;
+  height: auto;
+  margin-bottom: 1rem;
+  transition: var(--transition-smooth);
+}
+
 .site-footer {
   width: 100%;
   background-color: #FAF6F0; /* Soft warm cream background */
