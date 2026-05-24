@@ -415,7 +415,7 @@ const getMenuLabel = (key) => {
 .header-container {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0.6rem 6rem;
+  padding: 0.1rem 6rem 0rem 6rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
