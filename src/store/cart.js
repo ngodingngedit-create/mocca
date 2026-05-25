@@ -21,12 +21,12 @@ export const selectedTickets = ref([]);
 const getCartKey = (id, color) => `${id}-${color}`;
 
 // Actions
-export const addToCart = (product, color) => {
+export const addToCart = (product, color, quantity = 1) => {
   const key = getCartKey(product.id, color);
   const existingItem = cartItems.value.find(item => item.key === key);
 
   if (existingItem) {
-    existingItem.quantity += 1;
+    existingItem.quantity += quantity;
   } else {
     // Get title with localization fallbacks (ShopPage uses titleEn/titleId)
     const title = product.title || product.titleEn || product.titleId || 'Mocca Official Merch';
@@ -37,7 +37,8 @@ export const addToCart = (product, color) => {
       price: product.price,
       image: product.image,
       color: color || 'default',
-      quantity: 1
+      quantity: quantity,
+      store_location: product.has_store_location || null
     });
   }
 };

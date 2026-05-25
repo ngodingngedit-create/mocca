@@ -294,7 +294,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { currentPage, currentLang, selectedEvent } from '../store/cart.js';
 
 // Subscription states
@@ -321,282 +321,55 @@ const filterTags = [
   { nameId: 'Lainnya', nameEn: 'Others', value: 'others' }
 ];
 
-// High fidelity events database matching requirements
-const eventsData = ref([
-  {
-    id: 13,
-    title: 'Jakarta Mods Mayday 2026',
-    image: '/banner/bannerevent.webp',
-    category: 'others',
-    categoryNameId: 'Lainnya',
-    categoryNameEn: 'Others',
-    dateId: 'Minggu, 31 Mei 2026',
-    dateEn: 'Sunday, May 31, 2026',
-    time: '12:00 - 23:00 WIB',
-    location: 'Senayan Park (Island & Dome), Jakarta Pusat',
-    statusId: 'Tiket Tersedia',
-    statusEn: 'Tickets Available',
-    statusClass: 'status-available',
-    priceLabel: 'Rp150.000',
-    descriptionId: 'Jakarta Mods Mayday adalah perayaan tahunan subkultur mods yang diselenggarakan oleh Warriors Jakarta sejak 2011. Acara ini menggabungkan kecintaan pada scooter retro dengan musik indie pop, modern soul, ska, dan pameran karya seni.',
-    descriptionEn: 'Jakarta Mods Mayday is an annual subculture celebration organized by the Warriors Jakarta community since 2011, combining vintage scooters with live music, art exhibitions, and food market.',
-    timestamp: 1779951600000,
-    creatorName: 'Warriors Jakarta',
-    creatorLogo: 'plus'
-  },
-  {
-    id: 1,
-    title: 'Konser Berani Tambah Bahagia',
-    image: '/banner/bannerevent.webp',
-    category: 'concert',
-    categoryNameId: 'Konser',
-    categoryNameEn: 'Concert',
-    dateId: '23 Mei 2026',
-    dateEn: 'May 23, 2026',
-    time: '17:00 WIB',
-    location: 'Asram Edupark, Yogyakarta',
-    statusId: 'Tiket Tersedia',
-    statusEn: 'Tickets Available',
-    statusClass: 'status-available',
-    priceLabel: 'Rp60.000',
-    descriptionId: 'Setelah sekian lama, Mocca kembali menghadirkan konser intim bertajuk "Berani Tambah Bahagia". Nikmati aransemen lagu-lagu klasik Mocca secara langsung dengan konsep panggung yang hangat dan dekorasi bernuansa vintage sepia.',
-    descriptionEn: 'After a long wait, Mocca returns with an intimate concert themed "Berani Tambah Bahagia". Enjoy live performances of classic hits on a cozy, warm stage decorated with a beautiful vintage sepia theme.',
-    timestamp: 1781204400000,
-    creatorName: 'Konser Berani Tambah Bahagia',
-    creatorLogo: 'plus'
-  },
-  {
-    id: 2,
-    title: 'Mocca Meet & Greet Session',
-    image: '/banner/bannerevent.webp',
-    category: 'meet_greet',
-    categoryNameId: 'Meet & Greet',
-    categoryNameEn: 'Meet & Greet',
-    dateId: 'Kamis, 25 Juni 2026',
-    dateEn: 'Thursday, June 25, 2026',
-    time: '15:00 - 17:00 WIB',
-    location: 'Gramedia Matraman, Jakarta',
-    statusId: 'Tiket Tersedia',
-    statusEn: 'Tickets Available',
-    statusClass: 'status-available',
-    priceLabel: 'Rp80.000',
-    descriptionId: 'Sesi ramah tamah eksklusif bersama seluruh personil band Mocca dalam rangka perilisan merchandise kolaborasi edisi spesial. Dapatkan kesempatan foto bersama, tanda tangan album, dan chit-chat santai mengenai karya terbaru Mocca.',
-    descriptionEn: 'An exclusive meet and greet session with all members of Mocca to celebrate the release of their special edition collaboration merchandise. Get photos, signed albums, and a warm chat about their upcoming projects.',
-    timestamp: 1782313200000,
-    creatorName: 'Mocca',
-    creatorLogo: '/logo_mocca.png'
-  },
-  {
-    id: 3,
-    title: 'Mocca Songwriting Workshop',
-    image: '/banner/bannerevent.webp',
-    category: 'workshop',
-    categoryNameId: 'Workshop',
-    categoryNameEn: 'Workshop',
-    dateId: 'Rabu, 08 Juli 2026',
-    dateEn: 'Wednesday, July 8, 2026',
-    time: '13:00 - 16:00 WIB',
-    location: 'M Bloc Space, Jakarta',
-    statusId: 'Kuota Terbatas',
-    statusEn: 'Limited Spots',
-    statusClass: 'status-limited',
-    priceLabel: 'Rp150.000',
-    descriptionId: 'Pelajari proses kreatif di balik penciptaan melodi-melodi manis khas Mocca. Dipandu langsung oleh para personil Mocca, workshop ini sangat cocok untuk kamu yang ingin memulai belajar menulis lagu, merangkai lirik, dan memoles aransemen musik indie pop.',
-    descriptionEn: 'Learn the creative secrets behind writing Mocca\'s signature sweet pop melodies. Coached directly by the band members, this workshop is perfect for beginners who want to write songs, structure lyrics, and produce indie pop tunes.',
-    timestamp: 1783429200000,
-    creatorName: 'Mocca',
-    creatorLogo: '/logo_mocca.png'
-  },
-  {
-    id: 4,
-    title: 'Mocca Pop-Up Store at Senayan City',
-    image: '/banner/bannerevent.webp',
-    category: 'popup_store',
-    categoryNameId: 'Pop-up Store',
-    categoryNameEn: 'Pop-up Store',
-    dateId: '20 Juli - 26 Juli 2026',
-    dateEn: 'July 20 - July 26, 2026',
-    time: '10:00 - 22:00 WIB',
-    location: 'Senayan City, Jakarta',
-    statusId: 'Tiket Tersedia',
-    statusEn: 'Tickets Available',
-    statusClass: 'status-available',
-    priceLabel: 'Rp40.000',
-    descriptionId: 'Jelajahi Mocca Pop-Up Store resmi di Senayan City lantai 2. Menghadirkan pameran memorabilia perjalanan musik Mocca, rilisan fisik eksklusif piringan hitam, serta aneka merchandise premium mulai dari kaos, tas kanvas, cangkir kopi, dan produk kolaborasi spesial.',
-    descriptionEn: 'Explore the official Mocca Pop-Up Store located on the 2nd Floor of Senayan City. Featuring a mini-exhibition of Mocca\'s music journey memorabilia, exclusive physical vinyl records, and premium merch like t-shirts, tote bags, coffee mugs, and collaboration goodies.',
-    timestamp: 1784464800000,
-    creatorName: 'Mocca',
-    creatorLogo: '/logo_mocca.png'
-  },
-  {
-    id: 5,
-    title: 'Mocca Acoustic Cafe Session',
-    image: '/banner/bannerevent.webp',
-    category: 'concert',
-    categoryNameId: 'Konser',
-    categoryNameEn: 'Concert',
-    dateId: 'Senin, 15 Juni 2026',
-    dateEn: 'Monday, June 15, 2026',
-    time: '20:00 - 22:00 WIB',
-    location: 'Hard Rock Cafe, Bali',
-    statusId: 'Tiket Tersedia',
-    statusEn: 'Tickets Available',
-    statusClass: 'status-available',
-    priceLabel: 'Rp120.000',
-    descriptionId: 'Nikmati malam yang syahdu bersama Mocca dalam sesi akustik eksklusif di Hard Rock Cafe Bali. Dapatkan suasana santai dengan hits pop retro klasik Mocca.',
-    descriptionEn: 'Enjoy a peaceful evening with Mocca in an exclusive acoustic session at Hard Rock Cafe Bali. Relax with their classic retro pop hits.',
-    timestamp: 1781464800000,
-    creatorName: 'Mocca',
-    creatorLogo: '/logo_mocca.png'
-  },
-  {
-    id: 6,
-    title: 'Mocca Fan Exhibition & Gallery',
-    image: '/banner/bannerevent.webp',
-    category: 'popup_store',
-    categoryNameId: 'Pop-up Store',
-    categoryNameEn: 'Pop-up Store',
-    dateId: 'Sabtu, 01 Agustus 2026',
-    dateEn: 'Saturday, August 1, 2026',
-    time: '10:00 - 18:00 WIB',
-    location: 'Galeri Nasional, Jakarta',
-    statusId: 'Tiket Tersedia',
-    statusEn: 'Tickets Available',
-    statusClass: 'status-available',
-    priceLabel: 'Rp45.000',
-    descriptionId: 'Pameran memorabilia perjalanan musik Mocca selama dua dekade lebih. Lihat kostum panggung klasik, coretan lirik asli, alat musik bersejarah, dan galeri foto eksklusif.',
-    descriptionEn: 'An exhibition of Mocca\'s music journey memorabilia spanning over two decades. See classic stage outfits, original handwritten lyrics, historical instruments, and an exclusive photo gallery.',
-    timestamp: 1785501600000,
-    creatorName: 'Mocca',
-    creatorLogo: '/logo_mocca.png'
-  },
-  {
-    id: 7,
-    title: 'Mocca Intimate Dinner & Acoustic',
-    image: '/banner/bannerevent.webp',
-    category: 'meet_greet',
-    categoryNameId: 'Meet & Greet',
-    categoryNameEn: 'Meet & Greet',
-    dateId: 'Senin, 10 Agustus 2026',
-    dateEn: 'Monday, August 10, 2026',
-    time: '19:00 - 21:30 WIB',
-    location: 'Hotel Tentrem, Yogyakarta',
-    statusId: 'Kuota Terbatas',
-    statusEn: 'Limited Spots',
-    statusClass: 'status-limited',
-    priceLabel: 'Rp350.000',
-    descriptionId: 'Sesi makan malam eksklusif yang intim dilanjutkan pertunjukan musik akustik interaktif bersama personil Mocca. Kuota terbatas hanya untuk 50 penonton.',
-    descriptionEn: 'An exclusive, intimate dinner session followed by an interactive acoustic performance with the members of Mocca. Limited to 50 guests only.',
-    timestamp: 1786279200000,
-    creatorName: 'Mocca',
-    creatorLogo: '/logo_mocca.png'
-  },
-  {
-    id: 8,
-    title: 'Mocca Collaboration Launch with Local Brands',
-    image: '/banner/bannerevent.webp',
-    category: 'workshop',
-    categoryNameId: 'Workshop',
-    categoryNameEn: 'Workshop',
-    dateId: 'Kamis, 20 Agustus 2026',
-    dateEn: 'Thursday, August 20, 2026',
-    time: '15:00 - 18:00 WIB',
-    location: 'M Bloc Space, Jakarta',
-    statusId: 'Tiket Tersedia',
-    statusEn: 'Tickets Available',
-    statusClass: 'status-available',
-    priceLabel: 'Rp75.000',
-    descriptionId: 'Peluncuran resmi kolaborasi produk fashion dan merchandise edisi terbatas Mocca bersama brand lokal favorit. Hadiri talkshow mini dan pertunjukan pembuka.',
-    descriptionEn: 'Official launch of Mocca\'s limited edition collaboration fashion and merch products with top local brands. Join the mini talkshow and acoustic opening.',
-    timestamp: 1787142000000,
-    creatorName: 'Mocca',
-    creatorLogo: '/logo_mocca.png'
-  },
-  {
-    id: 9,
-    title: 'Mocca Live',
-    image: '/banner/bannerevent.webp',
-    category: 'concert',
-    categoryNameId: 'Konser',
-    categoryNameEn: 'Concert',
-    dateId: 'Sabtu, 05 September 2026',
-    dateEn: 'Saturday, September 5, 2026',
-    time: '19:30 - 21:00 WIB',
-    location: 'Live Space, Jakarta',
-    statusId: 'Tiket Tersedia',
-    statusEn: 'Tickets Available',
-    statusClass: 'status-available',
-    priceLabel: 'Rp110.000',
-    descriptionId: 'Pertunjukan musik langsung edisi spesial Mocca Live di Jakarta.',
-    descriptionEn: 'Mocca Live special edition live concert in Jakarta.',
-    timestamp: 1788550000000,
-    creatorName: 'Mocca',
-    creatorLogo: '/logo_mocca.png'
-  },
-  {
-    id: 10,
-    title: 'Mocca Talk',
-    image: '/banner/bannerevent.webp',
-    category: 'talkshow',
-    categoryNameId: 'Talkshow',
-    categoryNameEn: 'Talkshow',
-    dateId: 'Sabtu, 12 September 2026',
-    dateEn: 'Saturday, September 12, 2026',
-    time: '14:00 - 16:00 WIB',
-    location: 'Kopi Kalyan, Jakarta',
-    statusId: 'Tiket Tersedia',
-    statusEn: 'Tickets Available',
-    statusClass: 'status-available',
-    priceLabel: 'Rp65.000',
-    descriptionId: 'Sesi bincang santai dan sharing session Mocca Talk bersama penggemar.',
-    descriptionEn: 'Mocca Talk casual discussion and sharing session with fans.',
-    timestamp: 1789154400000,
-    creatorName: 'Mocca',
-    creatorLogo: '/logo_mocca.png'
-  },
-  {
-    id: 11,
-    title: 'Mocca Shop',
-    image: '/banner/bannerevent.webp',
-    category: 'popup_store',
-    categoryNameId: 'Pop-up Store',
-    categoryNameEn: 'Pop-up Store',
-    dateId: 'Jumat, 18 September 2026',
-    dateEn: 'Friday, September 18, 2026',
-    time: '10:00 - 22:00 WIB',
-    location: 'Paskal 23, Bandung',
-    statusId: 'Tiket Tersedia',
-    statusEn: 'Tickets Available',
-    statusClass: 'status-available',
-    priceLabel: 'Rp30.000',
-    descriptionId: 'Kunjungi Mocca Shop Bandung untuk mendapatkan rilisan fisik dan cinderamata resmi band.',
-    descriptionEn: 'Visit Mocca Shop Bandung to purchase band official physical releases and goodies.',
-    timestamp: 1789672800000,
-    creatorName: 'Mocca',
-    creatorLogo: '/logo_mocca.png'
-  },
-  {
-    id: 12,
-    title: 'Mocca Show',
-    image: '/banner/bannerevent.webp',
-    category: 'meet_greet',
-    categoryNameId: 'Meet & Greet',
-    categoryNameEn: 'Meet & Greet',
-    dateId: 'Jumat, 25 September 2026',
-    dateEn: 'Friday, September 25, 2026',
-    time: '16:00 - 18:00 WIB',
-    location: 'Paris Van Java, Bandung',
-    statusId: 'Tiket Tersedia',
-    statusEn: 'Tickets Available',
-    statusClass: 'status-available',
-    priceLabel: 'Rp95.000',
-    descriptionId: 'Sesi ramah tamah interaktif dan showcase spesial Mocca Show.',
-    descriptionEn: 'Mocca Show interactive meet-up session and special showcase.',
-    timestamp: 1790277600000,
-    creatorName: 'Mocca',
-    creatorLogo: '/logo_mocca.png'
+const eventsData = ref([]);
+
+const fetchEvents = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const creatorId = apiUrl.includes('my.id') ? 48 : 127;
+    const response = await fetch(`${apiUrl}/api/event-by-creator/${creatorId}`);
+    const json = await response.json();
+    const data = Array.isArray(json) ? json : json.data;
+
+    if (data && data.length > 0) {
+      eventsData.value = data.map(ev => {
+        const ticket = ev.has_event_ticket && ev.has_event_ticket.length > 0 ? ev.has_event_ticket[0] : {};
+        const price = ticket.price || 0;
+        
+        const formattedPrice = price === 0 ? 'Gratis' : new Intl.NumberFormat('id-ID', {
+          style: 'currency',
+          currency: 'IDR',
+          minimumFractionDigits: 0
+        }).format(price).replace('Rp', 'Rp');
+
+        return {
+          id: ev.id,
+          title: ev.name || ev.title || 'Event Mocca',
+          image: ev.image_url || '/banner/bannerevent.webp',
+          category: ev.has_event_topic?.name?.toLowerCase() || 'others',
+          categoryNameId: ev.has_event_topic?.name || 'Lainnya',
+          categoryNameEn: ev.has_event_topic?.name || 'Others',
+          dateId: ticket.event_schedule_date || 'TBA',
+          dateEn: ticket.event_schedule_date || 'TBA',
+          time: ticket.starting_time ? `${ticket.starting_time.slice(0, 5)} WIB` : 'TBA',
+          location: ticket.detail_venue_name || ev.location || 'TBA',
+          priceLabel: formattedPrice,
+          descriptionId: ev.description || '',
+          descriptionEn: ev.description || '',
+          timestamp: new Date(ticket.event_schedule_date || Date.now()).getTime(),
+          creatorName: ev.has_creator?.name || 'My Diary Records',
+          creatorLogo: ev.has_creator?.image_url || '/logo_mocca.png'
+        };
+      });
+    }
+  } catch (error) {
+    console.error('Failed to fetch events:', error);
   }
-]);
+};
+
+onMounted(() => {
+  fetchEvents();
+});
 
 // Reactive Filter & Sort logic
 const filteredAndSortedEvents = computed(() => {

@@ -54,8 +54,8 @@
                 </div>
                 
                 <!-- Swatch color indicator -->
-                <div class="item-meta">
-                  <span class="meta-label">Color:</span>
+                <div class="item-meta" v-if="item.color && item.color !== 'default' && item.color !== 'cream'">
+                  <span class="meta-label">Varian:</span>
                   <span class="meta-value capitalize">{{ item.color }}</span>
                 </div>
 

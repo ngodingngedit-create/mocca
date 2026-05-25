@@ -104,76 +104,57 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { currentPage, currentLang, selectedEvent } from '../../store/cart.js';
 
 // Featured events to showcase on the homepage
-const featuredEvents = ref([
-  {
-    id: 13,
-    title: 'Jakarta Mods Mayday 2026',
-    image: '/banner/bannerevent.webp',
-    category: 'others',
-    dateId: 'Minggu, 31 Mei 2026',
-    dateEn: 'Sunday, May 31, 2026',
-    time: '12:00 - 23:00 WIB',
-    location: 'Senayan Park, Jakarta Pusat',
-    priceLabel: 'Rp150.000',
-    descriptionId: 'Jakarta Mods Mayday adalah perayaan tahunan subkultur mods yang diselenggarakan oleh Warriors Jakarta sejak 2011.',
-    descriptionEn: 'Jakarta Mods Mayday is an annual subculture celebration organized by the Warriors Jakarta community since 2011.',
-    timestamp: 1779951600000,
-    creatorName: 'Warriors Jakarta',
-    creatorLogo: 'plus'
-  },
-  {
-    id: 1,
-    title: 'Konser Berani Tambah Bahagia',
-    image: '/banner/bannerevent.webp',
-    category: 'concert',
-    dateId: 'Sabtu, 30 Mei 2026',
-    dateEn: 'Saturday, May 30, 2026',
-    time: '19:00 - 22:00 WIB',
-    location: 'Studio Palem Kemang, Jakarta Selatan',
-    priceLabel: 'Rp250.000',
-    descriptionId: 'Konser istimewa merayakan peluncuran album terbaru Mocca dengan kolaborasi musisi tamu kejutan.',
-    descriptionEn: 'Special concert celebrating the launch of Mocca new album featuring guest collaborations.',
-    timestamp: 1781204400000,
-    creatorName: 'Mocca Official',
-    creatorLogo: '/logo_mocca.png'
-  },
-  {
-    id: 2,
-    title: 'Mocca Acoustic Showcase',
-    image: '/banner/bannerevent.webp',
-    category: 'meet_greet',
-    dateId: 'Jumat, 5 Juni 2026',
-    dateEn: 'Friday, June 5, 2026',
-    time: '16:00 - 18:00 WIB',
-    location: 'Kopi Toko Djawa, Bandung',
-    priceLabel: 'Rp100.000',
-    descriptionId: 'Showcase akustik intim bersama personel Mocca dilengkapi sesi tanya jawab santai.',
-    descriptionEn: 'Intimate acoustic session and chat with Mocca members at Bandung.',
-    timestamp: 1782313200000,
-    creatorName: 'Kopi Toko Djawa',
-    creatorLogo: '/logo_kolektix.png'
-  },
-  {
-    id: 3,
-    title: 'Mocca Songwriting Workshop',
-    image: '/banner/bannerevent.webp',
-    category: 'workshop',
-    dateId: 'Rabu, 08 Juli 2026',
-    dateEn: 'Wednesday, July 8, 2026',
-    time: '13:00 - 16:00 WIB',
-    location: 'M Bloc Space, Jakarta',
-    priceLabel: 'Rp150.000',
-    descriptionId: 'Pelajari proses kreatif di balik penciptaan melodi-melodi manis khas Mocca. Dipandu langsung oleh para personil Mocca.',
-    descriptionEn: 'Learn the creative secrets behind writing Mocca\'s signature sweet pop melodies. Coached directly by the band members.',
-    timestamp: 1783429200000,
-    creatorName: 'Mocca Official',
-    creatorLogo: '/logo_mocca.png'
+const featuredEvents = ref([]);
+
+const fetchEvents = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const creatorId = apiUrl.includes('my.id') ? 48 : 127;
+    const response = await fetch(`${apiUrl}/api/event-by-creator/${creatorId}`);
+    const json = await response.json();
+    const data = Array.isArray(json) ? json : json.data;
+
+    if (data && data.length > 0) {
+      featuredEvents.value = data.map(ev => {
+        const ticket = ev.has_event_ticket && ev.has_event_ticket.length > 0 ? ev.has_event_ticket[0] : {};
+        const price = ticket.price || 0;
+        
+        const formattedPrice = price === 0 ? 'Gratis' : new Intl.NumberFormat('id-ID', {
+          style: 'currency',
+          currency: 'IDR',
+          minimumFractionDigits: 0
+        }).format(price).replace('Rp', 'Rp');
+
+        return {
+          id: ev.id,
+          title: ev.name || ev.title || 'Event Mocca',
+          image: ev.image_url || '/banner/bannerevent.webp',
+          category: ev.has_event_topic?.name?.toLowerCase() || 'others',
+          dateId: ticket.event_schedule_date || 'TBA',
+          dateEn: ticket.event_schedule_date || 'TBA',
+          time: ticket.starting_time ? `${ticket.starting_time.slice(0, 5)} WIB` : 'TBA',
+          location: ticket.detail_venue_name || ev.location || 'TBA',
+          priceLabel: formattedPrice,
+          descriptionId: ev.description || '',
+          descriptionEn: ev.description || '',
+          timestamp: new Date(ticket.event_schedule_date || Date.now()).getTime(),
+          creatorName: ev.has_creator?.name || 'My Diary Records',
+          creatorLogo: ev.has_creator?.image_url || '/logo_mocca.png'
+        };
+      });
+    }
+  } catch (error) {
+    console.error('Failed to fetch events:', error);
   }
-]);
+};
+
+onMounted(() => {
+  fetchEvents();
+});
 
 const goToEventPage = () => {
   currentPage.value = 'event';

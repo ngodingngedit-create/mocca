@@ -32,61 +32,107 @@
           <!-- 2. Alamat Pengiriman Section -->
           <div class="form-card">
             <div class="card-inner-compact">
-              <div class="card-header-row">
+              <div class="card-header-row mb-1-5">
                 <h2 class="section-title text-alamat-pengiriman">2. Alamat Pengiriman</h2>
-                <button class="add-address-btn btn-tambah-alamat" @click="addNewAddress">
-                  Tambah Alamat Baru
-                </button>
               </div>
               
-              <div class="input-group mb-1-5">
-                <label class="field-label">Pilih Alamat</label>
-                <div class="select-wrapper">
-                  <select v-model="selectedAddressIndex" class="select-input" @change="syncAddressDetails">
-                    <option v-for="(addr, idx) in addresses" :key="idx" :value="idx">
-                      {{ addr.label }} - {{ addr.street }}, {{ addr.city }}, {{ addr.province }} {{ addr.zip }}
-                    </option>
-                  </select>
+              <!-- Address Stepper -->
+              <div class="address-stepper">
+                <div class="step-indicator" :class="{ active: addressStep >= 1 }">
+                  <div class="step-circle">1</div>
+                  <span class="step-label">Cari</span>
+                </div>
+                <div class="step-line" :class="{ active: addressStep >= 2 }"></div>
+                <div class="step-indicator" :class="{ active: addressStep >= 2 }">
+                  <div class="step-circle">2</div>
+                  <span class="step-label">Pinpoint</span>
+                </div>
+                <div class="step-line" :class="{ active: addressStep >= 3 }"></div>
+                <div class="step-indicator" :class="{ active: addressStep >= 3 }">
+                  <div class="step-circle">3</div>
+                  <span class="step-label">Detail</span>
                 </div>
               </div>
 
-              <div class="form-grid-2 mb-1-5">
-                <div class="input-group">
-                  <label class="field-label">Provinsi</label>
-                  <input type="text" v-model="activeAddress.province" class="text-input" />
+              <!-- STEP 1: Autocomplete -->
+              <div v-show="addressStep === 1" class="address-step-container">
+                <div class="input-group mb-1-5">
+                  <label class="field-label">Cari Lokasi</label>
+                  <input type="text" ref="autocompleteInputRef" class="text-input" placeholder="Ketik nama jalan, gedung, atau area..." />
                 </div>
-                <div class="input-group">
-                  <label class="field-label">Kota / Kabupaten</label>
-                  <input type="text" v-model="activeAddress.city" class="text-input" />
+                <button class="primary-checkout-btn" @click="proceedToMapPinpoint" :disabled="!selectedPlaceLocation">
+                  Lanjut Pinpoint Peta
+                </button>
+              </div>
+
+              <!-- STEP 2: Map Pinpoint -->
+              <div v-show="addressStep === 2" class="address-step-container">
+                <label class="field-label mb-0-5">Pinpoint Lokasi Anda</label>
+                <div id="map-container" style="width: 100%; height: 320px; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid var(--color-mocca-border);"></div>
+                
+                <div style="display: flex; gap: 1rem;">
+                  <button class="back-to-shop-btn" @click="addressStep = 1">Kembali</button>
+                  <button class="primary-checkout-btn" @click="proceedToAddressDetail">Gunakan Lokasi Ini</button>
                 </div>
               </div>
 
-              <div class="form-grid-2 mb-1-5">
-                <div class="input-group">
-                  <label class="field-label">Kecamatan</label>
-                  <input type="text" v-model="activeAddress.district" class="text-input" />
+              <!-- STEP 3: Detail Alamat -->
+              <div v-show="addressStep === 3" class="address-step-container">
+                <div class="form-grid-2 mb-1-5">
+                  <div class="input-group">
+                    <label class="field-label">Label Alamat</label>
+                    <input type="text" v-model="activeAddress.address_name" class="text-input" placeholder="Cth: Rumah" />
+                  </div>
+                  <div class="input-group">
+                    <label class="field-label">Nama Penerima</label>
+                    <input type="text" v-model="activeAddress.nama_penerima" class="text-input" />
+                  </div>
                 </div>
-                <div class="input-group">
+
+                <div class="input-group mb-1-5">
+                  <label class="field-label">Nomor Telepon</label>
+                  <input type="text" v-model="activeAddress.phone" class="text-input" placeholder="08..." />
+                </div>
+
+                <div class="form-grid-2 mb-1-5">
+                  <div class="input-group">
+                    <label class="field-label">Provinsi</label>
+                    <select v-model="activeAddress.province_id" class="select-input" @change="onProvinceChange">
+                      <option value="">Pilih Provinsi</option>
+                      <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <label class="field-label">Kota / Kabupaten</label>
+                    <select v-model="activeAddress.city_id" class="select-input" :disabled="!activeAddress.province_id">
+                      <option value="">Pilih Kota</option>
+                      <option v-for="city in cities" :key="city.id" :value="city.id">{{ city.name }}</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="input-group mb-1-5">
                   <label class="field-label">Kode Pos</label>
                   <input type="text" v-model="activeAddress.zip" class="text-input" />
                 </div>
-              </div>
 
-              <div class="input-group mb-1-5">
-                <label class="field-label">Alamat Lengkap</label>
-                <textarea v-model="activeAddress.street" rows="3" class="textarea-input"></textarea>
-              </div>
+                <div class="input-group mb-1-5">
+                  <label class="field-label">Alamat Lengkap</label>
+                  <textarea v-model="activeAddress.street" rows="3" class="textarea-input"></textarea>
+                </div>
 
-              <label class="primary-checkbox-label">
-                <input type="checkbox" v-model="activeAddress.isMain" />
-                <span class="checkbox-box"></span>
-                <span class="checkbox-text">Jadikan sebagai alamat utama</span>
-              </label>
+                <div style="display: flex; gap: 1rem;">
+                  <button class="back-to-shop-btn" @click="addressStep = 2">Ubah Pinpoint</button>
+                  <button class="primary-checkout-btn" @click="saveAddressAndFetchShipping" :disabled="isFetchingShipping">
+                    {{ isFetchingShipping ? 'Menghitung Ongkir...' : 'Simpan & Hitung Ongkir' }}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
           <!-- 3. Metode Pengiriman Section -->
-          <div class="form-card">
+          <div class="form-card" v-if="isShippingReady">
             <div class="card-inner-compact">
               <h2 class="section-title">3. Metode Pengiriman</h2>
               
@@ -102,8 +148,13 @@
               <!-- Courier Options Card (Visible if shippingType === 'courier') -->
               <div v-if="shippingType === 'courier'" class="couriers-accordion-list mb-1-5">
                 
+                <!-- No Couriers Message -->
+                <div v-if="Object.values(courierServices).every(arr => arr.length === 0)" class="no-couriers-alert">
+                  Maaf, tidak ada layanan pengiriman yang tersedia untuk alamat pengiriman ini.
+                </div>
+
                 <!-- JNE Express -->
-                <div class="courier-card" :class="{ open: expandedCourier === 'jne' }">
+                <div class="courier-card" v-if="courierServices.jne.length > 0" :class="{ open: expandedCourier === 'jne' }">
                   <div class="courier-header" @click="toggleCourier('jne')">
                     <div class="header-left-col">
                       <span class="courier-dot" :class="{ checked: selectedCourier === 'jne' }"></span>
@@ -153,271 +204,10 @@
                   </div>
                 </div>
 
-                <!-- J&T Express -->
-                <div class="courier-card" :class="{ open: expandedCourier === 'jnt' }">
-                  <div class="courier-header" @click="toggleCourier('jnt')">
-                    <div class="header-left-col">
-                      <span class="courier-dot" :class="{ checked: selectedCourier === 'jnt' }"></span>
-                      <div class="courier-brand">
-                        <span class="jnt-logo font-bold">J&T</span>
-                        <span class="courier-title">J&T Express</span>
-                      </div>
-                    </div>
-                    <div class="header-right-col">
-                      <span class="courier-price-range">Mulai dari Rp 8.000</span>
-                      <svg class="chevron-arrow" :class="{ rotate: expandedCourier === 'jnt' }" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
-                    </div>
-                  </div>
-                  
-                  <div class="courier-services-body" v-if="expandedCourier === 'jnt'">
-                    <h4 class="services-title">Layanan Pengiriman</h4>
-                    <div class="services-grid">
-                      <label 
-                        v-for="service in courierServices.jnt" 
-                        :key="service.id" 
-                        class="service-row" 
-                        :class="{ selected: selectedCourier === 'jnt' && selectedServiceId === service.id }"
-                        @click="selectCourierService('jnt', service)"
-                      >
-                        <div class="service-left">
-                          <input 
-                            type="radio" 
-                            name="jnt_service" 
-                            :checked="selectedCourier === 'jnt' && selectedServiceId === service.id" 
-                          />
-                          <span class="service-radio-dot"></span>
-                          <div class="service-meta">
-                            <span class="service-name font-bold">{{ service.name }}</span>
-                            <span class="service-desc">{{ service.desc }}</span>
-                          </div>
-                        </div>
-                        <span class="service-price font-bold">{{ formatPrice(service.price) }}</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
 
-                <!-- SiCepat Ekspres -->
-                <div class="courier-card" :class="{ open: expandedCourier === 'sicepat' }">
-                  <div class="courier-header" @click="toggleCourier('sicepat')">
-                    <div class="header-left-col">
-                      <span class="courier-dot" :class="{ checked: selectedCourier === 'sicepat' }"></span>
-                      <div class="courier-brand">
-                        <span class="sicepat-logo font-bold">SiCepat</span>
-                        <span class="courier-title">SiCepat Ekspres</span>
-                      </div>
-                    </div>
-                    <div class="header-right-col">
-                      <span class="courier-price-range">Mulai dari Rp 8.000</span>
-                      <svg class="chevron-arrow" :class="{ rotate: expandedCourier === 'sicepat' }" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div class="courier-services-body" v-if="expandedCourier === 'sicepat'">
-                    <h4 class="services-title">Layanan Pengiriman</h4>
-                    <div class="services-grid">
-                      <label 
-                        v-for="service in courierServices.sicepat" 
-                        :key="service.id" 
-                        class="service-row" 
-                        :class="{ selected: selectedCourier === 'sicepat' && selectedServiceId === service.id }"
-                        @click="selectCourierService('sicepat', service)"
-                      >
-                        <div class="service-left">
-                          <input 
-                            type="radio" 
-                            name="sicepat_service" 
-                            :checked="selectedCourier === 'sicepat' && selectedServiceId === service.id" 
-                          />
-                          <span class="service-radio-dot"></span>
-                          <div class="service-meta">
-                            <span class="service-name font-bold">{{ service.name }}</span>
-                            <span class="service-desc">{{ service.desc }}</span>
-                          </div>
-                        </div>
-                        <span class="service-price font-bold">{{ formatPrice(service.price) }}</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Anteraja -->
-                <div class="courier-card" :class="{ open: expandedCourier === 'anteraja' }">
-                  <div class="courier-header" @click="toggleCourier('anteraja')">
-                    <div class="header-left-col">
-                      <span class="courier-dot" :class="{ checked: selectedCourier === 'anteraja' }"></span>
-                      <div class="courier-brand">
-                        <span class="anteraja-logo font-bold">Anteraja</span>
-                        <span class="courier-title">Anteraja</span>
-                      </div>
-                    </div>
-                    <div class="header-right-col">
-                      <span class="courier-price-range">Mulai dari Rp 8.500</span>
-                      <svg class="chevron-arrow" :class="{ rotate: expandedCourier === 'anteraja' }" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div class="courier-services-body" v-if="expandedCourier === 'anteraja'">
-                    <h4 class="services-title">Layanan Pengiriman</h4>
-                    <div class="services-grid">
-                      <label 
-                        v-for="service in courierServices.anteraja" 
-                        :key="service.id" 
-                        class="service-row" 
-                        :class="{ selected: selectedCourier === 'anteraja' && selectedServiceId === service.id }"
-                        @click="selectCourierService('anteraja', service)"
-                      >
-                        <div class="service-left">
-                          <input 
-                            type="radio" 
-                            name="anteraja_service" 
-                            :checked="selectedCourier === 'anteraja' && selectedServiceId === service.id" 
-                          />
-                          <span class="service-radio-dot"></span>
-                          <div class="service-meta">
-                            <span class="service-name font-bold">{{ service.name }}</span>
-                            <span class="service-desc">{{ service.desc }}</span>
-                          </div>
-                        </div>
-                        <span class="service-price font-bold">{{ formatPrice(service.price) }}</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- COD Accordion Choice -->
-              <div class="shipping-method-choice">
-                <label class="shipping-radio-label mb-0-5">
-                  <input type="radio" value="cod" v-model="shippingType" @change="handleCodSelected" />
-                  <span class="radio-box"></span>
-                  <div class="cod-label-text">
-                    <span class="radio-text font-bold">Bayar di Tempat (COD)</span>
-                    <span class="cod-sub-desc">Bayar saat pesanan tiba di alamat tujuan</span>
-                  </div>
-                </label>
-                <span class="cod-flat-price font-bold">Rp 15.000</span>
               </div>
             </div>
           </div>
-
-          <!-- 4. Metode Pembayaran Section -->
-          <div class="form-card">
-            <div class="card-inner-compact">
-              <h2 class="section-title">4. Metode Pembayaran</h2>
-              
-              <div class="payment-methods-grid">
-                
-                <!-- 1) Transfer Bank -->
-                <label class="pay-method-row" :class="{ active: selectedPayMethod === 'bank' }" @click="selectedPayMethod = 'bank'">
-                  <div class="pay-left">
-                    <input type="radio" name="pay_method" :checked="selectedPayMethod === 'bank'" />
-                    <span class="pay-radio-dot"></span>
-                    <div class="pay-info">
-                      <svg class="pay-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
-                        <line x1="2" y1="10" x2="22" y2="10"></line>
-                      </svg>
-                      <div class="pay-text-group">
-                        <span class="pay-title font-bold">Transfer Bank</span>
-                        <span class="pay-desc">Bayar melalui transfer ke rekening bank kami.</span>
-                      </div>
-                    </div>
-                  </div>
-                </label>
-
-                <!-- 2) E-Wallet -->
-                <label class="pay-method-row" :class="{ active: selectedPayMethod === 'ewallet' }" @click="selectedPayMethod = 'ewallet'">
-                  <div class="pay-left">
-                    <input type="radio" name="pay_method" :checked="selectedPayMethod === 'ewallet'" />
-                    <span class="pay-radio-dot"></span>
-                    <div class="pay-info">
-                      <svg class="pay-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                        <line x1="2" y1="10" x2="22" y2="10"></line>
-                        <path d="M16 14h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10"></path>
-                      </svg>
-                      <div class="pay-text-group">
-                        <span class="pay-title font-bold">E-Wallet</span>
-                        <span class="pay-desc">Bayar menggunakan saldo e-wallet.</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="pay-right-logos">
-                    <span class="wallet-logo ovo">ovo</span>
-                    <span class="wallet-logo gopay">gopay</span>
-                    <span class="wallet-logo dana">dana</span>
-                  </div>
-                </label>
-
-                <!-- 3) Kartu Kredit / Debit -->
-                <label class="pay-method-row" :class="{ active: selectedPayMethod === 'cc' }" @click="selectedPayMethod = 'cc'">
-                  <div class="pay-left">
-                    <input type="radio" name="pay_method" :checked="selectedPayMethod === 'cc'" />
-                    <span class="pay-radio-dot"></span>
-                    <div class="pay-info">
-                      <svg class="pay-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                        <line x1="1" y1="10" x2="23" y2="10"></line>
-                      </svg>
-                      <div class="pay-text-group">
-                        <span class="pay-title font-bold">Kartu Kredit / Debit</span>
-                        <span class="pay-desc">Visa, Mastercard, JCB, dan lainnya.</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="pay-right-logos">
-                    <span class="cc-logo visa">VISA</span>
-                    <span class="cc-logo mc">Mastercard</span>
-                  </div>
-                </label>
-
-                <!-- 4) Virtual Account -->
-                <label class="pay-method-row" :class="{ active: selectedPayMethod === 'va' }" @click="selectedPayMethod = 'va'">
-                  <div class="pay-left">
-                    <input type="radio" name="pay_method" :checked="selectedPayMethod === 'va'" />
-                    <span class="pay-radio-dot"></span>
-                    <div class="pay-info">
-                      <span class="pay-va-badge font-bold">VA</span>
-                      <div class="pay-text-group">
-                        <span class="pay-title font-bold">Virtual Account</span>
-                        <span class="pay-desc">Bayar melalui Virtual Account.</span>
-                      </div>
-                    </div>
-                  </div>
-                </label>
-
-                <!-- 5) QRIS -->
-                <label class="pay-method-row" :class="{ active: selectedPayMethod === 'qris' }" @click="selectedPayMethod = 'qris'">
-                  <div class="pay-left">
-                    <input type="radio" name="pay_method" :checked="selectedPayMethod === 'qris'" />
-                    <span class="pay-radio-dot"></span>
-                    <div class="pay-info">
-                      <svg class="pay-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <rect x="7" y="7" width="3" height="3"></rect>
-                        <rect x="14" y="7" width="3" height="3"></rect>
-                        <rect x="7" y="14" width="3" height="3"></rect>
-                      </svg>
-                      <div class="pay-text-group">
-                        <span class="pay-title font-bold">QRIS</span>
-                        <span class="pay-desc">Scan QR untuk pembayaran mudah.</span>
-                      </div>
-                    </div>
-                  </div>
-                  <span class="qris-brand font-bold">QRIS</span>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          
 
         </div>
 
@@ -427,9 +217,6 @@
             <div class="card-inner-compact">
               <div class="summary-header-row">
                 <h3 class="summary-title">Ringkasan Pesanan</h3>
-                <button class="edit-summary-btn" @click="isEditingSummary = !isEditingSummary" :class="{ editing: isEditingSummary }">
-                  {{ isEditingSummary ? 'Selesai ✓' : 'Edit' }}
-                </button>
               </div>
               
               <!-- Products List inside summary -->
@@ -437,8 +224,8 @@
                 <div 
                   v-for="item in visibleCartItems" 
                   :key="item.id" 
-                  class="summary-prod-item"
-                  :class="{ 'editing-row': isEditingSummary, 'zero-qty': item.qty === 0 }"
+                  class="summary-prod-item editing-row"
+                  :class="{ 'zero-qty': item.qty === 0 }"
                 >
                   <div class="prod-left">
                     <div class="prod-thumb">
@@ -446,26 +233,25 @@
                     </div>
                     <div class="prod-info">
                       <h4 class="prod-name font-bold">{{ item.name }}</h4>
-                      <span class="prod-meta">Warna: {{ item.color }}, Ukuran: {{ item.size }}</span>
+                      <span class="prod-meta" v-if="(item.size && item.size !== '-') || (item.color && item.color !== 'default')">Varian: {{ item.size && item.size !== '-' ? item.size : item.color }}</span>
                       
-                      <!-- Notes Edit Mode -->
-                      <div v-if="isEditingSummary" class="summary-note-edit-wrapper mt-0-5">
+                      <!-- Notes Input -->
+                      <div class="summary-note-edit-wrapper mt-0-5">
                         <input 
                           type="text" 
                           v-model="item.note" 
                           class="summary-note-input" 
-                          placeholder="Tambah catatan..." 
+                          placeholder="Tambah catatan (opsional)..." 
                         />
                       </div>
-                      <span class="prod-note" v-else-if="item.note">Catatan: "{{ item.note }}"</span>
                     </div>
                   </div>
                   
                   <div class="prod-right text-right">
                     <span class="prod-price font-bold">{{ formatPrice(item.price) }}</span>
                     
-                    <!-- Quantity adjuster in Edit Mode -->
-                    <div v-if="isEditingSummary" class="summary-qty-adjuster mt-0-5">
+                    <!-- Quantity adjuster -->
+                    <div class="summary-qty-adjuster mt-0-5">
                       <button class="sqty-btn minus" @click="adjustSummaryQty(item, -1)">
                         <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                       </button>
@@ -477,7 +263,6 @@
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                       </button>
                     </div>
-                    <span class="prod-qty" v-else>x {{ item.qty }}</span>
                   </div>
                 </div>
                 <div v-if="visibleCartItems.length === 0" class="empty-summary-text text-center py-2">
@@ -504,8 +289,7 @@
                     {{ voucherApplied ? 'Gunakan ✓' : 'Gunakan' }}
                   </button>
                 </div>
-                <p class="voucher-tip" v-if="!voucherApplied">Gunakan kode <strong class="code-text">MOCCA10</strong> untuk diskon 10%!</p>
-                <p class="voucher-success-text" v-else>Voucher diskon 10% berhasil digunakan! <span class="remove-btn" @click="removeVoucherCode">Hapus</span></p>
+                <p class="voucher-success-text" v-if="voucherApplied">Voucher diskon 10% berhasil digunakan! <span class="remove-btn" @click="removeVoucherCode">Hapus</span></p>
               </div>
 
               <div class="summary-divider"></div>
@@ -517,8 +301,14 @@
                   <span class="breakdown-value">{{ formatPrice(cartSubtotalPrice) }}</span>
                 </div>
                 
+                <!-- Admin Fee -->
+                <div class="breakdown-row" v-if="cartAdminFee > 0">
+                  <span class="breakdown-label">Biaya Layanan</span>
+                  <span class="breakdown-value">{{ formatPrice(cartAdminFee) }}</span>
+                </div>
+                
                 <!-- Shipping Cost -->
-                <div class="breakdown-row" v-if="shippingType === 'courier'">
+                <div class="breakdown-row" v-if="isShippingReady && shippingType === 'courier' && shippingPrice > 0">
                   <span class="breakdown-label">Ongkir ({{ activeCourierLabel }} - {{ activeServiceLabel }})</span>
                   <span class="breakdown-value">{{ formatPrice(shippingPrice) }}</span>
                 </div>
@@ -599,7 +389,7 @@
             </div>
             <div class="invoice-row">
               <span class="inv-label">Metode Pembayaran:</span>
-              <span class="inv-value font-bold capitalize">{{ selectedPayMethodName }}</span>
+              <span class="inv-value font-bold capitalize">Xendit</span>
             </div>
             <div class="invoice-row">
               <span class="inv-label">Total Dibayar:</span>
@@ -623,68 +413,256 @@ import { currentPage, cartItems, clearCart, updateQuantity, removeFromCart, chec
 
 // 1. Data Diri
 const profile = ref({
-  name: 'Budi Santoso',
-  email: 'budi.santoso@gmail.com',
-  phone: '0812 3456 7890'
+  name: '',
+  email: '',
+  phone: ''
 });
 
-// 2. Alamat Pengiriman
-const addresses = ref([
-  {
-    label: 'Rumah',
-    province: 'DKI Jakarta',
-    city: 'Jakarta Selatan',
-    district: 'Kebayoran Baru',
-    zip: '12120',
-    street: 'Jl. Kembang Indah No. 10, RT 03/RW 02',
-    isMain: true
-  },
-  {
-    label: 'Kantor',
-    province: 'DKI Jakarta',
-    city: 'Jakarta Pusat',
-    district: 'Gambir',
-    zip: '10110',
-    street: 'Gedung Menara Mulia Lt. 12, Jl. Jend. Sudirman Kav. 9-11',
-    isMain: false
-  }
-]);
+// 2. Alamat Pengiriman (Google Maps Flow)
+const GOOGLE_MAPS_API_KEY = "AIzaSyBxZekg89Ut1U72fFpQldJAenvgTy197As";
+const GOOGLE_MAPS_MAP_ID = "795838f77e7bb079c78f5aac";
 
-const selectedAddressIndex = ref(0);
+const addressStep = ref(1);
+const autocompleteInputRef = ref(null);
+const selectedPlaceLocation = ref(null);
+let mapInstance = null;
+let markerInstance = null;
+const isFetchingShipping = ref(false);
+const isShippingReady = ref(false);
+
 const activeAddress = ref({
-  province: '',
-  city: '',
+  address_name: '',
+  nama_penerima: '',
+  phone: '',
+  province_id: '',
+  city_id: '',
   district: '',
   zip: '',
   street: '',
-  isMain: true
+  latitude: '',
+  longitude: ''
 });
 
-const syncAddressDetails = () => {
-  const chosen = addresses.value[selectedAddressIndex.value];
-  if (chosen) {
-    activeAddress.value = { ...chosen };
+const provinces = ref([]);
+const cities = ref([]);
+
+const fetchProvinces = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const response = await fetch(`${apiUrl}/api/province`);
+    const data = await response.json();
+    let result = data.data || data;
+    if (result && result.rajaongkir && result.rajaongkir.results) {
+      result = result.rajaongkir.results;
+    } else if (result && result.results) {
+      result = result.results;
+    }
+    provinces.value = Array.isArray(result) ? result : [];
+  } catch(e) {
+    console.error('Failed to fetch provinces', e);
   }
 };
 
-const addNewAddress = () => {
-  const newAddr = {
-    label: 'Alamat Baru ' + (addresses.value.length + 1),
-    province: '',
-    city: '',
-    district: '',
-    zip: '',
-    street: '',
-    isMain: false
+const onProvinceChange = async () => {
+  activeAddress.value.city_id = '';
+  cities.value = [];
+  if (activeAddress.value.province_id) {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+      const response = await fetch(`${apiUrl}/api/city?province_id=${activeAddress.value.province_id}`);
+      const data = await response.json();
+      let result = data.data || data;
+      if (result && result.rajaongkir && result.rajaongkir.results) {
+        result = result.rajaongkir.results;
+      } else if (result && result.results) {
+        result = result.results;
+      }
+      cities.value = Array.isArray(result) ? result : [];
+    } catch(e) {
+      console.error('Failed to fetch cities', e);
+    }
+  }
+};
+
+const initGoogleMaps = () => {
+  if (window.google && window.google.maps) {
+    initAutocomplete();
+    return;
+  }
+  const script = document.createElement('script');
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+  script.async = true;
+  script.defer = true;
+  script.onload = () => {
+    initAutocomplete();
   };
-  addresses.value.push(newAddr);
-  selectedAddressIndex.value = addresses.value.length - 1;
-  syncAddressDetails();
+  document.head.appendChild(script);
+};
+
+const initAutocomplete = () => {
+  if (!autocompleteInputRef.value) return;
+  const autocomplete = new window.google.maps.places.Autocomplete(autocompleteInputRef.value, {
+    types: ['geocode'],
+    componentRestrictions: { country: 'id' }
+  });
+  
+  autocomplete.addListener('place_changed', () => {
+    const place = autocomplete.getPlace();
+    if (!place.geometry || !place.geometry.location) {
+      return;
+    }
+    selectedPlaceLocation.value = {
+      lat: place.geometry.location.lat(),
+      lng: place.geometry.location.lng()
+    };
+    
+    activeAddress.value.street = place.formatted_address || '';
+    
+    for (const component of place.address_components) {
+      if (component.types.includes('postal_code')) {
+        activeAddress.value.zip = component.long_name;
+      }
+    }
+  });
+};
+
+const proceedToMapPinpoint = () => {
+  addressStep.value = 2;
+  setTimeout(() => {
+    initMap();
+  }, 100);
+};
+
+const initMap = () => {
+  const mapElement = document.getElementById('map-container');
+  if (!mapElement) return;
+  
+  const centerPos = selectedPlaceLocation.value || { lat: -6.200000, lng: 106.816666 };
+  
+  mapInstance = new window.google.maps.Map(mapElement, {
+    center: centerPos,
+    zoom: 15,
+    mapId: GOOGLE_MAPS_MAP_ID,
+    mapTypeControl: false,
+    streetViewControl: false
+  });
+
+  markerInstance = new window.google.maps.Marker({
+    position: centerPos,
+    map: mapInstance,
+    draggable: true,
+    animation: window.google.maps.Animation.DROP,
+  });
+
+  markerInstance.addListener('dragend', () => {
+    const position = markerInstance.getPosition();
+    selectedPlaceLocation.value = {
+      lat: position.lat(),
+      lng: position.lng()
+    };
+  });
+};
+
+const proceedToAddressDetail = () => {
+  addressStep.value = 3;
+};
+
+const saveAddressAndFetchShipping = async () => {
+  if (!activeAddress.value.province_id || !activeAddress.value.city_id || !activeAddress.value.zip) {
+    showToast('Mohon lengkapi Provinsi, Kota, dan Kode Pos.');
+    return;
+  }
+
+  activeAddress.value.latitude = selectedPlaceLocation.value.lat;
+  activeAddress.value.longitude = selectedPlaceLocation.value.lng;
+  
+  isFetchingShipping.value = true;
+  shippingType.value = '';
+  courierServices.value = { jne: [], jnt: [], sicepat: [], anteraja: [] };
+  
+  try {
+    let totalWeight = 0;
+    activeCartItems.value.forEach(item => {
+      totalWeight += (item.weight || 400) * item.qty;
+    });
+    if (totalWeight === 0) totalWeight = 1000;
+    
+    const firstItem = activeCartItems.value[0] || {};
+    const originStore = firstItem.store_location || {};
+
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const payload = {
+      origin_postal_code: originStore.postal_code || "",
+      destination_postal_code: activeAddress.value.zip,
+      origin_latitude: originStore.latitude || "",
+      origin_longitude: originStore.longitude || "",
+      destination_latitude: activeAddress.value.latitude,
+      destination_longitude: activeAddress.value.longitude,
+      weight: totalWeight
+    };
+    
+    console.log("DEBUG: originStore from cart item", originStore);
+    console.log("DEBUG: cek-all-ongkir payload", payload);
+    
+    const response = await fetch(`${apiUrl}/api/shipping/cek-all-ongkir`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    
+    const resData = await response.json();
+    const ratesData = resData.rates || resData.data || resData; 
+    
+    const newCourierServices = { jne: [] };
+    
+    if (ratesData && typeof ratesData === 'object' && !Array.isArray(ratesData)) {
+      Object.values(ratesData).forEach(serviceArray => {
+        if (Array.isArray(serviceArray)) {
+          serviceArray.forEach(cost => {
+            const code = (cost.courier || '').toLowerCase();
+            const serviceObj = {
+              id: cost.service || cost.type,
+              name: cost.service || cost.type,
+              desc: cost.etd ? `${cost.etd} hari` : 'Layanan',
+              price: parseInt(cost.price) || 0
+            };
+            
+            if (code.includes('jne')) {
+              newCourierServices.jne.push(serviceObj);
+            }
+          });
+        }
+      });
+    }
+    
+    courierServices.value = newCourierServices;
+    
+    // Automatically select the first available courier
+    for (const [carrier, services] of Object.entries(courierServices.value)) {
+      if (services.length > 0) {
+        shippingType.value = 'courier';
+        selectedCourier.value = carrier;
+        expandedCourier.value = carrier;
+        selectedServiceId.value = services[0].id;
+        shippingPrice.value = services[0].price;
+        break;
+      }
+    }
+    
+    isShippingReady.value = true;
+    showToast('Ongkos kirim berhasil dihitung!');
+  } catch(e) {
+    console.error('Failed to fetch shipping', e);
+    showToast('Gagal memuat ongkos kirim. Silakan periksa kembali detail alamat.');
+  } finally {
+    isFetchingShipping.value = false;
+  }
 };
 
 // Initialize addresses & cart items
 onMounted(() => {
-  syncAddressDetails();
+  fetchProvinces();
+  initGoogleMaps();
   if (checkedCheckoutItems.value && checkedCheckoutItems.value.length > 0) {
     activeCartItems.value = checkedCheckoutItems.value.map(item => ({ ...item }));
   } else {
@@ -699,29 +677,10 @@ const expandedCourier = ref('jne');  // sub-accordion expander
 const selectedServiceId = ref('next_day'); // default selected service
 
 const courierServices = ref({
-  jne: [
-    { id: 'sameday', name: 'Sameday', desc: 'Sampai dihari yang sama', price: 20000 },
-    { id: 'instan', name: 'Instan', desc: '1 - 2 jam sampai', price: 18000 },
-    { id: 'next_day', name: 'Next Day', desc: 'Sampai besok', price: 12000 },
-    { id: 'regular', name: 'Regular', desc: '2 - 3 hari kerja', price: 9000 },
-    { id: 'hemat', name: 'Hemat', desc: '3 - 5 hari kerja', price: 7000 }
-  ],
-  jnt: [
-    { id: 'jnt_reg', name: 'Regular EZ', desc: '2 - 3 hari kerja', price: 9000 },
-    { id: 'jnt_eco', name: 'Economy', desc: '3 - 6 hari kerja', price: 8000 }
-  ],
-  sicepat: [
-    { id: 'sicepat_best', name: 'BEST', desc: 'Besok Sampai Tujuan', price: 12000 },
-    { id: 'sicepat_reg', name: 'REG', desc: 'Layanan Regular', price: 9000 },
-    { id: 'sicepat_halu', name: 'HALU', desc: 'Harga Mulai Delapan Ribu', price: 8000 }
-  ],
-  anteraja: [
-    { id: 'anteraja_next', name: 'Next Day', desc: 'Layanan 1 hari kerja', price: 11500 },
-    { id: 'anteraja_reg', name: 'Regular', desc: 'Layanan 2-3 hari kerja', price: 8500 }
-  ]
+  jne: []
 });
 
-const shippingPrice = ref(12000); // flat tracking of shipping price
+const shippingPrice = ref(0); // flat tracking of shipping price
 
 const toggleCourier = (carrier) => {
   expandedCourier.value = expandedCourier.value === carrier ? null : carrier;
@@ -742,38 +701,16 @@ const selectCourierService = (carrier, service) => {
   shippingPrice.value = service.price;
 };
 
-const handleCodSelected = () => {
-  shippingPrice.value = 15000;
-  selectedCourier.value = '';
-  selectedServiceId.value = '';
-};
-
 // Courier text helpers
 const activeCourierLabel = computed(() => {
-  if (shippingType.value === 'cod') return 'COD';
-  const mapping = { jne: 'JNE', jnt: 'J&T', sicepat: 'SiCepat', anteraja: 'Anteraja' };
+  const mapping = { jne: 'JNE' };
   return mapping[selectedCourier.value] || 'Kurir';
 });
 
 const activeServiceLabel = computed(() => {
-  if (shippingType.value === 'cod') return 'Bayar di Tempat';
   const services = courierServices.value[selectedCourier.value] || [];
   const found = services.find(s => s.id === selectedServiceId.value);
   return found ? found.name : 'Regular';
-});
-
-// 4. Metode Pembayaran
-const selectedPayMethod = ref('ewallet'); // default 'ewallet' corresponding to mockup
-
-const selectedPayMethodName = computed(() => {
-  const mapping = {
-    bank: 'Transfer Bank',
-    ewallet: 'E-Wallet (OVO/GoPay/Dana)',
-    cc: 'Kartu Kredit / Debit',
-    va: 'Virtual Account',
-    qris: 'QRIS'
-  };
-  return mapping[selectedPayMethod.value] || 'Metode Pembayaran';
 });
 
 // Notes
@@ -816,6 +753,13 @@ const cartSubtotalPrice = computed(() => {
   return activeCartItems.value.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
 });
 
+const cartAdminFee = computed(() => {
+  return activeCartItems.value.reduce((acc, curr) => {
+    const fee = curr.admin_fee !== undefined ? curr.admin_fee : 2000;
+    return acc + (fee * curr.qty);
+  }, 0);
+});
+
 // Voucher
 const voucherCode = ref('');
 const voucherApplied = ref(false);
@@ -840,14 +784,8 @@ const removeVoucherCode = () => {
 // Total Payments calculation
 const totalPaymentsPrice = computed(() => {
   let total = cartSubtotalPrice.value;
-  
-  if (shippingType.value === 'courier') {
-    total += shippingPrice.value;
-  } else {
-    // COD fee of Rp 15.000 + JNE Next Day default shipping fee (Rp 12.000)
-    // Wait, in mockup, total is Rp 613.000 = Rp 586.000 (Subtotal) + Rp 12.000 (JNE Next Day) + Rp 15.000 (Biaya COD)
-    total += 12000 + 15000;
-  }
+  total += cartAdminFee.value;
+  total += shippingPrice.value;
   
   if (voucherApplied.value) {
     total -= voucherDiscount.value;
@@ -865,22 +803,140 @@ const isSubmitting = ref(false);
 const showSuccessModal = ref(false);
 const transactionId = ref('');
 
-const submitOrder = () => {
+const submitOrder = async () => {
+  if (!activeAddress.value.province_id || !shippingType.value) {
+    showToast('Mohon lengkapi alamat pengiriman dan metode pengiriman.');
+    return;
+  }
+  
   isSubmitting.value = true;
   
-  setTimeout(() => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    
+    // Admin fee is now computed in cartAdminFee
+    const totalAdminFee = cartAdminFee.value;
+    const productsPayload = activeCartItems.value.filter(item => item.qty > 0).map(item => {
+      const itemAdminFee = item.admin_fee !== undefined ? item.admin_fee : 2000;
+      return {
+        product_id: item.id,
+        qty: item.qty,
+        price: item.price,
+        weight: item.weight || 400,
+        admin_fee: itemAdminFee,
+        order_notes: item.note || "",
+        variant_id: item.variant_id || null
+      };
+    });
+    
+    // First item for delivery flags
+    const firstItem = activeCartItems.value[0] || {};
+    const originStore = firstItem.store_location || {};
+    const is_pickup_instore = firstItem.is_pickup_instore || 0;
+    const is_delivery = firstItem.is_delivery !== undefined ? firstItem.is_delivery : 1;
+    
+    let courierPayload = null;
+    if (shippingType.value === 'courier') {
+      const selectedCourierName = Object.keys(courierServices.value).find(c => 
+        courierServices.value[c].some(s => s.id === selectedServiceId.value)
+      ) || 'jne';
+      
+      courierPayload = {
+        main: activeCourierLabel.value,
+        type: activeServiceLabel.value,
+        courier_company: selectedCourierName,
+        courier_type: selectedServiceId.value,
+        origin_contact_name: "Dee Lestari Store",
+        origin_contact_phone: "081234567890",
+        origin_address: "Cimanggis, Depok, Jawa Barat",
+        origin_postal_code: originStore.postal_code || "",
+        destination_postal_code: activeAddress.value.zip,
+        origin_latitude: originStore.latitude || "",
+        origin_longitude: originStore.longitude || "",
+        destination_latitude: activeAddress.value.latitude,
+        destination_longitude: activeAddress.value.longitude,
+        name: profile.value.name,
+        phone: profile.value.phone,
+        address: activeAddress.value.street,
+        weight: productsPayload.reduce((acc, p) => acc + (p.weight * p.qty), 0),
+        price: shippingPrice.value
+      };
+    }
+    
+    const addressPayload = {
+      user_id: null,
+      is_main_address: 1,
+      province_id: activeAddress.value.province_id,
+      city_id: activeAddress.value.city_id,
+      address_detail: activeAddress.value.street,
+      address_name: activeAddress.value.address_name || "Shipping Address",
+      zipcode: activeAddress.value.zip,
+      latitude: String(activeAddress.value.latitude),
+      longitude: String(activeAddress.value.longitude),
+      nama_penerima: activeAddress.value.nama_penerima || profile.value.name,
+      phone: activeAddress.value.phone || profile.value.phone,
+      is_active: 1
+    };
+
+    const creatorId = apiUrl.includes('my.id') ? 48 : 127;
+
+    const payload = {
+      user_id: null,
+      name_pemesan: profile.value.name,
+      email_pemesan: profile.value.email,
+      phone_pemesan: profile.value.phone,
+      creator_id: creatorId,
+      total_price: cartSubtotalPrice.value,
+      grandtotal: totalPaymentsPrice.value,
+      admin_fee: totalAdminFee,
+      discount: voucherApplied.value ? voucherDiscount.value : 0,
+      product: productsPayload,
+      is_pickup_instore: is_pickup_instore,
+      is_delivery: is_delivery,
+      payment_method: "xendit",
+      payment_method_id: 4,
+      courier: courierPayload,
+      address: addressPayload,
+      success_redirect_url: window.location.origin + "/merch-invoice/{invoice_merch}",
+      failure_redirect_url: window.location.origin + "/checkout",
+      is_microsite: 1,
+      microsite_url: window.location.origin
+    };
+
+    const response = await fetch(`${apiUrl}/api/order-product`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+    
+    const xenditUrl = result.xendit_url || result.data?.xendit_url;
+    if (result.success || result.status === 'success' || xenditUrl) {
+      if (xenditUrl) {
+        window.location.href = xenditUrl; // Redirect to Xendit
+      } else {
+        transactionId.value = result.data?.invoice_number || Math.floor(100000 + Math.random() * 900000).toString();
+        showSuccessModal.value = true;
+      }
+    } else {
+      showToast(result.message || 'Gagal memproses pesanan.');
+    }
+  } catch(e) {
+    console.error('Order error:', e);
+    showToast('Terjadi kesalahan pada server saat membuat pesanan.');
+  } finally {
     isSubmitting.value = false;
-    transactionId.value = Math.floor(100000 + Math.random() * 900000).toString();
-    showSuccessModal.value = true;
-  }, 2000);
+  }
 };
 
 const closeSuccessModal = () => {
   showSuccessModal.value = false;
-  // Clear cart and go back home
   clearCart();
   checkedCheckoutItems.value = [];
-  currentPage.value = 'home';
+  currentPage.value = 'shop';
 };
 
 // Currency Formatter
@@ -915,6 +971,61 @@ const formatPrice = (price) => {
   display: flex;
   justify-content: center;
   margin-bottom: 2.5rem;
+}
+
+/* Address Stepper Styles */
+.address-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
+.step-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+.step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #FAF9F6;
+  border: 2px solid var(--color-mocca-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--color-mocca-muted);
+  transition: all 0.3s ease;
+}
+.step-indicator.active .step-circle {
+  background-color: var(--color-mocca-dark);
+  border-color: var(--color-mocca-dark);
+  color: white;
+}
+.step-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-mocca-muted);
+}
+.step-indicator.active .step-label {
+  color: var(--color-mocca-dark);
+}
+.step-line {
+  flex: 1;
+  height: 2px;
+  background-color: var(--color-mocca-border);
+  margin: 0 10px;
+  position: relative;
+  top: -10px;
+  transition: all 0.3s ease;
+}
+.step-line.active {
+  background-color: var(--color-mocca-dark);
 }
 
 .stepper-wrapper {

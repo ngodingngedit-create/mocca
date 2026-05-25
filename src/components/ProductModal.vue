@@ -49,9 +49,7 @@
             </div>
 
             <!-- Description -->
-            <p class="product-description">
-              {{ productData.description }}
-            </p>
+            <div class="product-description" v-html="productData.description"></div>
 
             <!-- Feature Bar Grid -->
             <div class="feature-bar">
@@ -61,23 +59,11 @@
               </div>
             </div>
 
-            <!-- Color selection -->
-            <div class="selection-section">
-              <span class="selection-title">Warna</span>
-              <div class="selection-options colors-row">
-                <span 
-                  v-for="color in product.colors" 
-                  :key="color"
-                  :class="['color-swatch-circle', `circle-${color}`, { active: selectedColor === color }]"
-                  @click="selectedColor = color"
-                  :title="color"
-                ></span>
-              </div>
-            </div>
+
 
             <!-- Size selection -->
             <div class="selection-section">
-              <span class="selection-title">Size</span>
+              <span class="selection-title">Varian</span>
               <div class="selection-options sizes-row">
                 <button 
                   v-for="sz in productData.sizes" 
@@ -87,6 +73,13 @@
                 >
                   {{ sz }}
                 </button>
+              </div>
+              <!-- Stock Info -->
+              <div v-if="productData.variants" class="stock-indicator">
+                <span v-if="isCurrentSoldOut" class="stock-badge sold-out">Stok Habis</span>
+                <span v-else class="stock-badge available">
+                  {{ currentStockCount !== null ? `Sisa stok: ${currentStockCount}` : 'Tersedia' }}
+                </span>
               </div>
             </div>
 
@@ -108,11 +101,11 @@
                   </button>
                 </div>
 
-                <button class="add-to-cart-outline-btn" @click="handleAddToCart">
+                <button class="add-to-cart-outline-btn" @click="handleAddToCart" :disabled="isCurrentSoldOut">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bag-icon"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                   Add to Cart
                 </button>
-                <button class="buy-now-solid-btn" @click="handleBuyNow">Buy Now</button>
+                <button class="buy-now-solid-btn" @click="handleBuyNow" :disabled="isCurrentSoldOut">Buy Now</button>
               </div>
             </div>
           </div>
@@ -164,7 +157,7 @@
 
 <script setup>
 import { ref, watch, computed } from 'vue';
-import { addToCart, updateQuantity, getItemQuantity, currentPage, currentLang } from '../store/cart.js';
+import { addToCart, updateQuantity, getItemQuantity, currentPage, currentLang, checkedCheckoutItems } from '../store/cart.js';
 
 const props = defineProps({
   isOpen: { type: Boolean, required: true },
@@ -258,20 +251,112 @@ const productsMetadata = {
   }
 };
 
-// Compute dynamic metadata based on product id
+const fetchedProductDetails = ref(null);
+const isLoadingDetails = ref(false);
+
+// Compute dynamic metadata based on product id or fetched data
 const productData = computed(() => {
-  return productsMetadata[props.product.id] || productsMetadata.tee;
+  if (fetchedProductDetails.value) {
+    const d = fetchedProductDetails.value;
+    
+    const variants = d.productVarian || d.product_varian || [];
+    const sizes = variants.map(v => v.varian_name);
+    const defaultSize = sizes.length > 0 ? sizes[0] : 'One Size';
+    const thumbnails = d.product_image && d.product_image.length > 0 
+      ? d.product_image.map(img => img.image_url) 
+      : (props.product?.image ? [props.product.image] : ['/mocca_group_tee.png']);
+
+    const plainDesc = d.description || 'Official merchandise Mocca.';
+
+    return {
+      description: plainDesc,
+      sizes: sizes.length > 0 ? sizes : ['One Size'],
+      defaultSize: defaultSize,
+      thumbnails: thumbnails,
+      variants: variants,
+      features: [
+        { label: 'Official Merchandise Mocca', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="f-icon"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8"/></svg>' }
+      ]
+    };
+  }
+  
+  const meta = productsMetadata[props.product?.id] || productsMetadata.tee;
+  return {
+    ...meta,
+    thumbnails: props.product?.image ? [props.product.image] : meta.thumbnails
+  };
 });
 
-// Watch for product changes to reset selectors
-watch(() => props.product, (newVal) => {
+const currentVariant = computed(() => {
+  if (productData.value && productData.value.variants) {
+    return productData.value.variants.find(v => v.varian_name === selectedSize.value);
+  }
+  return null;
+});
+
+const currentStockCount = computed(() => {
+  if (currentVariant.value && currentVariant.value.stock_summary) {
+    return currentVariant.value.stock_summary.sisa_stock;
+  }
+  return null;
+});
+
+const isCurrentSoldOut = computed(() => {
+  if (currentVariant.value) {
+    return currentVariant.value.is_soldout === 1 || currentStockCount.value === 0;
+  }
+  return false;
+});
+
+watch(isCurrentSoldOut, (soldOut) => {
+  if (soldOut) {
+    qty.value = 0;
+  } else if (qty.value === 0) {
+    qty.value = 1;
+  }
+});
+
+// Watch for product data changes to reset selected size if needed
+watch(productData, (newMeta) => {
+  if (!selectedSize.value || !newMeta.sizes.includes(selectedSize.value)) {
+    selectedSize.value = newMeta.defaultSize;
+  }
+});
+
+// Watch for product changes to reset selectors and fetch details
+watch(() => props.product, async (newVal) => {
   if (newVal && newVal.id) {
     activeImageIndex.value = 0;
-    selectedColor.value = newVal.colors ? newVal.colors[0] : '';
-    const meta = productsMetadata[newVal.id] || productsMetadata.tee;
-    selectedSize.value = meta.defaultSize;
-    qty.value = getItemQuantity(newVal.id, selectedColor.value) || 1;
+    selectedColor.value = newVal.colors ? newVal.colors[0] : 'cream';
     isWishlisted.value = false;
+    fetchedProductDetails.value = null;
+    qty.value = getItemQuantity(newVal.id, selectedColor.value) || 1;
+
+    if (newVal.slug) {
+      isLoadingDetails.value = true;
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+        const response = await fetch(`${apiUrl}/api/product/${newVal.slug}`);
+        const resJson = await response.json();
+        if (resJson.data) {
+          fetchedProductDetails.value = resJson.data;
+          // Ensure default variant is selected immediately after fetch
+          const variants = resJson.data.productVarian || resJson.data.product_varian || [];
+          if (variants.length > 0) {
+            selectedSize.value = variants[0].varian_name;
+          } else {
+            selectedSize.value = 'One Size';
+          }
+        }
+      } catch(e) {
+        console.error('Failed to fetch product details', e);
+      } finally {
+        isLoadingDetails.value = false;
+      }
+    } else {
+      const meta = productData.value;
+      selectedSize.value = meta.defaultSize;
+    }
   }
 }, { immediate: true });
 
@@ -292,6 +377,7 @@ const toggleWishlist = () => {
 };
 
 const changeModalQty = (delta) => {
+  if (isCurrentSoldOut.value) return;
   qty.value = Math.max(0, qty.value + delta); // Allow quantity down to 0!
 };
 
@@ -300,15 +386,20 @@ const handleAddToCart = () => {
     id: props.product.id,
     title: productTitle.value,
     price: props.product.price,
-    image: props.product.image
+    image: props.product.image,
+    has_store_location: fetchedProductDetails.value?.has_store_location || props.product?.has_store_location || null
   };
   
+  const variantVal = selectedSize.value || '-';
+  
   // Calculate difference between desired quantity and current cart count
-  const currentCartQty = getItemQuantity(p.id, selectedColor.value);
+  const currentCartQty = getItemQuantity(p.id, variantVal);
   const diff = qty.value - currentCartQty;
   
-  if (diff !== 0) {
-    updateQuantity(p.id, selectedColor.value, diff);
+  if (currentCartQty === 0 && qty.value > 0) {
+    addToCart(p, variantVal, qty.value);
+  } else if (diff !== 0) {
+    updateQuantity(p.id, variantVal, diff);
   }
   
   if (qty.value === 0) {
@@ -323,21 +414,29 @@ const handleAddToCart = () => {
 };
 
 const handleBuyNow = () => {
-  const p = {
+  if (isCurrentSoldOut.value) return;
+  
+  const productPrice = props.product.price || 0;
+  const currentPrice = currentVariant.value ? parseInt(currentVariant.value.price) : productPrice;
+
+  const storeLocation = fetchedProductDetails.value?.has_store_location || props.product?.has_store_location || null;
+
+  checkedCheckoutItems.value = [{
     id: props.product.id,
-    title: productTitle.value,
-    price: props.product.price,
-    image: props.product.image
-  };
-  const currentCartQty = getItemQuantity(p.id, selectedColor.value);
-  if (currentCartQty === 0 && qty.value > 0) {
-    updateQuantity(p.id, selectedColor.value, qty.value);
-  }
+    name: productTitle.value,
+    price: currentPrice,
+    qty: Math.max(1, qty.value),
+    color: selectedColor.value,
+    size: selectedSize.value || '-',
+    image: props.product.image,
+    note: '',
+    store_location: storeLocation
+  }];
   
   triggerToast(currentLang.value === 'id' ? 'Mengarahkan ke halaman checkout...' : 'Directing to checkout page...');
   setTimeout(() => {
     close();
-    currentPage.value = 'checkout';
+    currentPage.value = 'payment';
   }, 800);
 };
 
@@ -378,8 +477,9 @@ const formatPrice = (price) => {
 
 .modal-container {
   background-color: var(--color-bg-light);
-  width: 1080px;
-  max-width: 100%;
+  width: 960px;
+  max-width: 95vw;
+  max-height: 90vh;
   border-radius: 16px;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
   position: relative;
@@ -433,8 +533,9 @@ const formatPrice = (price) => {
 .modal-main-content {
   display: flex;
   width: 100%;
-  height: auto;
-  min-height: 520px;
+  flex: 1;
+  min-height: 480px;
+  overflow: hidden;
 }
 
 /* Left Image Column */
@@ -445,6 +546,7 @@ const formatPrice = (price) => {
   gap: 1.25rem;
   background-color: #FAF6F0; /* Soft warm cream */
   border-right: 1px solid var(--color-mocca-border);
+  overflow-y: auto;
 }
 
 /* 1. Thumbnails column */
@@ -505,6 +607,7 @@ const formatPrice = (price) => {
   padding: 2rem 2.5rem 1.5rem 2.5rem;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .info-header {
@@ -591,6 +694,22 @@ const formatPrice = (price) => {
   line-height: 1.6;
   color: #55443a;
   margin-bottom: 0.85rem;
+}
+
+:deep(.product-description h2),
+:deep(.product-description h3) {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+:deep(.product-description p) {
+  margin-bottom: 0.5rem;
+}
+
+:deep(.product-description ul) {
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 /* Feature grid */
@@ -713,6 +832,28 @@ const formatPrice = (price) => {
   border-color: var(--color-mocca-dark);
 }
 
+.stock-indicator {
+  margin-top: 0.5rem;
+}
+
+.stock-badge {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.stock-badge.sold-out {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
+.stock-badge.available {
+  background-color: #D1FAE5;
+  color: #065F46;
+}
+
 /* Control & Checkout sections */
 .checkout-control-section {
   border-top: 1px solid rgba(59, 35, 20, 0.08);
@@ -809,14 +950,21 @@ const formatPrice = (price) => {
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 0.5rem;
   transition: var(--transition-smooth);
   flex-grow: 1;
+  justify-content: center;
 }
 
-.add-to-cart-outline-btn:hover {
+.add-to-cart-outline-btn:hover:not(:disabled) {
   background-color: rgba(59, 35, 20, 0.04);
+}
+
+.add-to-cart-outline-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--color-mocca-muted);
+  color: var(--color-mocca-muted);
 }
 
 .bag-icon {
@@ -827,19 +975,31 @@ const formatPrice = (price) => {
 .buy-now-solid-btn {
   background-color: var(--color-mocca-dark);
   color: var(--color-bg-light);
+  border: none;
   font-family: var(--font-body);
   font-size: 0.85rem;
   font-weight: 600;
-  padding: 0 1.75rem;
+  padding: 0 1.5rem;
   height: 44px;
   border-radius: 6px;
-  border: none;
   cursor: pointer;
+  flex-grow: 1;
   transition: var(--transition-smooth);
+  box-shadow: 0 4px 15px rgba(59, 35, 20, 0.15);
 }
 
-.buy-now-solid-btn:hover {
+.buy-now-solid-btn:hover:not(:disabled) {
   background-color: #2D1A0E;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 35, 20, 0.2);
+}
+
+.buy-now-solid-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  background-color: var(--color-mocca-muted);
 }
 
 /* Bottom trust bar grid */

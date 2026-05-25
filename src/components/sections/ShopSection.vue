@@ -74,7 +74,7 @@
           <!-- Creator Section -->
           <div class="card-creator-section" @click.stop="currentPage = 'creator'">
             <div class="creator-avatar-wrapper">
-              <img :src="`/logo_${product.creator?.name || 'deelestari'}.png`" :alt="product.creator?.name" class="creator-avatar" />
+              <img :src="product.creator?.image_url || '/logo_mocca.png'" :alt="product.creator?.name" class="creator-avatar" />
             </div>
             <div class="creator-info">
               <span class="creator-label">{{ currentLang === 'id' ? 'Partner Store' : 'Provided by' }}</span>
@@ -148,7 +148,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import ProductModal from '../ProductModal.vue';
 import { 
   addToCart, 
@@ -185,48 +185,53 @@ const handleCardClick = (product, event) => {
   openModal(product);
 };
 
-// Static products metadata list
-const products = [
-  {
-    id: 'tee',
-    title: 'Mocca Group Tee',
-    price: 199000,
-    image: '/mocca_group_tee.png',
-    colors: ['cream', 'black'],
-    creator: { name: 'mocca', avatarInitial: 'M' }
-  },
-  {
-    id: 'tote',
-    title: 'Mocca Logo Tote Bag',
-    price: 149000,
-    image: '/mocca_tote_bag.png',
-    colors: ['green', 'cream', 'black'],
-    creator: { name: 'mocca', avatarInitial: 'M' }
-  },
-  {
-    id: 'mug',
-    title: 'Mocca Enamel Mug',
-    price: 119000,
-    image: '/mocca_enamel_mug.png',
-    colors: ['cream'],
-    creator: { name: 'deelestari', avatarInitial: 'D' }
-  },
-  {
-    id: 'cap',
-    title: 'Mocca Logo Cap',
-    price: 179000,
-    image: '/mocca_logo_cap.png',
-    colors: ['beige', 'black'],
-    creator: { name: 'kolektix', avatarInitial: 'K' }
-  }
-];
+// Reactive products list
+const products = ref([]);
 
 // Reactive active swatch selections
-const selectedColors = ref({
-  tee: 'cream',
-  tote: 'green',
-  mug: 'cream',
-  cap: 'beige'
+const selectedColors = ref({});
+
+const fetchProducts = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const creatorId = apiUrl.includes('my.id') ? 48 : 127;
+    const response = await fetch(`${apiUrl}/api/product?creator_id=${creatorId}`);
+    const json = await response.json();
+    const data = Array.isArray(json) ? json : json.data;
+    
+    if (data) {
+      products.value = data.map(p => {
+        let price = parseInt(p.price);
+        if (price === 0 && p.product_varian && p.product_varian.length > 0) {
+          price = parseInt(p.product_varian[0].price);
+        }
+        return {
+          id: p.id,
+          slug: p.slug,
+          title: p.product_name,
+          price: price,
+          image: p.product_image?.[0]?.image_url || '/mocca_group_tee.png',
+          colors: ['cream'],
+          creator: { 
+            name: p.creator?.name || 'My Diary Records', 
+            image_url: p.creator?.image_url || '/logo_mocca.png',
+            avatarInitial: p.creator?.name?.[0] || 'M' 
+          },
+          has_store_location: p.has_store_location
+        };
+      });
+      
+      data.forEach(p => {
+        selectedColors.value[p.id] = 'cream';
+      });
+    }
+  } catch (error) {
+    console.error('Failed to fetch products:', error);
+  }
+};
+
+onMounted(() => {
+  fetchProducts();
 });
 
 // Helper actions
@@ -254,8 +259,8 @@ const formatPrice = (price) => {
 
 // Reactive search filtering
 const filteredProducts = computed(() => {
-  if (!searchQuery.value) return products;
-  return products.filter(p => p.title.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  if (!searchQuery.value) return products.value;
+  return products.value.filter(p => p.title.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
 
 const resetSearch = () => {

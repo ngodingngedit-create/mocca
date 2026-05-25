@@ -121,7 +121,7 @@
           <!-- Creator Section -->
           <div class="card-creator-section" @click.stop="currentPage = 'creator'">
             <div class="creator-avatar-wrapper">
-              <img :src="`/logo_${product.creator?.name || 'deelestari'}.png`" :alt="product.creator?.name" class="creator-avatar" />
+              <img :src="product.creator?.image_url || '/logo_mocca.png'" :alt="product.creator?.name" class="creator-avatar" />
             </div>
             <div class="creator-info">
               <span class="creator-label">{{ currentLang === 'id' ? 'Partner Store' : 'Provided by' }}</span>
@@ -143,7 +143,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import ProductModal from './ProductModal.vue';
 import { addToCart, updateQuantity, getItemQuantity, currentLang, isSearchOpen, searchQuery, currentPage } from '../store/cart.js';
 
@@ -190,103 +190,59 @@ const handleCardClick = (product, event) => {
   openModal(product);
 };
 
-// Expanded catalog products (12 items)
-const products = [
-  {
-    id: 'tee', category: 'apparel',
-    titleEn: 'Mocca Group Tee', titleId: 'Kaos Mocca Group',
-    price: 199000, image: '/mocca_group_tee.png',
-    colors: ['cream', 'black'],
-    creator: { name: 'mocca', avatarInitial: 'M' }
-  },
-  {
-    id: 'tote', category: 'accessories',
-    titleEn: 'Mocca Logo Tote Bag', titleId: 'Tas Kanvas Mocca Logo',
-    price: 149000, image: '/mocca_tote_bag.png',
-    colors: ['green', 'cream', 'black'],
-    creator: { name: 'mocca', avatarInitial: 'M' }
-  },
-  {
-    id: 'mug', category: 'home',
-    titleEn: 'Mocca Enamel Mug', titleId: 'Cangkir Enamel Mocca',
-    price: 119000, image: '/mocca_enamel_mug.png',
-    colors: ['cream'],
-    creator: { name: 'deelestari', avatarInitial: 'D' }
-  },
-  {
-    id: 'cap', category: 'accessories',
-    titleEn: 'Mocca Logo Cap', titleId: 'Topi Mocca Logo',
-    price: 179000, image: '/mocca_logo_cap.png',
-    colors: ['beige', 'black'],
-    creator: { name: 'kolektix', avatarInitial: 'K' }
-  },
-  {
-    id: 'sticker', category: 'accessories',
-    titleEn: 'Mocca Sticker Pack', titleId: 'Paket Stiker Mocca',
-    price: 49000, image: '/mocca_sticker_pack.png',
-    colors: ['cream'],
-    creator: { name: 'kolektix', avatarInitial: 'K' }
-  },
-  {
-    id: 'keychain', category: 'accessories',
-    titleEn: 'Mocca Keychain', titleId: 'Gantungan Kunci Mocca',
-    price: 59000, image: '/mocca_keychain.png',
-    colors: ['cream'],
-    creator: { name: 'kolektix', avatarInitial: 'K' }
-  },
-  {
-    id: 'hoodie', category: 'apparel',
-    titleEn: 'Mocca Classic Hoodie', titleId: 'Jaket Hoodie Mocca',
-    price: 349000, image: '/mocca_col_apparel.png',
-    colors: ['black', 'cream'],
-    creator: { name: 'mocca', avatarInitial: 'M' }
-  },
-  {
-    id: 'notebook', category: 'home',
-    titleEn: 'Mocca Daily Notebook', titleId: 'Buku Catatan Mocca',
-    price: 89000, image: '/mocca_col_everyday.png',
-    colors: ['beige'],
-    creator: { name: 'deelestari', avatarInitial: 'D' }
-  },
-  {
-    id: 'tumbler', category: 'home',
-    titleEn: 'Mocca Tumbler', titleId: 'Tumbler Mocca',
-    price: 159000, image: '/mocca_col_accessories.png',
-    colors: ['black', 'cream'],
-    creator: { name: 'mocca', avatarInitial: 'M' }
-  },
-  {
-    id: 'poster', category: 'accessories',
-    titleEn: 'Mocca Poster Set', titleId: 'Set Poster Mocca',
-    price: 99000, image: '/album_art.png',
-    colors: ['cream'],
-    creator: { name: 'mocca', avatarInitial: 'M' }
-  },
-  {
-    id: 'pin', category: 'accessories',
-    titleEn: 'Mocca Signature Pin', titleId: 'Pin Logo Mocca',
-    price: 39000, image: '/mocca_keychain.png',
-    colors: ['beige'],
-    creator: { name: 'deelestari', avatarInitial: 'D' }
-  },
-  {
-    id: 'bundle', category: 'bundles',
-    titleEn: 'Mocca Ultimate Bundle', titleId: 'Paket Mocca Lengkap',
-    price: 499000, image: '/mocca_collage.png',
-    colors: ['cream'],
-    creator: { name: 'mocca', avatarInitial: 'M' }
-  }
-];
+// Reactive products list
+const products = ref([]);
 
 // Swatch selection state for each item
-const selectedColors = ref({
-  tee: 'cream', tote: 'green', mug: 'cream', cap: 'beige',
-  sticker: 'cream', keychain: 'cream', hoodie: 'black', notebook: 'beige',
-  tumbler: 'black', poster: 'cream', pin: 'beige', bundle: 'cream'
+const selectedColors = ref({});
+
+const fetchProducts = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const creatorId = apiUrl.includes('my.id') ? 48 : 127;
+    const response = await fetch(`${apiUrl}/api/product?creator_id=${creatorId}`);
+    const json = await response.json();
+    const data = Array.isArray(json) ? json : json.data;
+    
+    if (data) {
+      products.value = data.map(p => {
+        let price = parseInt(p.price);
+        if (price === 0 && p.product_varian && p.product_varian.length > 0) {
+          price = parseInt(p.product_varian[0].price);
+        }
+        return {
+          id: p.id,
+          slug: p.slug,
+          category: 'apparel', // Default category since API might not provide exact categories matching UI
+          titleEn: p.product_name,
+          titleId: p.product_name,
+          price: price,
+          image: p.product_image?.[0]?.image_url || '/mocca_group_tee.png',
+          colors: ['cream'],
+          creator: { 
+            name: p.creator?.name || 'My Diary Records', 
+            image_url: p.creator?.image_url || '/logo_mocca.png',
+            avatarInitial: p.creator?.name?.[0] || 'M' 
+          },
+          has_store_location: p.has_store_location
+        };
+      });
+      
+      data.forEach(p => {
+        selectedColors.value[p.id] = 'cream';
+      });
+    }
+  } catch (error) {
+    console.error('Failed to fetch products:', error);
+  }
+};
+
+onMounted(() => {
+  fetchProducts();
 });
 
 const filteredProducts = computed(() => {
-  let result = products;
+  let result = products.value;
   if (activeCategory.value !== 'all') {
     result = result.filter(p => p.category === activeCategory.value);
   }

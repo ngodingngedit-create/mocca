@@ -111,18 +111,7 @@
                     </div>
                   </div>
 
-                  <!-- Optional Note Row -->
-                  <div class="row-note-data">
-                    <div class="note-container">
-                      <label class="note-label">Catatan (opsional)</label>
-                      <input 
-                        type="text" 
-                        v-model="item.note"
-                        :placeholder="item.notePlaceholder" 
-                        class="note-input"
-                      />
-                    </div>
-                  </div>
+
                 </div>
               </div>
             </div>
@@ -158,8 +147,8 @@
                   </div>
                   <div class="prod-info">
                     <h4 class="prod-name font-bold">{{ item.name }}</h4>
-                    <span class="prod-meta">Warna: {{ item.color }}, Ukuran: {{ item.size }}</span>
-                    <span class="prod-note" v-if="item.note">Catatan: "{{ item.note }}"</span>
+                    <span class="prod-meta" v-if="(item.size && item.size !== '-') || (item.color && item.color !== 'default')">Varian: {{ item.size && item.size !== '-' ? item.size : item.color }}</span>
+
                   </div>
                 </div>
                 
@@ -180,33 +169,9 @@
                 <span class="row-label">Subtotal ({{ checkedItemsCount }} produk)</span>
                 <span class="row-value">{{ formatPrice(subtotal) }}</span>
               </div>
-              
-              <div class="summary-row">
-                <span class="row-label">Ongkir</span>
-                <span class="row-value">{{ formatPrice(shippingFee) }}</span>
-              </div>
-              
-              <div class="summary-divider"></div>
-              
-              <div class="summary-row total-row">
-                <span class="row-label">Total</span>
-                <span class="row-value total-price">{{ formatPrice(totalPrice) }}</span>
-              </div>
             </div>
+              
 
-            <!-- Delivery Estimate Banner -->
-            <div class="estimate-banner">
-              <svg class="truck-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="1" y="3" width="15" height="13" rx="2" ry="2"></rect>
-                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-                <circle cx="5.5" cy="18.5" r="2.5"></circle>
-                <circle cx="18.5" cy="18.5" r="2.5"></circle>
-              </svg>
-              <div class="banner-text">
-                <span class="banner-title">Estimasi pengiriman</span>
-                <span class="banner-desc">2–4 hari kerja</span>
-              </div>
-            </div>
 
             <!-- Action Buttons -->
             <div class="summary-actions">
@@ -317,6 +282,7 @@ watch(cartItems, (newCartItems) => {
       existing.name = cartItem.title;
       existing.price = cartItem.price;
       existing.image = cartItem.image;
+      existing.store_location = cartItem.store_location;
       updatedItems.push(existing);
     } else {
       updatedItems.push({
@@ -329,7 +295,8 @@ watch(cartItems, (newCartItems) => {
         checked: true,
         image: cartItem.image,
         note: '',
-        notePlaceholder: 'Contoh: tolong dibungkus rapi'
+        notePlaceholder: 'Contoh: tolong dibungkus rapi',
+        store_location: cartItem.store_location
       });
     }
   });
@@ -346,12 +313,8 @@ const subtotal = computed(() => {
     .reduce((sum, item) => sum + item.price * item.qty, 0);
 });
 
-const shippingFee = computed(() => {
-  return subtotal.value > 0 ? 18000 : 0;
-});
-
 const totalPrice = computed(() => {
-  return subtotal.value + shippingFee.value;
+  return subtotal.value;
 });
 
 const checkedItemsCount = computed(() => {
@@ -431,7 +394,8 @@ const processPayment = () => {
       color: item.color,
       size: item.size || '-',
       image: item.image,
-      note: item.note || ''
+      note: item.note || '',
+      store_location: item.store_location
     }));
 
   showToast('Menghubungkan ke gerbang pembayaran aman...');
