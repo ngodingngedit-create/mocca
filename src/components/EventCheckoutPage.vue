@@ -484,7 +484,19 @@ const totalTicketCount = computed(() => {
   return 2;
 });
 
-const serviceFee = ref(10000);
+const serviceFee = computed(() => {
+  let feeTotal = 0;
+  if (selectedTickets.value && selectedTickets.value.length > 0) {
+    selectedTickets.value.forEach(t => {
+      const fee = t.ticket_fee !== undefined ? Number(t.ticket_fee) : 0;
+      feeTotal += fee * t.quantity;
+    });
+  } else if (selectedTicket.value) {
+    const fee = selectedTicket.value.ticket_fee !== undefined ? Number(selectedTicket.value.ticket_fee) : 0;
+    feeTotal += fee * ticketQuantity.value;
+  }
+  return feeTotal;
+});
 
 const grandTotalPrice = computed(() => {
   return subtotalPrice.value + serviceFee.value;
@@ -657,20 +669,20 @@ const onCityChange = () => {
 // Form validation
 const validateForm = () => {
   const data = formData.value;
+  const ev = displayEvent.value;
   // Mock validation for seat mismatch
   if (data.fullName.toLowerCase().trim() === 'seat') {
     return 'Jumlah seat tidak sesuai qty';
   }
-  if (!data.fullName.trim()) return currentLang.value === 'id' ? 'Nama Lengkap wajib diisi.' : 'Full Name is required.';
-  if (!data.idCard.trim() || data.idCard.length < 16) return currentLang.value === 'id' ? 'Nomor Identitas (KTP) harus 16 digit.' : 'ID Card number must be 16 digits.';
-  if (!data.email.trim() || !data.email.includes('@')) return currentLang.value === 'id' ? 'Format email tidak valid.' : 'Invalid email format.';
-  if (!data.phone.trim()) return currentLang.value === 'id' ? 'Nomor Telepon wajib diisi.' : 'Phone Number is required.';
-  if (!data.birthDate) return currentLang.value === 'id' ? 'Tanggal Lahir wajib diisi.' : 'Birth date is required.';
-  if (!data.address.trim()) return currentLang.value === 'id' ? 'Alamat Lengkap wajib diisi.' : 'Full Address is required.';
-  if (!data.province) return currentLang.value === 'id' ? 'Provinsi wajib dipilih.' : 'Province selection is required.';
-  if (!data.city) return currentLang.value === 'id' ? 'Kota / Kabupaten wajib dipilih.' : 'City/Regency selection is required.';
-  if (!data.district) return currentLang.value === 'id' ? 'Kecamatan wajib dipilih.' : 'District selection is required.';
-  if (!data.postalCode.trim()) return currentLang.value === 'id' ? 'Kode Pos wajib diisi.' : 'Postal Code is required.';
+  
+  if (ev.is_name != 0 && !data.fullName.trim()) return currentLang.value === 'id' ? 'Nama Lengkap wajib diisi.' : 'Full Name is required.';
+  if (ev.is_email != 0 && (!data.email.trim() || !data.email.includes('@'))) return currentLang.value === 'id' ? 'Format email tidak valid.' : 'Invalid email format.';
+  if (ev.is_phone_number != 0 && !data.phone.trim()) return currentLang.value === 'id' ? 'Nomor Telepon wajib diisi.' : 'Phone Number is required.';
+  if (ev.is_birthdate != 0 && !data.birthDate) return currentLang.value === 'id' ? 'Tanggal Lahir wajib diisi.' : 'Birth date is required.';
+  if (ev.is_profession != 0 && !data.job.trim()) return currentLang.value === 'id' ? 'Pekerjaan wajib diisi.' : 'Profession is required.';
+  if (ev.is_company != 0 && !data.company.trim()) return currentLang.value === 'id' ? 'Perusahaan / Instansi wajib diisi.' : 'Company is required.';
+  if (ev.is_kelas != 0 && !data.kelas.trim()) return currentLang.value === 'id' ? 'Kelas / Semester wajib diisi.' : 'Class / Semester is required.';
+
   if (!data.privacyChecked1 || !data.privacyChecked2) {
     return currentLang.value === 'id' 
       ? 'Anda harus menyetujui seluruh ketentuan dan kebijakan privasi.' 
@@ -713,20 +725,21 @@ const proceedToPayment = async () => {
   
   // 1. Orderer identity
   identities.push({
-    nik: formData.value.idCard || "0000000000000000",
+    nik: formData.value.idCard || "",
     full_name: formData.value.fullName,
     email: formData.value.email,
     countryCode: "62",
     no_telp: formData.value.phone.replace(/^0+/, ''),
     is_pemesan: 1,
     identity_type_id: 1,
-    event_ticket_id: selectedTickets.value.length > 0 ? selectedTickets.value[0].id : (selectedTicket.value?.id || 1)
+    event_ticket_id: selectedTickets.value.length > 0 ? selectedTickets.value[0].id : (selectedTicket.value?.id || 1),
+    seat_number: ""
   });
 
   // 2. Ticket attendees
   ticketAttendees.value.forEach((attendee) => {
     identities.push({
-      nik: attendee.idCard || "0000000000000000",
+      nik: attendee.idCard || "",
       full_name: attendee.fullName,
       email: attendee.email,
       countryCode: "62",
@@ -748,8 +761,8 @@ const proceedToPayment = async () => {
         price: t.price,
         name: t.name,
         subtotal_price: t.price * t.quantity,
-        is_bundling: t.isBundle ? 1 : 0,
-        bundling_qty: t.isBundle ? t.quantity : 0,
+        is_bundling: t.is_bundling !== undefined ? t.is_bundling : (t.isBundle ? 1 : 0),
+        bundling_qty: t.bundling_qty !== undefined ? t.bundling_qty : (t.isBundle ? t.quantity : 0),
         qty_ticket: t.quantity,
         is_promo: 0,
         is_bundling_merch: 0,
@@ -770,8 +783,8 @@ const proceedToPayment = async () => {
         price: selectedTicket.value.price,
         name: selectedTicket.value.name,
         subtotal_price: selectedTicket.value.price * ticketQuantity.value,
-        is_bundling: 0,
-        bundling_qty: 0,
+        is_bundling: selectedTicket.value.is_bundling !== undefined ? selectedTicket.value.is_bundling : 0,
+        bundling_qty: selectedTicket.value.bundling_qty !== undefined ? selectedTicket.value.bundling_qty : 0,
         qty_ticket: ticketQuantity.value,
         is_promo: 0,
         is_bundling_merch: 0,
@@ -823,14 +836,18 @@ const proceedToPayment = async () => {
     });
 
     const result = await response.json();
-    if (response.ok || result.success) {
+    const xenditUrl = result.xendit_url || result.data?.xendit_url || result.data?.invoice_url || result.invoice_url;
+    if (response.ok || result.success || xenditUrl) {
       triggerToast(
         currentLang.value === 'id' ? 'Koneksi Sukses' : 'Connection Success',
         currentLang.value === 'id' ? 'Menghubungkan ke sistem pembayaran...' : 'Redirecting to payment gateway...'
       );
       setTimeout(() => {
-        currentPage.value = 'payment';
+        currentPage.value = 'home';
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (xenditUrl) {
+          window.location.href = xenditUrl;
+        }
       }, 1200);
     } else {
       triggerToast(

@@ -196,17 +196,7 @@
                 </h3>
                 
                 <div class="info-facts-horizontal-grid">
-                  <!-- Usia Minimum -->
-                  <div class="fact-item-inline">
-                    <svg class="fact-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                    <div class="fact-text">
-                      <span class="fact-label">{{ currentLang === 'id' ? 'Usia Minimum' : 'Minimum Age' }}</span>
-                      <span class="fact-value">{{ displayEvent.minAge || 'Semua umur' }}</span>
-                    </div>
-                  </div>
+                  <!-- Usia Minimum (Hidden per request) -->
 
                   <!-- Kategori Event -->
                   <div class="fact-item-inline">
@@ -219,17 +209,7 @@
                     </div>
                   </div>
 
-                  <!-- Durasi -->
-                  <div class="fact-item-inline">
-                    <svg class="fact-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    <div class="fact-text">
-                      <span class="fact-label">{{ currentLang === 'id' ? 'Durasi' : 'Duration' }}</span>
-                      <span class="fact-value">{{ displayEvent.duration || '11 Jam' }}</span>
-                    </div>
-                  </div>
+                  <!-- Durasi (Hidden per request) -->
 
                   <!-- Bahasa -->
                   <div class="fact-item-inline">
@@ -264,7 +244,7 @@
               </div>
 
               <!-- Lineup & Program -->
-              <div class="desc-sub-section">
+              <div v-if="false" class="desc-sub-section">
                 <h3 class="section-title">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="title-icon">
                     <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
@@ -972,6 +952,7 @@ const fetchTickets = async () => {
           isBundle: t.is_bundling === 1,
           status: t.is_soldout ? 'sold-out' : 'on-sale',
           description: t.description || '',
+          ticket_fee: t.ticket_fee !== undefined ? t.ticket_fee : 0,
           benefits: [],
           month: monthName,
           day: dayNum,
@@ -1009,7 +990,8 @@ const selectTicket = (ticket) => {
       id: ticket.id,
       name: ticket.name,
       price: ticket.price,
-      quantity: 1
+      quantity: 1,
+      ticket_fee: ticket.ticket_fee
     });
   }
 };
@@ -1058,7 +1040,8 @@ const selectTicketCard = (ticket) => {
       id: ticket.id,
       name: ticket.name,
       price: ticket.price,
-      quantity: 1
+      quantity: 1,
+      ticket_fee: ticket.ticket_fee
     });
   }
 };
@@ -1094,7 +1077,8 @@ watch(selectedTickets, (newVal) => {
     selectedTicket.value = {
       id: newVal[0].id,
       name: newVal[0].name,
-      price: newVal[0].price
+      price: newVal[0].price,
+      ticket_fee: newVal[0].ticket_fee
     };
     ticketQuantity.value = newVal[0].quantity;
   } else {
@@ -1232,7 +1216,7 @@ const displayEvent = computed(() => {
       {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7A1C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`,
         title: 'Timeline',
-        desc: base.time || '15:00 - selesai'
+        desc: base.dateId || base.time || '15:00 - selesai'
       },
       {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7A1C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`,
