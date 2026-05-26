@@ -19,7 +19,7 @@
       </nav> -->
 
       <!-- Hero Event Banner Card -->
-      <div class="hero-event-banner" style="--banner-bg-img: url('/banner/bannerevent.webp')">
+      <div class="hero-event-banner" :style="{ '--banner-bg-img': `url(${displayEvent.image})` }">
         <!-- Top Header Row (Title & Countdown side-by-side) -->
         <div class="hero-banner-header">
           <h1 class="event-banner-title">{{ displayEvent.title }}</h1>
@@ -54,7 +54,7 @@
         <div class="hero-banner-body-grid">
           <!-- Left Side: Image / Artwork -->
           <div class="hero-banner-left">
-            <img src="/banner/bannerevent.webp" alt="" class="hero-banner-img" />
+            <img :src="displayEvent.image" :alt="displayEvent.title" class="hero-banner-img" />
             <!-- Gritty overlay text if it is the Mods Mayday event -->
             <div v-if="displayEvent.id === 13" class="mods-banner-overlay">
               <!-- Content already embedded in generated image, but we can overlay additional if needed -->
@@ -182,7 +182,7 @@
           <div v-show="activeTab === 'deskripsi'" class="tab-content-block">
             <div class="desc-section-card">
               <!-- General overview -->
-              <p class="event-desc-main">{{ currentLang === 'id' ? displayEvent.descriptionId : displayEvent.descriptionEn }}</p>
+              <div class="event-desc-main" v-html="currentLang === 'id' ? displayEvent.descriptionId : displayEvent.descriptionEn"></div>
 
               <!-- Informasi Penting Section (Moved to Description) -->
               <div class="desc-sub-section info-penting-inline-section">
@@ -306,7 +306,8 @@
                 </svg>
                 {{ currentLang === 'id' ? 'Syarat & Ketentuan' : 'Terms & Conditions' }}
               </h3>
-              <ol class="terms-list">
+              <div v-if="displayEvent.termCondition" class="event-desc-main terms-html-content" v-html="displayEvent.termCondition"></div>
+              <ol v-else class="terms-list">
                 <li v-for="(rule, idx) in displayEvent.rules" :key="idx">{{ rule }}</li>
               </ol>
             </div>
@@ -369,13 +370,13 @@
                     <h4 class="expanded-section-title">{{ currentLang === 'id' ? 'Tanggal Event' : 'Event Date' }}</h4>
                     <div class="event-date-card-wrapper">
                       <div class="calendar-card-mini">
-                        <span class="cal-month-mini">{{ eventCalendarInfo.month }}</span>
-                        <span class="cal-day-mini">{{ eventCalendarInfo.day }}</span>
-                        <span class="cal-day-name-mini">{{ eventCalendarInfo.dayName }}</span>
+                        <span class="cal-month-mini">{{ ticket.month }}</span>
+                        <span class="cal-day-mini">{{ ticket.day }}</span>
+                        <span class="cal-day-name-mini">{{ ticket.dayName }}</span>
                       </div>
                       <div class="date-validity-info">
                         <span class="validity-label">{{ currentLang === 'id' ? 'Masa berlaku:' : 'Validity:' }}</span>
-                        <span class="validity-value">{{ eventCalendarInfo.fullDate }}</span>
+                        <span class="validity-value">{{ ticket.fullDate }}</span>
                       </div>
                     </div>
                   </div>
@@ -442,7 +443,7 @@
                   <!-- Left: Validity/Expiration -->
                   <div class="ticket-bottom-left-desktop">
                     <span class="bottom-info-label-desktop">{{ currentLang === 'id' ? 'Berakhir Pada' : 'Ends On' }}</span>
-                    <span class="bottom-info-val-desktop">{{ eventCalendarInfo.expiration }}</span>
+                    <span class="bottom-info-val-desktop">{{ ticket.expiration }}</span>
                   </div>
 
                   <!-- Right: Add Button or Qty adjuster + Total -->
@@ -538,7 +539,7 @@
                     <!-- Left: Validity/Expiration -->
                     <div class="ticket-bottom-left">
                       <span class="bottom-info-label">{{ currentLang === 'id' ? 'Berakhir Pada' : 'Ends On' }}</span>
-                      <span class="bottom-info-val">{{ eventCalendarInfo.expiration }}</span>
+                      <span class="bottom-info-val">{{ ticket.expiration }}</span>
                     </div>
 
                     <!-- Right: Total Price details -->
@@ -623,9 +624,9 @@
                 </div>
                 <div class="rec-card-info">
                   <h4 class="rec-card-title">{{ recEvent.title }}</h4>
-                  <span class="rec-card-date">{{ recEvent.date }}</span>
+                  <span class="rec-card-date">{{ currentLang === 'id' ? recEvent.dateId : recEvent.dateEn }}</span>
                   <span class="rec-card-location">{{ recEvent.location }}</span>
-                  <span class="rec-card-price">{{ recEvent.price }}</span>
+                  <span class="rec-card-price">{{ recEvent.priceLabel }}</span>
                 </div>
               </div>
             </div>
@@ -729,19 +730,6 @@
                 <div class="price-breakdown-row">
                   <span class="breakdown-lbl">Subtotal</span>
                   <span class="breakdown-val">{{ formatCurrency(computedSubtotal) }}</span>
-                </div>
-                <div class="price-breakdown-row">
-                  <span class="breakdown-lbl">
-                    {{ currentLang === 'id' ? 'Biaya Layanan' : 'Service Fee' }}
-                    <span class="info-icon-tooltip">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                      </svg>
-                    </span>
-                  </span>
-                  <span class="breakdown-val">{{ formatCurrency(computedServiceFee) }}</span>
                 </div>
               </div>
 
@@ -889,19 +877,6 @@
                 <span class="breakdown-lbl">Subtotal</span>
                 <span class="breakdown-val">{{ formatCurrency(computedSubtotal) }}</span>
               </div>
-              <div class="price-breakdown-row">
-                <span class="breakdown-lbl">
-                  {{ currentLang === 'id' ? 'Biaya Layanan' : 'Service Fee' }}
-                  <span class="info-icon-tooltip">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="12" y1="16" x2="12" y2="12"></line>
-                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                  </span>
-                </span>
-                <span class="breakdown-val">{{ formatCurrency(computedServiceFee) }}</span>
-              </div>
             </div>
             
             <div class="summary-price-divider"></div>
@@ -946,50 +921,70 @@ const showMobileSummary = ref(false);
 
 const expandedTicketId = ref('early-wave-normal');
 
-const ticketCategories = ref([
-  {
-    id: 'wave-two-normal',
-    name: 'GELOMBANG BERDUA OTW NORMAL (BUNDLING 2 ORANG)',
-    price: 115000,
-    isBundle: true,
-    status: 'on-sale',
-    description: 'Tiket reguler untuk akses konser berdua dengan harga lebih hemat.',
-    benefits: [
-      'Akses masuk konser untuk 2 orang',
-      'Area festival (standing)',
-      'Akses ke booth merchandise',
-      'Tidak termasuk meet & greet'
-    ]
-  },
-  {
-    id: 'early-wave-normal',
-    name: 'GELOMBANG AWAL OTW NORMAL',
-    price: 120000,
-    isBundle: false,
-    status: 'on-sale',
-    description: 'Tiket reguler untuk akses konser dengan pengalaman seru dari awal hingga akhir acara.',
-    benefits: [
-      'Akses masuk konser',
-      'Area festival (standing)',
-      'Akses ke booth merchandise',
-      'Tidak termasuk meet & greet'
-    ]
-  },
-  {
-    id: 'wave-ramean',
-    name: 'GELOMBANG RAMEAN (BUNDLING 4 ORANG)',
-    price: 90000,
-    isBundle: true,
-    status: 'sold-out',
-    description: 'Tiket reguler untuk grup berisi 4 orang dengan harga spesial.',
-    benefits: [
-      'Akses masuk konser untuk 4 orang',
-      'Area festival (standing)',
-      'Akses ke booth merchandise',
-      'Tidak termasuk meet & greet'
-    ]
+const ticketCategories = ref([]);
+
+const fetchTickets = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const eventId = displayEvent.value.id || selectedEvent.value?.id;
+    if (!eventId) return;
+    
+    const response = await fetch(`${apiUrl}/api/event-ticket/${eventId}`);
+    const json = await response.json();
+    const data = Array.isArray(json) ? json : (json.data || []);
+    
+    if (data && data.length > 0) {
+      if (data[0].has_event && selectedEvent.value) {
+        const ev = data[0].has_event;
+        selectedEvent.value.is_name = ev.is_name ?? 1;
+        selectedEvent.value.is_assistant = ev.is_assistant ?? 1;
+        selectedEvent.value.is_phone_number = ev.is_phone_number ?? 1;
+        selectedEvent.value.is_birthdate = ev.is_birthdate ?? 1;
+        selectedEvent.value.is_email = ev.is_email ?? 1;
+        selectedEvent.value.is_noidentity = ev.is_noidentity ?? 0;
+        selectedEvent.value.is_gender = ev.is_gender ?? 1;
+        selectedEvent.value.is_profession = ev.is_profession ?? 0;
+        selectedEvent.value.is_company = ev.is_company ?? 0;
+        selectedEvent.value.is_kelas = ev.is_kelas ?? 1;
+      }
+
+      ticketCategories.value = data.map(t => {
+        const tDate = new Date(t.ticket_date || Date.now());
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
+        let monthName = months[tDate.getMonth()] || '';
+        let dayNum = tDate.getDate() || '';
+        let dayName = days[tDate.getDay()] || '';
+        let startTime = t.starting_time ? t.starting_time.slice(0, 5) : '00:00';
+        let fullDate = `${dayNum} ${monthName} ${tDate.getFullYear()}, ${startTime} WIB`;
+        
+        const eDate = new Date(t.ticket_end || Date.now());
+        let eMonth = months[eDate.getMonth()] || '';
+        let eDayNum = eDate.getDate() || '';
+        let endTime = t.ending_time ? t.ending_time.slice(0, 5) : '23:59';
+        let expiration = `${eDayNum} ${eMonth} ${eDate.getFullYear()}, ${endTime} WIB`;
+
+        return {
+          id: t.id,
+          name: t.name,
+          price: t.price,
+          isBundle: t.is_bundling === 1,
+          status: t.is_soldout ? 'sold-out' : 'on-sale',
+          description: t.description || '',
+          benefits: [],
+          month: monthName,
+          day: dayNum,
+          dayName: dayName,
+          fullDate: fullDate,
+          expiration: expiration
+        };
+      });
+    }
+  } catch (error) {
+    console.error('Failed to fetch tickets:', error);
   }
-]);
+};
 
 const toggleExpandTicket = (id) => {
   expandedTicketId.value = expandedTicketId.value === id ? null : id;
@@ -1038,12 +1033,8 @@ const computedSubtotal = computed(() => {
   return selectedTickets.value.reduce((sum, t) => sum + t.price * t.quantity, 0);
 });
 
-const computedServiceFee = computed(() => {
-  return selectedTickets.value.length > 0 ? 10000 : 0;
-});
-
 const computedTotalPayment = computed(() => {
-  return computedSubtotal.value + computedServiceFee.value;
+  return computedSubtotal.value;
 });
 
 const totalSelectedTicketsCount = computed(() => {
@@ -1317,69 +1308,66 @@ const handleChat = () => {
   triggerToast(msg);
 };
 
-const recommendedEvents = computed(() => {
-  return [
-    {
-      id: 1,
-      title: 'Konser Berani Tambah Bahagia',
-      image: '/banner/bannerevent.webp',
-      date: currentLang.value === 'id' ? 'Jumat, 18 Sep 2026' : 'Friday, Sep 18, 2026',
-      location: 'Paskal 23, Bandung',
-      price: 'Rp30.000'
-    },
-    {
-      id: 2,
-      title: 'Meet & Greet Acoustic Showcase',
-      image: '/banner/bannerevent.webp',
-      date: currentLang.value === 'id' ? 'Jumat, 25 Sep 2026' : 'Friday, Sep 25, 2026',
-      location: 'Dago Tea House, Bandung',
-      price: 'Rp50.000'
-    },
-    {
-      id: 3,
-      title: 'Mocca Songwriting Workshop',
-      image: '/banner/bannerevent.webp',
-      date: currentLang.value === 'id' ? 'Sabtu, 02 Okt 2026' : 'Saturday, Oct 2, 2026',
-      location: 'Creative Hub, Bandung',
-      price: 'Rp75.000'
-    },
-    {
-      id: 4,
-      title: 'Mocca Pop-Up Store & Showcase',
-      image: '/banner/bannerevent.webp',
-      date: currentLang.value === 'id' ? 'Sabtu, 10 Okt 2026' : 'Saturday, Oct 10, 2026',
-      location: 'Senayan Park, Jakarta',
-      price: 'Gratis'
-    },
-    {
-      id: 5,
-      title: 'Mocca Acoustic Cafe Tour',
-      image: '/banner/bannerevent.webp',
-      date: currentLang.value === 'id' ? 'Minggu, 18 Okt 2026' : 'Sunday, Oct 18, 2026',
-      location: 'Common Grounds, Surabaya',
-      price: 'Rp40.000'
+const recommendedEvents = ref([]);
+
+const fetchRecommendedEvents = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const creatorId = 11;
+    const response = await fetch(`${apiUrl}/api/event-by-creator/${creatorId}`);
+    const json = await response.json();
+    const data = Array.isArray(json) ? json : json.data;
+
+    if (data && data.length > 0) {
+      // Filter out the currently displayed event to avoid self-recommendation
+      const filteredData = data.filter(ev => ev.id !== (displayEvent.value.id || selectedEvent.value?.id));
+      
+      recommendedEvents.value = filteredData.map(ev => {
+        const ticket = ev.has_event_ticket && ev.has_event_ticket.length > 0 ? ev.has_event_ticket[0] : {};
+        const price = ticket.price || 0;
+        
+        const formattedPrice = price === 0 ? 'Gratis' : new Intl.NumberFormat('id-ID', {
+          style: 'currency',
+          currency: 'IDR',
+          minimumFractionDigits: 0
+        }).format(price).replace('Rp', 'Rp');
+
+        return {
+          id: ev.id,
+          title: ev.name || ev.title || 'Event Mocca',
+          image: ev.image_url || '/banner/bannerevent.webp',
+          category: ev.has_event_topic?.name?.toLowerCase() || 'others',
+          dateId: ticket.event_schedule_date || 'TBA',
+          dateEn: ticket.event_schedule_date || 'TBA',
+          time: ticket.starting_time ? `${ticket.starting_time.slice(0, 5)} WIB` : 'TBA',
+          location: ticket.detail_venue_name || ev.location_name || ev.location_city || ev.location || 'TBA',
+          priceLabel: formattedPrice,
+          descriptionId: ev.description || '',
+          descriptionEn: ev.description || '',
+          termCondition: ev.term_condition || '',
+          timestamp: new Date(ticket.event_schedule_date || Date.now()).getTime(),
+          creatorName: ev.has_creator?.name || 'My Diary Records',
+          creatorLogo: ev.has_creator?.image_url || '/logo_mocca.png',
+          is_name: ev.is_name ?? 1,
+          is_assistant: ev.is_assistant ?? 1,
+          is_phone_number: ev.is_phone_number ?? 1,
+          is_birthdate: ev.is_birthdate ?? 1,
+          is_email: ev.is_email ?? 1,
+          is_noidentity: ev.is_noidentity ?? 0,
+          is_gender: ev.is_gender ?? 1,
+          is_profession: ev.is_profession ?? 0,
+          is_company: ev.is_company ?? 0,
+          is_kelas: ev.is_kelas ?? 1
+        };
+      });
     }
-  ];
-});
+  } catch (error) {
+    console.error('Failed to fetch recommended events:', error);
+  }
+};
 
 const selectRecommendedEvent = (recEvt) => {
-  const mapped = {
-    id: recEvt.id,
-    title: recEvt.title,
-    image: recEvt.image,
-    dateId: recEvt.date,
-    dateEn: recEvt.date,
-    time: '10:00 - 22:00 WIB',
-    location: recEvt.location,
-    priceLabel: recEvt.price === 'Gratis' ? 'Gratis' : recEvt.price,
-    priceVal: recEvt.price === 'Gratis' ? 0 : parseInt(recEvt.price.replace(/[^\d]/g, '')),
-    categoriesLabel: 'Festival & Pameran • Musik • Pop Indonesia',
-    creatorName: 'Mocca',
-    creatorLogo: '/logo_mocca.png',
-    timestamp: 1779951600000 + (recEvt.id * 86400000)
-  };
-  
-  selectedEvent.value = mapped;
+  selectedEvent.value = recEvt;
   activeTab.value = 'deskripsi';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
@@ -1482,6 +1470,8 @@ const startCountdown = () => {
 };
 
 onMounted(() => {
+  fetchTickets();
+  fetchRecommendedEvents();
   startCountdown();
 });
 

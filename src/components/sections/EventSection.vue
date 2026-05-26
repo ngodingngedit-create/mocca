@@ -113,7 +113,7 @@ const featuredEvents = ref([]);
 const fetchEvents = async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
-    const creatorId = apiUrl.includes('my.id') ? 48 : 127;
+    const creatorId = 11;
     const response = await fetch(`${apiUrl}/api/event-by-creator/${creatorId}`);
     const json = await response.json();
     const data = Array.isArray(json) ? json : json.data;
@@ -137,13 +137,24 @@ const fetchEvents = async () => {
           dateId: ticket.event_schedule_date || 'TBA',
           dateEn: ticket.event_schedule_date || 'TBA',
           time: ticket.starting_time ? `${ticket.starting_time.slice(0, 5)} WIB` : 'TBA',
-          location: ticket.detail_venue_name || ev.location || 'TBA',
+          location: ticket.detail_venue_name || ev.location_name || ev.location_city || ev.location || 'TBA',
           priceLabel: formattedPrice,
           descriptionId: ev.description || '',
           descriptionEn: ev.description || '',
+          termCondition: ev.term_condition || '',
           timestamp: new Date(ticket.event_schedule_date || Date.now()).getTime(),
           creatorName: ev.has_creator?.name || 'My Diary Records',
-          creatorLogo: ev.has_creator?.image_url || '/logo_mocca.png'
+          creatorLogo: ev.has_creator?.image_url || '/logo_mocca.png',
+          is_name: ev.is_name ?? 1,
+          is_assistant: ev.is_assistant ?? 1,
+          is_phone_number: ev.is_phone_number ?? 1,
+          is_birthdate: ev.is_birthdate ?? 1,
+          is_email: ev.is_email ?? 1,
+          is_noidentity: ev.is_noidentity ?? 0,
+          is_gender: ev.is_gender ?? 1,
+          is_profession: ev.is_profession ?? 0,
+          is_company: ev.is_company ?? 0,
+          is_kelas: ev.is_kelas ?? 1
         };
       });
     }

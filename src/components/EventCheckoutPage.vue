@@ -49,20 +49,26 @@
             </div>
 
             <div v-show="ordererOpen" class="accordion-body">
+              <!-- No Identitas -->
+              <div v-if="displayEvent.is_noidentity != 0" class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Nomor Identitas (KTP/Passport)' : 'Identity Number' }}</label>
+                <input type="text" class="field-input" v-model="formData.idCard" :placeholder="currentLang === 'id' ? 'Masukkan NIK / Passport' : 'Enter ID / Passport'" />
+              </div>
+
               <!-- Nama Lengkap -->
-              <div class="form-field-group">
+              <div v-if="displayEvent.is_name != 0" class="form-field-group">
                 <label class="field-label">{{ currentLang === 'id' ? 'Nama Lengkap' : 'Full Name' }}</label>
                 <input type="text" class="field-input" v-model="formData.fullName" :placeholder="currentLang === 'id' ? 'Nama Lengkap' : 'Full Name'" />
               </div>
 
               <!-- Email -->
-              <div class="form-field-group">
+              <div v-if="displayEvent.is_email != 0" class="form-field-group">
                 <label class="field-label">Email</label>
                 <input type="email" class="field-input" v-model="formData.email" placeholder="Contoh: example@example.com" />
               </div>
 
               <!-- No Telepon -->
-              <div class="form-field-group">
+              <div v-if="displayEvent.is_phone_number != 0" class="form-field-group">
                 <label class="field-label">{{ currentLang === 'id' ? 'No Telepon' : 'Phone Number' }}</label>
                 <div class="phone-field-wrapper">
                   <div class="phone-country-btn">
@@ -71,6 +77,39 @@
                   </div>
                   <input type="tel" class="phone-field-input" v-model="formData.phone" :placeholder="currentLang === 'id' ? 'Contoh: 81234567890' : 'e.g. 81234567890'" />
                 </div>
+              </div>
+
+              <!-- Tanggal Lahir -->
+              <div v-if="displayEvent.is_birthdate != 0" class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Tanggal Lahir' : 'Birth Date' }}</label>
+                <input type="date" class="field-input" v-model="formData.birthDate" />
+              </div>
+
+              <!-- Jenis Kelamin -->
+              <div v-if="displayEvent.is_gender != 0" class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Jenis Kelamin' : 'Gender' }}</label>
+                <select class="field-input" v-model="formData.gender">
+                  <option value="Laki-laki">{{ currentLang === 'id' ? 'Laki-laki' : 'Male' }}</option>
+                  <option value="Perempuan">{{ currentLang === 'id' ? 'Perempuan' : 'Female' }}</option>
+                </select>
+              </div>
+
+              <!-- Pekerjaan -->
+              <div v-if="displayEvent.is_profession != 0" class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Pekerjaan' : 'Profession' }}</label>
+                <input type="text" class="field-input" v-model="formData.job" :placeholder="currentLang === 'id' ? 'Pekerjaan' : 'Profession'" />
+              </div>
+
+              <!-- Perusahaan -->
+              <div v-if="displayEvent.is_company != 0" class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Perusahaan / Instansi' : 'Company' }}</label>
+                <input type="text" class="field-input" v-model="formData.company" :placeholder="currentLang === 'id' ? 'Nama Perusahaan/Instansi' : 'Company Name'" />
+              </div>
+
+              <!-- Kelas -->
+              <div v-if="displayEvent.is_kelas != 0" class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Kelas / Semester' : 'Class / Semester' }}</label>
+                <input type="text" class="field-input" v-model="formData.kelas" :placeholder="currentLang === 'id' ? 'Contoh: Semester 4' : 'e.g. Semester 4'" />
               </div>
             </div>
           </div>
@@ -113,20 +152,26 @@
                 </button>
               </div>
 
+              <!-- No Identitas -->
+              <div v-if="displayEvent.is_noidentity != 0" class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Nomor Identitas (KTP/Passport)' : 'Identity Number' }}</label>
+                <input type="text" class="field-input" v-model="ticket.idCard" :disabled="ticket.useOrdererData" :placeholder="currentLang === 'id' ? 'Masukkan NIK / Passport' : 'Enter ID / Passport'" />
+              </div>
+
               <!-- Nama Lengkap -->
-              <div class="form-field-group">
+              <div v-if="displayEvent.is_name != 0" class="form-field-group">
                 <label class="field-label">{{ currentLang === 'id' ? 'Nama Lengkap' : 'Full Name' }}</label>
                 <input type="text" class="field-input" v-model="ticket.fullName" :disabled="ticket.useOrdererData" :placeholder="currentLang === 'id' ? 'Nama Lengkap' : 'Full Name'" />
               </div>
 
               <!-- Email -->
-              <div class="form-field-group">
+              <div v-if="displayEvent.is_email != 0" class="form-field-group">
                 <label class="field-label">Email</label>
                 <input type="email" class="field-input" v-model="ticket.email" :disabled="ticket.useOrdererData" placeholder="Contoh: example@example.com" />
               </div>
 
               <!-- No Telepon -->
-              <div class="form-field-group">
+              <div v-if="displayEvent.is_phone_number != 0" class="form-field-group">
                 <label class="field-label">{{ currentLang === 'id' ? 'No Telepon' : 'Phone Number' }}</label>
                 <div class="phone-field-wrapper" :class="{ disabled: ticket.useOrdererData }">
                   <div class="phone-country-btn">
@@ -135,6 +180,39 @@
                   </div>
                   <input type="tel" class="phone-field-input" v-model="ticket.phone" :disabled="ticket.useOrdererData" :placeholder="currentLang === 'id' ? 'Contoh: 81234567890' : 'e.g. 81234567890'" />
                 </div>
+              </div>
+
+              <!-- Tanggal Lahir -->
+              <div v-if="displayEvent.is_birthdate != 0" class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Tanggal Lahir' : 'Birth Date' }}</label>
+                <input type="date" class="field-input" v-model="ticket.birthDate" :disabled="ticket.useOrdererData" />
+              </div>
+
+              <!-- Jenis Kelamin -->
+              <div v-if="displayEvent.is_gender != 0" class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Jenis Kelamin' : 'Gender' }}</label>
+                <select class="field-input" v-model="ticket.gender" :disabled="ticket.useOrdererData">
+                  <option value="Laki-laki">{{ currentLang === 'id' ? 'Laki-laki' : 'Male' }}</option>
+                  <option value="Perempuan">{{ currentLang === 'id' ? 'Perempuan' : 'Female' }}</option>
+                </select>
+              </div>
+
+              <!-- Pekerjaan -->
+              <div v-if="displayEvent.is_profession != 0" class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Pekerjaan' : 'Profession' }}</label>
+                <input type="text" class="field-input" v-model="ticket.job" :disabled="ticket.useOrdererData" :placeholder="currentLang === 'id' ? 'Pekerjaan' : 'Profession'" />
+              </div>
+
+              <!-- Perusahaan -->
+              <div v-if="displayEvent.is_company != 0" class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Perusahaan / Instansi' : 'Company' }}</label>
+                <input type="text" class="field-input" v-model="ticket.company" :disabled="ticket.useOrdererData" :placeholder="currentLang === 'id' ? 'Nama Perusahaan/Instansi' : 'Company Name'" />
+              </div>
+
+              <!-- Kelas -->
+              <div v-if="displayEvent.is_kelas != 0" class="form-field-group">
+                <label class="field-label">{{ currentLang === 'id' ? 'Kelas / Semester' : 'Class / Semester' }}</label>
+                <input type="text" class="field-input" v-model="ticket.kelas" :disabled="ticket.useOrdererData" :placeholder="currentLang === 'id' ? 'Contoh: Semester 4' : 'e.g. Semester 4'" />
               </div>
             </div>
           </div>
@@ -370,7 +448,17 @@ const displayEvent = computed(() => {
     location: 'Senayan Park (Island & Dome), Jakarta Pusat',
     priceLabel: 'Rp150.000',
     categoriesLabel: 'Festival & Pameran • Musik • Pop Indonesia',
-    priceVal: 150000
+    priceVal: 150000,
+    is_name: 1,
+    is_assistant: 1,
+    is_phone_number: 1,
+    is_birthdate: 1,
+    is_email: 1,
+    is_noidentity: 0,
+    is_gender: 1,
+    is_profession: 0,
+    is_company: 0,
+    is_kelas: 1
   };
 });
 
@@ -449,6 +537,8 @@ const buildAttendees = () => {
       for (let i = 0; i < t.quantity; i++) {
         list.push({
           id: `${t.id}-${i}`,
+          ticketId: t.id,
+          isBundle: t.isBundle ? 1 : 0,
           typeName: t.name,
           price: t.price,
           open: true,
@@ -456,12 +546,20 @@ const buildAttendees = () => {
           fullName: '',
           email: '',
           phone: '',
+          idCard: '',
+          birthDate: '',
+          gender: 'Laki-laki',
+          job: '',
+          company: '',
+          kelas: ''
         });
       }
     });
   } else {
     list.push({
       id: 'default-0',
+      ticketId: selectedTicket.value ? selectedTicket.value.id : 1,
+      isBundle: 0,
       typeName: selectedTicket.value ? selectedTicket.value.name : 'Presale 2 - Sesi 1',
       price: selectedTicket.value ? selectedTicket.value.price : 45000,
       open: true,
@@ -469,6 +567,12 @@ const buildAttendees = () => {
       fullName: '',
       email: '',
       phone: '',
+      idCard: '',
+      birthDate: '',
+      gender: 'Laki-laki',
+      job: '',
+      company: '',
+      kelas: ''
     });
   }
   return list;
@@ -483,6 +587,12 @@ const toggleUseOrdererData = (idx) => {
     t.fullName = formData.value.fullName;
     t.email = formData.value.email;
     t.phone = formData.value.phone;
+    t.idCard = formData.value.idCard;
+    t.birthDate = formData.value.birthDate;
+    t.gender = formData.value.gender;
+    t.job = formData.value.job;
+    t.company = formData.value.company;
+    t.kelas = formData.value.kelas;
   }
 };
 
@@ -591,21 +701,150 @@ const goToEventDetail = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-const proceedToPayment = () => {
+const proceedToPayment = async () => {
   const errorMsg = validateForm();
   if (errorMsg) {
     triggerToast(errorMsg);
     return;
   }
 
-  triggerToast(
-    currentLang.value === 'id' ? 'Koneksi Sukses' : 'Connection Success',
-    currentLang.value === 'id' ? 'Menghubungkan ke sistem pembayaran...' : 'Redirecting to payment gateway...'
-  );
-  setTimeout(() => {
-    currentPage.value = 'payment';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 1200);
+  const evId = displayEvent.value.id || selectedEvent.value?.id || 103;
+  const identities = [];
+  
+  // 1. Orderer identity
+  identities.push({
+    nik: formData.value.idCard || "0000000000000000",
+    full_name: formData.value.fullName,
+    email: formData.value.email,
+    countryCode: "62",
+    no_telp: formData.value.phone.replace(/^0+/, ''),
+    is_pemesan: 1,
+    identity_type_id: 1,
+    event_ticket_id: selectedTickets.value.length > 0 ? selectedTickets.value[0].id : (selectedTicket.value?.id || 1)
+  });
+
+  // 2. Ticket attendees
+  ticketAttendees.value.forEach((attendee) => {
+    identities.push({
+      nik: attendee.idCard || "0000000000000000",
+      full_name: attendee.fullName,
+      email: attendee.email,
+      countryCode: "62",
+      no_telp: attendee.phone.replace(/^0+/, ''),
+      is_pemesan: 0,
+      identity_type_id: 1,
+      event_ticket_id: attendee.ticketId || 1,
+      seat_number: ""
+    });
+  });
+
+  const ticketPayloads = [];
+  if (selectedTickets.value && selectedTickets.value.length > 0) {
+    selectedTickets.value.forEach(t => {
+      ticketPayloads.push({
+        id: t.id,
+        event_id: evId,
+        event_ticket_id: t.id,
+        price: t.price,
+        name: t.name,
+        subtotal_price: t.price * t.quantity,
+        is_bundling: t.isBundle ? 1 : 0,
+        bundling_qty: t.isBundle ? t.quantity : 0,
+        qty_ticket: t.quantity,
+        is_promo: 0,
+        is_bundling_merch: 0,
+        promo_title: "",
+        promo_price: 0,
+        payment_status: "pending",
+        seatnumber_ticket: "[]",
+        is_insurance: 0,
+        insurance_amount: 0,
+        insurance_require: 0
+      });
+    });
+  } else if (selectedTicket.value) {
+      ticketPayloads.push({
+        id: selectedTicket.value.id,
+        event_id: evId,
+        event_ticket_id: selectedTicket.value.id,
+        price: selectedTicket.value.price,
+        name: selectedTicket.value.name,
+        subtotal_price: selectedTicket.value.price * ticketQuantity.value,
+        is_bundling: 0,
+        bundling_qty: 0,
+        qty_ticket: ticketQuantity.value,
+        is_promo: 0,
+        is_bundling_merch: 0,
+        promo_title: "",
+        promo_price: 0,
+        payment_status: "pending",
+        seatnumber_ticket: "[]",
+        is_insurance: 0,
+        insurance_amount: 0,
+        insurance_require: 0
+      });
+  }
+
+  // Set expiration to 15 mins
+  const expDate = new Date(Date.now() + 15 * 60000).toISOString();
+
+  const payload = {
+    event_id: evId,
+    admin_fee: null,
+    payment_method: "4",
+    grandtotal: grandTotalPrice.value,
+    ppn_type: "nominal",
+    ppn: 0,
+    ppn_amount: 0,
+    is_insurance: 0,
+    insurance_amount: 0,
+    insurance_total: 0,
+    insurance_required: 0,
+    identities: identities,
+    tickets: ticketPayloads,
+    bank_code: "",
+    expiration_date: expDate,
+    vouchers: []
+  };
+
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    triggerToast(
+      currentLang.value === 'id' ? 'Memproses Pesanan' : 'Processing Order',
+      currentLang.value === 'id' ? 'Mohon tunggu sebentar...' : 'Please wait...'
+    );
+
+    const response = await fetch(`${apiUrl}/api/transaction-without-auth`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+    if (response.ok || result.success) {
+      triggerToast(
+        currentLang.value === 'id' ? 'Koneksi Sukses' : 'Connection Success',
+        currentLang.value === 'id' ? 'Menghubungkan ke sistem pembayaran...' : 'Redirecting to payment gateway...'
+      );
+      setTimeout(() => {
+        currentPage.value = 'payment';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 1200);
+    } else {
+      triggerToast(
+        currentLang.value === 'id' ? 'Gagal Memproses' : 'Failed to Process',
+        result.message || 'Terjadi kesalahan saat checkout.'
+      );
+    }
+  } catch (error) {
+    console.error('Checkout error:', error);
+    triggerToast(
+      currentLang.value === 'id' ? 'Gagal Terhubung' : 'Connection Failed',
+      'Silakan coba beberapa saat lagi.'
+    );
+  }
 };
 
 const triggerToast = (msg, desc = '') => {
