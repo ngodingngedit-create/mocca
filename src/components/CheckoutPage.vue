@@ -283,6 +283,7 @@ watch(cartItems, (newCartItems) => {
       existing.price = cartItem.price;
       existing.image = cartItem.image;
       existing.store_location = cartItem.store_location;
+      existing.variant_id = cartItem.variant_id || null;
       updatedItems.push(existing);
     } else {
       updatedItems.push({
@@ -296,7 +297,8 @@ watch(cartItems, (newCartItems) => {
         image: cartItem.image,
         note: '',
         notePlaceholder: 'Contoh: tolong dibungkus rapi',
-        store_location: cartItem.store_location
+        store_location: cartItem.store_location,
+        variant_id: cartItem.variant_id || null
       });
     }
   });
@@ -395,7 +397,8 @@ const processPayment = () => {
       size: item.size || '-',
       image: item.image,
       note: item.note || '',
-      store_location: item.store_location
+      store_location: item.store_location,
+      variant_id: item.variant_id || null
     }));
 
   showToast('Menghubungkan ke gerbang pembayaran aman...');

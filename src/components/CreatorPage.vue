@@ -228,18 +228,6 @@
               <span class="product-price">{{ formatPrice(product.price) }}</span>
             </div>
 
-            <!-- Color Swatches Row -->
-            <div class="product-colors-row">
-              <div class="color-swatches">
-                <span 
-                  v-for="color in product.colors" 
-                  :key="color"
-                  :class="['swatch', `swatch-${color}`, { active: selectedColors[product.id] === color }]" 
-                  @click.stop="selectedColors[product.id] = color"
-                  :title="color"
-                ></span>
-              </div>
-            </div>
 
             <!-- Quantity Selector Button -->
             <div class="product-actions-row">

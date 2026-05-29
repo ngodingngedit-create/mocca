@@ -382,11 +382,13 @@ const changeModalQty = (delta) => {
 };
 
 const handleAddToCart = () => {
+  const variantId = currentVariant.value ? currentVariant.value.id : (props.product.variant_id || null);
   const p = {
     id: props.product.id,
     title: productTitle.value,
     price: props.product.price,
     image: props.product.image,
+    variant_id: variantId,
     has_store_location: fetchedProductDetails.value?.has_store_location || props.product?.has_store_location || null
   };
   
@@ -418,6 +420,7 @@ const handleBuyNow = () => {
   
   const productPrice = props.product.price || 0;
   const currentPrice = currentVariant.value ? parseInt(currentVariant.value.price) : productPrice;
+  const variantId = currentVariant.value ? currentVariant.value.id : (props.product.variant_id || null);
 
   const storeLocation = fetchedProductDetails.value?.has_store_location || props.product?.has_store_location || null;
 
@@ -430,6 +433,7 @@ const handleBuyNow = () => {
     size: selectedSize.value || '-',
     image: props.product.image,
     note: '',
+    variant_id: variantId,
     store_location: storeLocation
   }];
   

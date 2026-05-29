@@ -47,24 +47,23 @@
             <div class="user-text-info">
               <h3 class="user-fullname">{{ userState.fullName }}</h3>
               <span class="user-email-text">{{ userState.email }}</span>
-              <div class="member-badge-container">
-                <span class="member-badge">Member Mocca</span>
-              </div>
             </div>
           </div>
 
-          <!-- Mocca Rewards Card (Static) -->
-          <div class="rewards-card static-rewards">
-            <div class="rewards-icon-box">
-              <svg class="rewards-star-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-              </svg>
-            </div>
-            <div class="rewards-info-box">
-              <span class="rewards-label">Mocca Rewards</span>
-              <span class="rewards-points">{{ userState.points }} poin terkumpul</span>
-            </div>
-          </div>
+          <nav class="sidebar-menu" style="border-bottom: 1px solid rgba(90, 60, 40, 0.08); padding-bottom: 1rem; margin-bottom: 0.5rem;">
+            <button class="menu-link-btn" :class="{ 'active': activeTab === 'transaksi-event' }" @click="activeTab = 'transaksi-event'">
+              <span class="menu-icon-wrapper">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              </span>
+              <span class="menu-label-text">Transaksi Event</span>
+            </button>
+            <button class="menu-link-btn" :class="{ 'active': activeTab === 'transaksi-merchandise' }" @click="activeTab = 'transaksi-merchandise'">
+              <span class="menu-icon-wrapper">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+              </span>
+              <span class="menu-label-text">Transaksi Merchandise</span>
+            </button>
+          </nav>
 
           <!-- Vertical Menu Navigation -->
           <nav class="sidebar-menu">
@@ -122,707 +121,176 @@
         <!-- ================= RIGHT COLUMN: SETTINGS PANEL ================= -->
         <main class="settings-panel">
           
-          <!-- Top Tabbed Bar (Desktop only, scrollable layout) -->
-          <div class="tabs-nav-bar">
-            <button 
-              v-for="tab in mainTabs" 
-              :key="tab.id" 
-              class="tab-nav-btn" 
-              :class="{ active: activeTab === tab.id }" 
-              @click="activeTab = tab.id"
-            >
-              {{ currentLang === 'id' ? tab.labelId : tab.labelEn }}
-            </button>
-          </div>
+          <!-- Top Tabbed Bar Removed -->
 
           <!-- Active Panel Content (Cozy transition) -->
           <div class="tab-content-container">
             <Transition name="tab-fade" mode="out-in">
               <div :key="activeTab" class="active-tab-panel">
                 
-                <!-- ================= TAB 1: BIODATA DIRI (DEFAULT) ================= -->
-                <div v-if="activeTab === 'biodata'" class="biodata-tab-layout">
-                  
-                  <!-- Sub-section: Profile Photo Upload (Left) -->
-                  <div class="profile-photo-panel">
-                    <h4 class="photo-title-label">Foto Profil</h4>
-                    <div class="photo-avatar-box">
-                      <!-- Circular photo box containing custom drawing -->
-                      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" class="band-sketch-svg-main">
-                        <circle cx="60" cy="60" r="54" fill="#FAF6F0" stroke="#E6DFD5" stroke-width="1"/>
-                        <line x1="20" y1="80" x2="100" y2="80" stroke="#55331C" stroke-width="1.5" stroke-linecap="round"/>
-                        <line x1="30" y1="80" x2="30" y2="95" stroke="#55331C" stroke-width="1.5"/>
-                        <line x1="90" y1="80" x2="90" y2="95" stroke="#55331C" stroke-width="1.5"/>
-                        <!-- Members -->
-                        <circle cx="40" cy="48" r="7" fill="none" stroke="#55331C" stroke-width="1.5"/>
-                        <path d="M40 55 C35 60, 35 78, 38 80" fill="none" stroke="#55331C" stroke-width="1.5" stroke-linecap="round"/>
-                        <circle cx="53" cy="44" r="7.5" fill="none" stroke="#55331C" stroke-width="1.5"/>
-                        <path d="M53 51.5 C48 57, 48 78, 52 80" fill="none" stroke="#55331C" stroke-width="1.5" stroke-linecap="round"/>
-                        <circle cx="67" cy="46" r="7" fill="none" stroke="#55331C" stroke-width="1.5"/>
-                        <path d="M67 53 C64 58, 62 78, 65 80" fill="none" stroke="#55331C" stroke-width="1.5" stroke-linecap="round"/>
-                        <circle cx="80" cy="49" r="6.5" fill="none" stroke="#55331C" stroke-width="1.5"/>
-                        <path d="M80 55.5 C76 60, 75 78, 78 80" fill="none" stroke="#55331C" stroke-width="1.5" stroke-linecap="round"/>
-                        <!-- details -->
-                        <path d="M38 80 L38 90" stroke="#55331C" stroke-width="1.5"/>
-                        <path d="M42 80 L42 90" stroke="#55331C" stroke-width="1.5"/>
-                        <path d="M50 80 L50 90" stroke="#55331C" stroke-width="1.5"/>
-                        <path d="M54 80 L54 90" stroke="#55331C" stroke-width="1.5"/>
-                        <path d="M64 80 L64 90" stroke="#55331C" stroke-width="1.5"/>
-                        <path d="M68 80 L68 90" stroke="#55331C" stroke-width="1.5"/>
-                        <path d="M76 80 L76 90" stroke="#55331C" stroke-width="1.5"/>
-                        <path d="M80 80 L80 90" stroke="#55331C" stroke-width="1.5"/>
-                      </svg>
-                    </div>
-                    
-                    <button class="btn-change-photo" @click="triggerPhotoUpload">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-btn-icon">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                      </svg>
-                      Ubah Foto
-                    </button>
-                    
-                    <span class="photo-requirements-text">
-                      Format JPG, JPEG, PNG. Ukuran maksimal 10MB.
-                    </span>
-                    <input type="file" ref="fileInput" class="hidden-file-input" @change="handleFileChange" accept="image/*" />
+                
+                                                <!-- ================= NEW TAB: TRANSAKSI EVENT ================= -->
+                <div v-if="activeTab === 'transaksi-event'" class="pesanan-tab-layout">
+                  <div class="flex justify-between items-center mb-4" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4 class="section-title-inside" style="margin-bottom: 0;">Transaksi Event</h4>
+                    <select v-model="selectedEventId" class="input-field-mocca select-mocca" style="width: auto; padding: 0.5rem 1rem; border: 1px solid var(--color-mocca-border); border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer;">
+                      <option disabled value="">Pilih Event</option>
+                      <option v-for="evt in eventList" :key="evt.id" :value="evt.id">{{ evt.title || evt.name || evt.event_name || 'Event ' + evt.id }}</option>
+                    </select>
                   </div>
-
-                  <!-- Sub-section: Information Blocks (Right) -->
-                  <div class="profile-details-panel">
-                    
-                    <!-- Block 1: Informasi Pribadi -->
-                    <div class="details-block">
-                      <div class="block-header-row">
-                        <h4 class="block-title">Informasi Pribadi</h4>
-                        
-                        <!-- Inline Edit Action Buttons Group -->
-                        <div v-if="isEditingPribadi" class="inline-edit-action-group">
-                          <button class="btn-cancel-inline font-bold" @click="cancelEditInline('pribadi')">Batal</button>
-                          <button class="btn-save-inline font-bold" @click="saveEditInline('pribadi')">Simpan</button>
-                        </div>
-                        <button v-else class="btn-edit-block" @click="startEditInline('pribadi')">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-btn-icon">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                          </svg>
-                          Edit
-                        </button>
-                      </div>
-
-                      <div class="details-rows">
-                        <div class="detail-row">
-                          <div class="detail-label-col">
-                            <svg class="detail-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                              <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                            Nama Lengkap
-                          </div>
-                          
-                          <!-- Inline Edit Input -->
-                          <div v-if="isEditingPribadi" class="detail-val-col-wrapper">
-                            <input type="text" v-model="editForm.fullName" class="input-field-mocca inline-edit-input font-bold" />
-                          </div>
-                          <div v-else class="detail-val-col font-bold">{{ userState.fullName }}</div>
-                        </div>
-                        
-                        <div class="detail-row">
-                          <div class="detail-label-col">
-                            <svg class="detail-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                              <line x1="16" y1="2" x2="16" y2="6"></line>
-                              <line x1="8" y1="2" x2="8" y2="6"></line>
-                              <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            Tanggal Lahir
-                          </div>
-                          
-                          <!-- Inline Edit Input -->
-                          <div v-if="isEditingPribadi" class="detail-val-col-wrapper">
-                            <input type="text" v-model="editForm.birthDate" class="input-field-mocca inline-edit-input" placeholder="Contoh: 12 Januari 1998" />
-                          </div>
-                          <div v-else class="detail-val-col">{{ userState.birthDate }}</div>
-                        </div>
-                        
-                        <div class="detail-row">
-                          <div class="detail-label-col">
-                            <svg class="detail-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <circle cx="10" cy="14" r="5"></circle>
-                              <line x1="19" y1="5" x2="13.6" y2="10.4"></line>
-                              <polyline points="14 5 19 5 19 10"></polyline>
-                            </svg>
-                            Jenis Kelamin
-                          </div>
-                          
-                          <!-- Inline Edit Select -->
-                          <div v-if="isEditingPribadi" class="detail-val-col-wrapper">
-                            <select v-model="editForm.gender" class="input-field-mocca select-mocca inline-edit-input">
-                              <option value="Laki-laki">Laki-laki</option>
-                              <option value="Perempuan">Perempuan</option>
-                            </select>
-                          </div>
-                          <div v-else class="detail-val-col">{{ userState.gender }}</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Block 2: Informasi Kontak -->
-                    <div class="details-block">
-                      <div class="block-header-row">
-                        <h4 class="block-title">Informasi Kontak</h4>
-                        
-                        <!-- Inline Edit Action Buttons Group -->
-                        <div v-if="isEditingKontak" class="inline-edit-action-group">
-                          <button class="btn-cancel-inline font-bold" @click="cancelEditInline('kontak')">Batal</button>
-                          <button class="btn-save-inline font-bold" @click="saveEditInline('kontak')">Simpan</button>
-                        </div>
-                        <button v-else class="btn-edit-block" @click="startEditInline('kontak')">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-btn-icon">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                          </svg>
-                          Edit
-                        </button>
-                      </div>
-
-                      <div class="details-rows">
-                        <div class="detail-row">
-                          <div class="detail-label-col">
-                            <svg class="detail-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                              <polyline points="22,6 12,13 2,6"></polyline>
-                            </svg>
-                            Email
-                          </div>
-                          
-                          <!-- Inline Edit Input -->
-                          <div v-if="isEditingKontak" class="detail-val-col-wrapper full-width-input">
-                            <input type="email" v-model="editForm.email" class="input-field-mocca inline-edit-input font-bold" />
-                          </div>
-                          <div v-else class="detail-val-col-wrapper">
-                            <span class="detail-val-col font-bold">{{ userState.email }}</span>
-                            <span class="verified-pill">
-                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="inline-check">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                              </svg>
-                              Terverifikasi
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div class="detail-row">
-                          <div class="detail-label-col">
-                            <svg class="detail-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                            </svg>
-                            Nomor HP
-                          </div>
-                          
-                          <!-- Inline Edit Input -->
-                          <div v-if="isEditingKontak" class="detail-val-col-wrapper full-width-input">
-                            <input type="text" v-model="editForm.phone" class="input-field-mocca inline-edit-input font-bold" />
-                          </div>
-                          <div v-else class="detail-val-col-wrapper">
-                            <span class="detail-val-col font-bold">{{ userState.phone }}</span>
-                            <span class="verified-pill">
-                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="inline-check">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                              </svg>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Action Buttons moved here -->
-                    <div class="photo-action-buttons desktop-only">
-                      <button class="photo-action-btn" @click="openModal('password')">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                          <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                        Ubah Kata Sandi
-                      </button>
-                      <button class="photo-action-btn" @click="openModal('pin')">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        PIN Transaksi
-                      </button>
-                      <button class="photo-action-btn" @click="openModal('verification')">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10s10-4.477 10-10A10 10 0 0 0 12 2z"></path>
-                          <path d="M12 6a6 6 0 0 1 6 6M12 8a4 4 0 0 1 4 4M12 10a2 2 0 0 1 2 2"></path>
-                        </svg>
-                        Verifikasi Instan
-                      </button>
-                    </div>
-
-                  </div>
-                </div>
-
-                <!-- ================= TAB 2: DAFTAR ALAMAT ================= -->
-                <div v-else-if="activeTab === 'alamat'" class="alamat-tab-layout">
-                  <!-- Address Form (Add / Edit) -->
-                  <div v-if="isAddingAddress || isEditingAddress" class="address-form-box">
-                    <h4 class="section-title-inside">{{ isAddingAddress ? 'Tambah Alamat Baru' : 'Ubah Alamat' }}</h4>
-                    
-                    <div class="address-form-fields">
-                      <div class="input-group-mocca">
-                        <label class="input-label font-bold">Label Alamat</label>
-                        <input type="text" v-model="addressForm.label" class="input-field-mocca" placeholder="Contoh: Rumah, BCA Tower, Kantor" />
-                      </div>
-                      
-                      <div class="form-row-2col">
-                        <div class="input-group-mocca">
-                          <label class="input-label font-bold">Nama Penerima</label>
-                          <input type="text" v-model="addressForm.recipientName" class="input-field-mocca" />
-                        </div>
-                        <div class="input-group-mocca">
-                          <label class="input-label font-bold">Nomor Telepon</label>
-                          <input type="text" v-model="addressForm.recipientPhone" class="input-field-mocca" />
-                        </div>
-                      </div>
-                      
-                      <div class="input-group-mocca">
-                        <label class="input-label font-bold">Alamat Lengkap</label>
-                        <textarea v-model="addressForm.addressDetails" class="input-field-mocca textarea-mocca" rows="3" placeholder="Nama Jalan, Gedung, No Rumah, Kelurahan, Kecamatan, Kota, Kode Pos"></textarea>
-                      </div>
-                      
-                      <div class="input-group-mocca checkbox-group">
-                        <label class="vintage-checkbox-label">
-                          <input type="checkbox" v-model="addressForm.isUtama" :disabled="isEditingAddress && addressForm.isUtama" />
-                          <span class="checkbox-custom"></span>
-                          Jadikan Alamat Utama
-                        </label>
-                      </div>
-                    </div>
-                    
-                    <div class="address-form-actions">
-                      <button class="btn-cancel-mocca" @click="cancelAddressForm">Batal</button>
-                      <button class="btn-save-mocca font-bold" @click="saveAddress">Simpan Alamat</button>
-                    </div>
-                  </div>
-
-                  <!-- Address List -->
-                  <div v-else>
-                    <div class="alamat-header-row">
-                      <div class="alamat-header-left">
-                        <div class="header-title-with-icon">
-                          <svg class="header-loc-pin" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                          </svg>
-                          <h4 class="alamat-tab-title font-bold">Daftar Alamat</h4>
-                        </div>
-                        <p class="alamat-tab-subtext">Kelola alamat pengiriman Anda untuk pengalaman belanja yang lebih mudah.</p>
-                      </div>
-                      <button class="btn-tambah-alamat font-bold" @click="startAddAddress">
-                        <svg class="btn-plus-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                          <line x1="12" y1="5" x2="12" y2="19"></line>
-                          <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        Tambah Alamat
-                      </button>
-                    </div>
-                    
-                    <div class="addresses-stack">
-                      <div 
-                        v-for="addr in addresses" 
-                        :key="addr.id" 
-                        class="addr-premium-card"
-                        :class="{ 'active-utama-card': addr.isUtama }"
-                      >
-                        <!-- Left Side: Type Icon -->
-                        <div class="addr-card-icon-box">
-                          <svg v-if="addr.label.toLowerCase().includes('kantor')" class="addr-type-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                            <line x1="9" y1="22" x2="9" y2="16"></line>
-                            <line x1="15" y1="22" x2="15" y2="16"></line>
-                            <line x1="9" y1="16" x2="15" y2="16"></line>
-                            <path d="M8 6h.01"></path>
-                            <path d="M16 6h.01"></path>
-                            <path d="M8 10h.01"></path>
-                            <path d="M16 10h.01"></path>
-                          </svg>
-                          <svg v-else class="addr-type-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                          </svg>
-                        </div>
-                        
-                        <!-- Center Content -->
-                        <div class="addr-card-center">
-                          <div class="addr-first-row">
-                            <span class="addr-label-bold font-bold">{{ addr.label }}</span>
-                            <span v-if="addr.isUtama" class="addr-badge-utama-gold">Utama</span>
-                            
-                            <div class="addr-recipient-inline">
-                              <span class="recipient-name font-bold">{{ addr.recipientName }}</span>
-                              <span class="recipient-tag-grey">Penerima</span>
-                            </div>
-                          </div>
-                          
-                          <div class="addr-details-text">
-                            {{ addr.addressDetails }}
-                          </div>
-                          
-                          <div class="addr-phone-text">
-                            {{ addr.recipientPhone }}
-                          </div>
-                        </div>
-                        
-                        <!-- Right Side Actions -->
-                        <div class="addr-card-right-actions">
-                          <button class="addr-action-row-btn font-bold" @click="startEditAddress(addr)">
-                            <svg class="action-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                              <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
-                            Edit
-                          </button>
-                          
-                          <button 
-                            class="addr-action-row-btn font-bold delete-action-btn"
-                            :class="{ 'disabled-action': addr.isUtama }"
-                            :disabled="addr.isUtama"
-                            @click="deleteAddress(addr.id)"
-                          >
-                            <svg class="action-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                              <polyline points="3 6 5 6 21 6"></polyline>
-                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            </svg>
-                            Hapus
-                          </button>
-                          
-                          <button 
-                            v-if="!addr.isUtama" 
-                            class="addr-action-row-btn font-bold set-utama-action-btn"
-                            @click="setAlamatUtamaDirect(addr)"
-                          >
-                            Set Utama
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <!-- Bottom Support Banner -->
-                    <div class="addr-support-banner">
-                      <div class="banner-left-info">
-                        <div class="banner-info-icon-box">
-                          <svg class="info-svg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                          </svg>
-                        </div>
-                        <div class="banner-text-content">
-                          <p class="banner-title font-bold">Perlu bantuan?</p>
-                          <p class="banner-subtext">Hubungi customer service kami jika Anda mengalami kesulitan mengelola alamat.</p>
-                        </div>
-                      </div>
-                      <button class="btn-hubungi-kami font-bold" @click="triggerToast('Menghubungi customer service...')">
-                        <svg class="headset-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                          <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                        </svg>
-                        Hubungi Kami
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- ================= TAB 3: PESANAN SAYA ================= -->
-                <div v-else-if="activeTab === 'pesanan'" class="pesanan-tab-layout">
-                  <h4 class="section-title-inside">{{ currentLang === 'id' ? 'Riwayat Pesanan Saya' : 'My Orders History' }}</h4>
                   
                   <div class="orders-list">
-                    <!-- Order 1 -->
-                    <div class="order-scrapbook-card">
-                      <div class="order-card-header">
-                        <div class="order-meta-left">
-                          <span class="order-id font-bold">#MC-2026-0518</span>
-                          <span class="order-date">18 Mei 2026</span>
-                        </div>
-                        <span class="order-status-badge shipping">Sedang Dikirim</span>
+                    <div class="filter-controls-container" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; background-color: #faf9f6; padding: 1rem; border-radius: 12px; border: 1px solid rgba(140, 115, 85, 0.15);">
+                      <div class="search-input-wrapper" style="position: relative; flex: 1; min-width: 250px;">
+                        <svg style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #8c7355; opacity: 0.6;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" v-model="eventSearchQuery" placeholder="Cari invoice atau nama pembeli..." class="input-field-mocca" style="width: 100%; padding: 0.65rem 1rem 0.65rem 2.75rem; border: 1px solid rgba(140, 115, 85, 0.2); border-radius: 8px; background-color: white; font-size: 0.875rem; color: #4a3b2c; outline: none; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onfocus="this.style.borderColor='#8C7355'; this.style.boxShadow='0 0 0 3px rgba(140, 115, 85, 0.1)'" onblur="this.style.borderColor='rgba(140, 115, 85, 0.2)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.02)'" />
                       </div>
+                      <div class="filter-select-wrapper" style="position: relative; display: flex; align-items: center;">
+                        <svg style="position: absolute; left: 1rem; color: #8c7355; opacity: 0.6; pointer-events: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                        <select v-model="eventFilterStatus" class="input-field-mocca select-mocca" style="appearance: none; padding: 0.65rem 2.5rem 0.65rem 2.5rem; border: 1px solid rgba(140, 115, 85, 0.2); border-radius: 8px; cursor: pointer; background-color: white; font-size: 0.875rem; font-weight: 500; color: #4a3b2c; outline: none; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onfocus="this.style.borderColor='#8C7355'" onblur="this.style.borderColor='rgba(140, 115, 85, 0.2)'">
+                          <option value="">Semua Status</option>
+                          <option v-for="st in availableEventStatuses" :key="st" :value="st">{{ st }}</option>
+                        </select>
+                        <svg style="position: absolute; right: 1rem; color: #8c7355; opacity: 0.6; pointer-events: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </div>
+                    </div>
+                    <div v-if="loadingEventTrans" class="text-center py-4" style="text-align: center; padding: 1rem 0;">Memuat data transaksi...</div>
+                    <div v-else-if="eventTransactions.length === 0" class="text-center py-4 text-stone-500" style="text-align: center; padding: 1rem 0; color: #78716c;">Belum ada transaksi event untuk event ini.</div>
+                    <div v-else class="overflow-x-auto" style="overflow-x: auto;">
+                      <table class="w-full text-left border-collapse mt-4" style="width: 100%; min-width: 800px; text-align: left; border-collapse: collapse; margin-top: 1rem;">
+                        <thead>
+                          <tr class="border-b border-stone-200" style="border-bottom: 2px solid #E6DFD5;">
+                            <th class="p-3 text-sm font-bold" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark);">No.</th>
+                            <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortEventTable('invoice_no')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
+                              Invoice <span v-if="eventSortKey==='invoice_no'">{{ eventSortOrder==='asc' ? '↑' : '↓' }}</span>
+                            </th>
+                            <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortEventTable('created_at')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
+                              Tanggal <span v-if="eventSortKey==='created_at'">{{ eventSortOrder==='asc' ? '↑' : '↓' }}</span>
+                            </th>
+                            <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortEventTable('user_name')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
+                              Pembeli <span v-if="eventSortKey==='user_name'">{{ eventSortOrder==='asc' ? '↑' : '↓' }}</span>
+                            </th>
+                            <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortEventTable('grandtotal')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
+                              Total Harga <span v-if="eventSortKey==='grandtotal'">{{ eventSortOrder==='asc' ? '↑' : '↓' }}</span>
+                            </th>
+                            <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortEventTable('status')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
+                              Status <span v-if="eventSortKey==='status'">{{ eventSortOrder==='asc' ? '↑' : '↓' }}</span>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(order, index) in processedEventTransactions" :key="order.id" class="hover:bg-stone-50" style="border-bottom: 1px solid rgba(90, 60, 40, 0.1); cursor: default; transition: background-color 0.2s;">
+                            <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark);">{{ (eventPage - 1) * itemsPerPage + index + 1 }}</td>
+                            <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); font-weight: 500;">{{ order.invoice_no || order.order_no || '-' }}</td>
+                            <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-muted);">{{ formatDate(order.created_at) }}</td>
+                            <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark);">{{ order.user?.name || order.customer_name || '-' }}</td>
+                            <td class="p-3 text-sm font-bold" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); font-weight: bold;">{{ formatCurrency(order.grandtotal || order.total_price) }}</td>
+                            <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem;">
+                              <span class="px-2 py-1 text-xs rounded-full font-bold" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 9999px; font-weight: bold; color: #fff;" :style="{ backgroundColor: order.transaction_status?.bgcolor || '#8C7355' }">
+                                {{ order.transaction_status?.name || order.payment_status || order.status }}
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                       
-                      <div class="order-card-body">
-                        <div class="order-item-detail">
-                          <div class="item-thumb-mini">
-                            <img src="/mocca_group_tee.png" alt="Mocca Group Tee" onerror="this.src='https://placehold.co/50x50/F4EDE4/55331C?text=Tee'" />
-                          </div>
-                          <div class="item-text-mini">
-                            <p class="item-name-mini font-bold">Mocca Group Tee</p>
-                            <span class="item-options-mini">Warna: Cream, Ukuran: L</span>
-                            <span class="item-qty-mini">x 1</span>
-                          </div>
+                      <!-- Pagination Controls Event -->
+                      <div class="flex justify-between items-center mt-4" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
+                        <span style="font-size: 0.85rem; color: var(--color-mocca-muted);">Menampilkan halaman {{ eventPage }} dari {{ totalEventPages || 1 }} (Total: {{ filteredEventLength }})</span>
+                        <div style="display: flex; gap: 0.5rem;">
+                          <button @click="eventPage > 1 ? eventPage-- : null" :disabled="eventPage === 1" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--color-mocca-border); background-color: white; cursor: pointer; color: var(--color-mocca-dark);" :style="eventPage === 1 ? 'opacity: 0.5; cursor: not-allowed;' : ''">Sebelumnya</button>
+                          <button @click="eventPage < totalEventPages ? eventPage++ : null" :disabled="eventPage === totalEventPages || totalEventPages === 0" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--color-mocca-border); background-color: white; cursor: pointer; color: var(--color-mocca-dark);" :style="(eventPage === totalEventPages || totalEventPages === 0) ? 'opacity: 0.5; cursor: not-allowed;' : ''">Selanjutnya</button>
                         </div>
-                      </div>
-                      
-                      <div class="order-card-footer">
-                        <div class="price-summary-mini">
-                          <span class="total-label-mini">Total Pesanan:</span>
-                          <span class="total-price-mini font-bold">Rp 217.000</span>
-                        </div>
-                        <button class="btn-order-detail" @click="triggerToast('Menampilkan detail pesanan #MC-2026-0518...')">
-                          Lacak Pengiriman
-                        </button>
-                      </div>
-                    </div>
-
-                    <!-- Order 2 -->
-                    <div class="order-scrapbook-card">
-                      <div class="order-card-header">
-                        <div class="order-meta-left">
-                          <span class="order-id font-bold">#MC-2026-0412</span>
-                          <span class="order-date">12 April 2026</span>
-                        </div>
-                        <span class="order-status-badge completed">Selesai</span>
-                      </div>
-                      
-                      <div class="order-card-body">
-                        <div class="order-item-detail">
-                          <div class="item-thumb-mini">
-                            <img src="/album_art.png" alt="Scrapbook Album CD" onerror="this.src='https://placehold.co/50x50/F4EDE4/55331C?text=CD'" />
-                          </div>
-                          <div class="item-text-mini">
-                            <p class="item-name-mini font-bold">Vintage Scrapbook Album CD</p>
-                            <span class="item-options-mini">Koleksi Terbatas</span>
-                            <span class="item-qty-mini">x 1</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div class="order-card-footer">
-                        <div class="price-summary-mini">
-                          <span class="total-label-mini">Total Pesanan:</span>
-                          <span class="total-price-mini font-bold">Rp 145.000</span>
-                        </div>
-                        <button class="btn-order-detail-secondary" @click="triggerToast('Menampilkan detail invoice #MC-2026-0412...')">
-                          Beli Lagi
-                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- ================= TAB 4: PEMBAYARAN ================= -->
-                <div v-else-if="activeTab === 'pembayaran'" class="pembayaran-tab-layout">
-                  <h4 class="section-title-inside">{{ currentLang === 'id' ? 'Metode Pembayaran Tersimpan' : 'Saved Payment Methods' }}</h4>
-                  
-                  <div class="payments-list">
-                    <div class="payment-method-box linked">
-                      <div class="pm-left">
-                        <span class="pm-badge-bca">BCA KlikPay</span>
-                        <div class="pm-info">
-                          <p class="pm-name font-bold">Budi Santoso</p>
-                          <p class="pm-details">Terhubung ke 8832 *** 991</p>
-                        </div>
+                <!-- ================= NEW TAB: TRANSAKSI MERCHANDISE ================= -->
+                <div v-else-if="activeTab === 'transaksi-merchandise'" class="pesanan-tab-layout">
+                  <h4 class="section-title-inside" style="margin-bottom: 1rem;">Transaksi Merchandise</h4>
+                  <div class="orders-list">
+                    <div class="filter-controls-container" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; background-color: #faf9f6; padding: 1rem; border-radius: 12px; border: 1px solid rgba(140, 115, 85, 0.15);">
+                      <div class="search-input-wrapper" style="position: relative; flex: 1; min-width: 250px;">
+                        <svg style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #8c7355; opacity: 0.6;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" v-model="merchSearchQuery" placeholder="Cari invoice atau nama pembeli..." class="input-field-mocca" style="width: 100%; padding: 0.65rem 1rem 0.65rem 2.75rem; border: 1px solid rgba(140, 115, 85, 0.2); border-radius: 8px; background-color: white; font-size: 0.875rem; color: #4a3b2c; outline: none; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onfocus="this.style.borderColor='#8C7355'; this.style.boxShadow='0 0 0 3px rgba(140, 115, 85, 0.1)'" onblur="this.style.borderColor='rgba(140, 115, 85, 0.2)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.02)'" />
                       </div>
-                      <span class="pm-status-connected">Terhubung</span>
-                    </div>
-
-                    <div class="payment-method-box linked">
-                      <div class="pm-left">
-                        <span class="pm-badge-gopay font-bold">GoPay</span>
-                        <div class="pm-info">
-                          <p class="pm-name font-bold">0812-3456-7890</p>
-                          <p class="pm-details">Saldo e-Wallet GoPay</p>
+                      <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                        <div class="filter-select-wrapper" style="position: relative; display: flex; align-items: center;">
+                          <svg style="position: absolute; left: 1rem; color: #8c7355; opacity: 0.6; pointer-events: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                          <select v-model="merchFilterStatus" class="input-field-mocca select-mocca" style="appearance: none; padding: 0.65rem 2.5rem 0.65rem 2.5rem; border: 1px solid rgba(140, 115, 85, 0.2); border-radius: 8px; cursor: pointer; background-color: white; font-size: 0.875rem; font-weight: 500; color: #4a3b2c; outline: none; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onfocus="this.style.borderColor='#8C7355'" onblur="this.style.borderColor='rgba(140, 115, 85, 0.2)'">
+                            <option value="">Semua Status</option>
+                            <option v-for="st in availableMerchStatuses" :key="st" :value="st">{{ st }}</option>
+                          </select>
+                          <svg style="position: absolute; right: 1rem; color: #8c7355; opacity: 0.6; pointer-events: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                         </div>
-                      </div>
-                      <span class="pm-status-connected">Terhubung</span>
-                    </div>
-
-                    <div class="payment-method-box">
-                      <div class="pm-left">
-                        <span class="pm-badge-card font-bold">VISA</span>
-                        <div class="pm-info">
-                          <p class="pm-name font-bold">Budi Santoso</p>
-                          <p class="pm-details">Visa Platinum **** 4321</p>
-                        </div>
-                      </div>
-                      <button class="pm-btn-disconnect" @click="triggerToast('Kartu Visa berhasil dihapus.')">Hapus</button>
-                    </div>
-                  </div>
-
-                  <button class="btn-add-payment-method" @click="triggerToast('Metode pembayaran baru dibuka...')">
-                    + Tambah Metode Pembayaran Baru
-                  </button>
-                </div>
-
-                <!-- ================= TAB 5: REKENING BANK ================= -->
-                <div v-else-if="activeTab === 'rekening'" class="rekening-tab-layout">
-                  <h4 class="section-title-inside">{{ currentLang === 'id' ? 'Rekening Bank Terdaftar' : 'Registered Bank Accounts' }}</h4>
-                  
-                  <div class="bank-cards-list">
-                    <div class="vintage-bank-card-container">
-                      <div class="bank-card-inner">
-                        <div class="bank-card-logo-row">
-                          <span class="card-bank-name font-bold">BCA</span>
-                          <span class="card-bank-type">Rekening Utama</span>
-                        </div>
-                        <div class="bank-card-number-row font-bold">
-                          8832 9901 7890
-                        </div>
-                        <div class="bank-card-holder-row">
-                          <span class="card-holder-label">PEMEGANG REKENING</span>
-                          <span class="card-holder-name font-bold">BUDI SANTOSO</span>
+                        <div class="filter-select-wrapper" style="position: relative; display: flex; align-items: center;">
+                          <svg style="position: absolute; left: 1rem; color: #8c7355; opacity: 0.6; pointer-events: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                          <select v-model="merchFilterProduct" class="input-field-mocca select-mocca" style="appearance: none; padding: 0.65rem 2.5rem 0.65rem 2.5rem; max-width: 250px; text-overflow: ellipsis; border: 1px solid rgba(140, 115, 85, 0.2); border-radius: 8px; cursor: pointer; background-color: white; font-size: 0.875rem; font-weight: 500; color: #4a3b2c; outline: none; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onfocus="this.style.borderColor='#8C7355'" onblur="this.style.borderColor='rgba(140, 115, 85, 0.2)'">
+                            <option value="">Semua Produk</option>
+                            <option v-for="prod in availableMerchProducts" :key="prod" :value="prod">{{ prod }}</option>
+                          </select>
+                          <svg style="position: absolute; right: 1rem; color: #8c7355; opacity: 0.6; pointer-events: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                         </div>
                       </div>
                     </div>
-                  </div>
+                    <div v-if="loadingMerch" class="text-center py-4" style="text-align: center; padding: 1rem 0;">Memuat data...</div>
+                    <div v-else-if="merchOrders.length === 0" class="text-center py-4 text-stone-500" style="text-align: center; padding: 1rem 0; color: #78716c;">Belum ada transaksi merchandise.</div>
+                    <div v-else class="overflow-x-auto" style="overflow-x: auto;">
+                      <table class="w-full text-left border-collapse mt-4" style="width: 100%; min-width: 800px; text-align: left; border-collapse: collapse; margin-top: 1rem;">
+                        <thead>
+                          <tr class="border-b border-stone-200" style="border-bottom: 2px solid #E6DFD5;">
+                            <th class="p-3 text-sm font-bold" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark);">No.</th>
+                            <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortMerchTable('invoice_no')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
+                              Invoice <span v-if="merchSortKey==='invoice_no'">{{ merchSortOrder==='asc' ? '↑' : '↓' }}</span>
+                            </th>
+                            <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortMerchTable('created_at')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
+                              Tanggal <span v-if="merchSortKey==='created_at'">{{ merchSortOrder==='asc' ? '↑' : '↓' }}</span>
+                            </th>
+                            <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortMerchTable('user_name')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
+                              Pembeli <span v-if="merchSortKey==='user_name'">{{ merchSortOrder==='asc' ? '↑' : '↓' }}</span>
+                            </th>
+                            <th class="p-3 text-sm font-bold" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark);">Produk</th>
+                            <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortMerchTable('grandtotal')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
+                              Total Harga <span v-if="merchSortKey==='grandtotal'">{{ merchSortOrder==='asc' ? '↑' : '↓' }}</span>
+                            </th>
+                            <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortMerchTable('status')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
+                              Status <span v-if="merchSortKey==='status'">{{ merchSortOrder==='asc' ? '↑' : '↓' }}</span>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(order, index) in processedMerchOrders" :key="order.id" class="hover:bg-stone-50" style="border-bottom: 1px solid rgba(90, 60, 40, 0.1); cursor: default; transition: background-color 0.2s;">
+                            <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark);">{{ (merchPage - 1) * itemsPerPage + index + 1 }}</td>
+                            <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); font-weight: 500;">{{ order.invoice_no }}</td>
+                            <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-muted);">{{ formatDate(order.created_at) }}</td>
+                            <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark);">{{ order.user?.name || '-' }}</td>
+                            <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-muted);">
+                              <div v-for="detail in order.detail" :key="detail.id">
+                                {{ detail.product?.product_name || '-' }} ({{ detail.qty }}x)
+                              </div>
+                            </td>
+                            <td class="p-3 text-sm font-bold" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); font-weight: bold;">{{ formatCurrency(order.grandtotal) }}</td>
+                            <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem;">
+                              <span class="px-2 py-1 text-xs rounded-full font-bold" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 9999px; font-weight: bold; color: #fff;" :style="{ backgroundColor: order.transaction_status?.bgcolor || '#8C7355' }">
+                                {{ order.transaction_status?.name || order.payment_status }}
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
 
-                  <div class="bank-action-row">
-                    <button class="btn-edit-bank" @click="triggerToast('Edit Rekening BCA...')">Ubah Rekening</button>
-                    <button class="btn-add-bank-secondary" @click="triggerToast('Tambah rekening baru dibuka...')">
-                      + Tambah Rekening Lain
-                    </button>
-                  </div>
-                </div>
-
-                <!-- ================= TAB 6: NOTIFIKASI ================= -->
-                <div v-else-if="activeTab === 'notifikasi'" class="notifikasi-tab-layout">
-                  <h4 class="section-title-inside">{{ currentLang === 'id' ? 'Pengaturan Notifikasi' : 'Notification Preferences' }}</h4>
-                  
-                  <div class="notification-settings-list">
-                    <div class="notif-option-row">
-                      <div class="notif-text-side">
-                        <h5 class="notif-option-title font-bold">Diskon & Promosi Mocca</h5>
-                        <p class="notif-option-desc">Dapatkan update merchandise terbaru, diskon musiman, dan penjualan khusus album fisik.</p>
+                      <!-- Pagination Controls Merch -->
+                      <div class="flex justify-between items-center mt-4" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
+                        <span style="font-size: 0.85rem; color: var(--color-mocca-muted);">Menampilkan halaman {{ merchPage }} dari {{ totalMerchPages || 1 }} (Total: {{ filteredMerchLength }})</span>
+                        <div style="display: flex; gap: 0.5rem;">
+                          <button @click="merchPage > 1 ? merchPage-- : null" :disabled="merchPage === 1" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--color-mocca-border); background-color: white; cursor: pointer; color: var(--color-mocca-dark);" :style="merchPage === 1 ? 'opacity: 0.5; cursor: not-allowed;' : ''">Sebelumnya</button>
+                          <button @click="merchPage < totalMerchPages ? merchPage++ : null" :disabled="merchPage === totalMerchPages || totalMerchPages === 0" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--color-mocca-border); background-color: white; cursor: pointer; color: var(--color-mocca-dark);" :style="(merchPage === totalMerchPages || totalMerchPages === 0) ? 'opacity: 0.5; cursor: not-allowed;' : ''">Selanjutnya</button>
+                        </div>
                       </div>
-                      <label class="vintage-switch">
-                        <input type="checkbox" checked />
-                        <span class="switch-slider"></span>
-                      </label>
-                    </div>
-
-                    <div class="notif-option-row">
-                      <div class="notif-text-side">
-                        <h5 class="notif-option-title font-bold">Status Update Pesanan</h5>
-                        <p class="notif-option-desc">Terima pemberitahuan melalui email dan SMS ketika paket merchandise dikemas atau dikirim.</p>
-                      </div>
-                      <label class="vintage-switch">
-                        <input type="checkbox" checked />
-                        <span class="switch-slider"></span>
-                      </label>
-                    </div>
-
-                    <div class="notif-option-row">
-                      <div class="notif-text-side">
-                        <h5 class="notif-option-title font-bold">Buletin & Berita Musik</h5>
-                        <p class="notif-option-desc">Email berkala dari band Mocca mengenai konser, rilisan single terbaru, dan aktivitas belakang layar.</p>
-                      </div>
-                      <label class="vintage-switch">
-                        <input type="checkbox" />
-                        <span class="switch-slider"></span>
-                      </label>
-                    </div>
-                  </div>
-                  
-                  <button class="btn-primary-mocca mt-6" @click="triggerToast('Pengaturan notifikasi berhasil disimpan!')">
-                    Simpan Pengaturan
-                  </button>
-                </div>
-
-                <!-- ================= TAB 7: MODE TAMPILAN ================= -->
-                <!-- <div v-else-if="activeTab === 'mode'" class="mode-tab-layout">
-                  <h4 class="section-title-inside">{{ currentLang === 'id' ? 'Pilih Mode Tampilan' : 'Choose Display Mode' }}</h4>
-                  
-                  <div class="theme-palette-grid"> -->
-                    <!-- Theme Card 1: Light Cream (Default) -->
-                    <!-- <div
-                      class="theme-card"
-                      :class="{ 'active-theme': currentTheme === 'cream' }"
-                      @click="selectTheme('cream')"
-                    >
-                      <div class="theme-preview-box cream-theme">
-                        <div class="preview-header"></div>
-                        <div class="preview-body"></div>
-                      </div>
-                      <span class="theme-name font-bold">Light Cream (Default)</span>
-                      <span class="theme-desc">Latar kertas hangat, tulisan kopi pekat hangat.</span>
-                    </div> -->
-
-                    <!-- Theme Card 2: Vintage Sepia -->
-                    <!-- <div
-                      class="theme-card"
-                      :class="{ 'active-theme': currentTheme === 'sepia' }"
-                      @click="selectTheme('sepia')"
-                    >
-                      <div class="theme-preview-box sepia-theme">
-                        <div class="preview-header"></div>
-                        <div class="preview-body"></div>
-                      </div>
-                      <span class="theme-name font-bold">Vintage Sepia</span>
-                      <span class="theme-desc">Nuansa album foto lama, warna sage dan pasir hangat.</span>
-                    </div> -->
-
-                    <!-- Theme Card 3: Cozy Dark Cocoa -->
-                    <!-- <div
-                      class="theme-card"
-                      :class="{ 'active-theme': currentTheme === 'cocoa' }"
-                      @click="selectTheme('cocoa')"
-                    >
-                      <div class="theme-preview-box cocoa-theme">
-                        <div class="preview-header"></div>
-                        <div class="preview-body"></div>
-                      </div>
-                      <span class="theme-name font-bold">Cozy Dark Cocoa</span>
-                      <span class="theme-desc">Latar cokelat pekat gelap, teks krem lembut.</span>
-                    </div>
-                  </div>
-                </div> -->
-
-                <!-- ================= TAB 8: KEAMANAN ================= -->
-                <div v-else-if="activeTab === 'keamanan'" class="keamanan-tab-layout">
-                  <h4 class="section-title-inside">{{ currentLang === 'id' ? 'Pengaturan Keamanan Akun' : 'Account Security Settings' }}</h4>
-                  
-                  <div class="security-sections-list">
-                    <div class="sec-item-row">
-                      <div class="sec-text-side">
-                        <h5 class="sec-item-title font-bold">Autentikasi Dua Faktor (2FA)</h5>
-                        <p class="sec-item-desc">Tambahkan lapisan keamanan ekstra dengan mengirimkan kode OTP ke nomor handphone Anda saat masuk.</p>
-                      </div>
-                      <label class="vintage-switch">
-                        <input type="checkbox" />
-                        <span class="switch-slider"></span>
-                      </label>
-                    </div>
-
-                    <div class="sec-item-row">
-                      <div class="sec-text-side">
-                        <h5 class="sec-item-title font-bold">Daftar Sesi Login</h5>
-                        <p class="sec-item-desc">Anda saat ini sedang login melalui Chrome (Windows) - Jakarta, Indonesia.</p>
-                      </div>
-                      <button class="btn-outline-mocca-small" @click="triggerToast('Sesi perangkat lain berhasil dikeluarkan.')">
-                        Keluar dari Semua Perangkat
-                      </button>
                     </div>
                   </div>
                 </div>
-
-                <!-- ================= TAB 9: MOCCA REWARDS ================= -->
-                <div v-else-if="activeTab === 'rewards'" class="rewards-tab-layout-panel">
-                  <h4 class="section-title-inside">Mocca Rewards & Loyalty Program</h4>
-                  
-                  <div class="rewards-loyalty-showcase">
-                    <div class="points-card-large">
-                      <span class="points-label-large">SALDO POIN ANDA</span>
-                      <span class="points-val-large font-bold">{{ userState.points }} POIN</span>
-                      <span class="points-sub-large">Poin kedaluwarsa pada 31 Desember 2026</span>
-                    </div>
-
-                    <div class="rewards-tiers-info">
-                      <h5 class="tier-title font-bold">Level Keanggotaan: Gold Member</h5>
-                      <p class="tier-desc">Kumpulkan 55 poin lagi untuk membuka status <strong>Platinum Member</strong> dan nikmati keuntungan gratis ongkir tanpa batas serta rilisan merchandise eksklusif H-3 lebih awal.</p>
-                    </div>
-                  </div>
-                </div>
-
               </div>
             </Transition>
           </div>
@@ -927,7 +395,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted, watch, computed } from 'vue';
 import { currentPage, currentLang, currentTheme, isLoggedIn } from '../store/cart.js';
 
 const isAccordionOpen = ref(true);
@@ -939,16 +407,319 @@ const selectTheme = (theme) => {
 
 // Reactive User State initialized matching mock Budi Santoso
 const userState = reactive({
-  fullName: 'Budi Santoso',
+  fullName: localStorage.getItem('user_name') || 'Budi Santoso',
   birthDate: '12 Januari 1998',
   gender: 'Laki-laki',
-  email: 'budi.santoso@gmail.com',
+  email: localStorage.getItem('user_email') || 'budi.santoso@gmail.com',
   phone: '0812 3456 7890',
   points: 245
 });
 
 // Navigation state
-const activeTab = ref('biodata');
+const activeTab = ref('transaksi-event');
+
+
+
+// MERCHANDISE STATE
+const merchOrders = ref([]);
+const loadingMerch = ref(false);
+
+const fetchMerchOrders = async () => {
+  loadingMerch.value = true;
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const token = localStorage.getItem('token') || localStorage.getItem('access_token') || '';
+    const response = await fetch(`${apiUrl}/api/order-bycreator`, {
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
+    });
+    const result = await response.json();
+    if (result.status && result.data) {
+      merchOrders.value = result.data;
+    }
+  } catch (error) {
+    console.error('Error fetching merch orders:', error);
+  } finally {
+    loadingMerch.value = false;
+  }
+};
+
+// EVENT STATE
+const eventList = ref([]);
+const selectedEventId = ref('');
+const eventTransactions = ref([]);
+const loadingEventTrans = ref(false);
+
+const fetchEventsList = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const response = await fetch(`${apiUrl}/api/event?page=1&per_page=500`);
+    const result = await response.json();
+    const events = result.data?.data || result.data || [];
+    if (Array.isArray(events)) {
+      eventList.value = events;
+      if (events.length > 0) {
+        selectedEventId.value = events[0].id;
+        fetchEventTransactions();
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching events list:', error);
+  }
+};
+
+const fetchEventTransactions = async () => {
+  if (!selectedEventId.value) return;
+  loadingEventTrans.value = true;
+  eventPage.value = 1; // reset page
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const token = localStorage.getItem('token') || localStorage.getItem('access_token') || '';
+    const response = await fetch(`${apiUrl}/api/list-transaction-by-event?event_id=${selectedEventId.value}&page=1&per_page=500`, {
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
+    });
+    const result = await response.json();
+    const trans = result.data?.data || result.data || [];
+    if (Array.isArray(trans)) {
+      eventTransactions.value = trans;
+    }
+  } catch (error) {
+    console.error('Error fetching event transactions:', error);
+  } finally {
+    loadingEventTrans.value = false;
+  }
+};
+
+watch(selectedEventId, () => {
+  fetchEventTransactions();
+});
+
+// EVENT PAGINATION & SORTING
+const eventPage = ref(1);
+const itemsPerPage = 10;
+const eventSortKey = ref('');
+const eventSortOrder = ref('asc');
+const eventSearchQuery = ref('');
+const eventFilterStatus = ref('');
+
+const availableEventStatuses = computed(() => {
+  const statuses = new Set();
+  eventTransactions.value.forEach(t => {
+    const s = t.transaction_status?.name || t.payment_status || t.status || '';
+    if (s) statuses.add(s);
+  });
+  return Array.from(statuses);
+});
+
+const sortEventTable = (key) => {
+  if (eventSortKey.value === key) {
+    eventSortOrder.value = eventSortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    eventSortKey.value = key;
+    eventSortOrder.value = 'asc';
+  }
+};
+
+const processedEventTransactions = computed(() => {
+  let list = [...eventTransactions.value];
+  
+  if (eventSearchQuery.value) {
+    const q = eventSearchQuery.value.toLowerCase();
+    list = list.filter(item => {
+      const inv = (item.invoice_no || item.order_no || '').toLowerCase();
+      const buyer = (item.user?.name || item.customer_name || '').toLowerCase();
+      return inv.includes(q) || buyer.includes(q);
+    });
+  }
+  
+  if (eventFilterStatus.value) {
+    list = list.filter(item => {
+      const status = item.transaction_status?.name || item.payment_status || item.status || '';
+      return status === eventFilterStatus.value;
+    });
+  }
+  
+  if (eventSortKey.value) {
+    list.sort((a, b) => {
+      let valA = a[eventSortKey.value] || '';
+      let valB = b[eventSortKey.value] || '';
+      
+      if (eventSortKey.value === 'user_name') {
+        valA = a.user?.name || a.customer_name || '';
+        valB = b.user?.name || b.customer_name || '';
+      } else if (eventSortKey.value === 'grandtotal') {
+        valA = Number(a.grandtotal || a.total_price || 0);
+        valB = Number(b.grandtotal || b.total_price || 0);
+      } else if (eventSortKey.value === 'status') {
+        valA = a.transaction_status?.name || a.payment_status || a.status || '';
+        valB = b.transaction_status?.name || b.payment_status || b.status || '';
+      }
+      
+      if (valA < valB) return eventSortOrder.value === 'asc' ? -1 : 1;
+      if (valA > valB) return eventSortOrder.value === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+  
+  const start = (eventPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return list.slice(start, end);
+});
+const filteredEventLength = computed(() => {
+  let list = [...eventTransactions.value];
+  if (eventSearchQuery.value) {
+    const q = eventSearchQuery.value.toLowerCase();
+    list = list.filter(item => {
+      const inv = (item.invoice_no || item.order_no || '').toLowerCase();
+      const buyer = (item.user?.name || item.customer_name || '').toLowerCase();
+      return inv.includes(q) || buyer.includes(q);
+    });
+  }
+  if (eventFilterStatus.value) {
+    list = list.filter(item => {
+      const status = item.transaction_status?.name || item.payment_status || item.status || '';
+      return status === eventFilterStatus.value;
+    });
+  }
+  return list.length;
+});
+const totalEventPages = computed(() => Math.ceil(filteredEventLength.value / itemsPerPage));
+
+// MERCH PAGINATION & SORTING
+const merchPage = ref(1);
+const merchSortKey = ref('');
+const merchSortOrder = ref('asc');
+const merchSearchQuery = ref('');
+const merchFilterStatus = ref('');
+const merchFilterProduct = ref('');
+
+const availableMerchStatuses = computed(() => {
+  const statuses = new Set();
+  merchOrders.value.forEach(t => {
+    const s = t.transaction_status?.name || t.payment_status || '';
+    if (s) statuses.add(s);
+  });
+  return Array.from(statuses);
+});
+
+const availableMerchProducts = computed(() => {
+  const products = new Set();
+  merchOrders.value.forEach(order => {
+    if (order.detail && Array.isArray(order.detail)) {
+      order.detail.forEach(d => {
+        if (d.product?.product_name) products.add(d.product.product_name);
+      });
+    }
+  });
+  return Array.from(products);
+});
+
+const sortMerchTable = (key) => {
+  if (merchSortKey.value === key) {
+    merchSortOrder.value = merchSortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    merchSortKey.value = key;
+    merchSortOrder.value = 'asc';
+  }
+};
+
+const processedMerchOrders = computed(() => {
+  let list = [...merchOrders.value];
+  
+  if (merchSearchQuery.value) {
+    const q = merchSearchQuery.value.toLowerCase();
+    list = list.filter(item => {
+      const inv = (item.invoice_no || '').toLowerCase();
+      const buyer = (item.user?.name || '').toLowerCase();
+      return inv.includes(q) || buyer.includes(q);
+    });
+  }
+  
+  if (merchFilterStatus.value) {
+    list = list.filter(item => {
+      const status = item.transaction_status?.name || item.payment_status || '';
+      return status === merchFilterStatus.value;
+    });
+  }
+  
+  if (merchFilterProduct.value) {
+    list = list.filter(item => {
+      if (!item.detail || !Array.isArray(item.detail)) return false;
+      return item.detail.some(d => d.product?.product_name === merchFilterProduct.value);
+    });
+  }
+  
+  if (merchSortKey.value) {
+    list.sort((a, b) => {
+      let valA = a[merchSortKey.value] || '';
+      let valB = b[merchSortKey.value] || '';
+      
+      if (merchSortKey.value === 'user_name') {
+        valA = a.user?.name || '';
+        valB = b.user?.name || '';
+      } else if (merchSortKey.value === 'grandtotal') {
+        valA = Number(a.grandtotal || 0);
+        valB = Number(b.grandtotal || 0);
+      } else if (merchSortKey.value === 'status') {
+        valA = a.transaction_status?.name || a.payment_status || '';
+        valB = b.transaction_status?.name || b.payment_status || '';
+      }
+      
+      if (valA < valB) return merchSortOrder.value === 'asc' ? -1 : 1;
+      if (valA > valB) return merchSortOrder.value === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+  
+  const start = (merchPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return list.slice(start, end);
+});
+const filteredMerchLength = computed(() => {
+  let list = [...merchOrders.value];
+  if (merchSearchQuery.value) {
+    const q = merchSearchQuery.value.toLowerCase();
+    list = list.filter(item => {
+      const inv = (item.invoice_no || '').toLowerCase();
+      const buyer = (item.user?.name || '').toLowerCase();
+      return inv.includes(q) || buyer.includes(q);
+    });
+  }
+  if (merchFilterStatus.value) {
+    list = list.filter(item => {
+      const status = item.transaction_status?.name || item.payment_status || '';
+      return status === merchFilterStatus.value;
+    });
+  }
+  if (merchFilterProduct.value) {
+    list = list.filter(item => {
+      if (!item.detail || !Array.isArray(item.detail)) return false;
+      return item.detail.some(d => d.product?.product_name === merchFilterProduct.value);
+    });
+  }
+  return list.length;
+});
+const totalMerchPages = computed(() => Math.ceil(filteredMerchLength.value / itemsPerPage));
+
+
+watch([eventSearchQuery, eventFilterStatus], () => { eventPage.value = 1; });
+watch([merchSearchQuery, merchFilterStatus, merchFilterProduct], () => { merchPage.value = 1; });
+
+const formatCurrency = (val) => {
+  if (!val) return 'Rp 0';
+  return 'Rp ' + Number(val).toLocaleString('id-ID');
+};
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+};
+
+onMounted(() => {
+  fetchMerchOrders();
+  fetchEventsList();
+});
+
 
 // File Upload ref
 const fileInput = ref(null);

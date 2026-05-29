@@ -342,6 +342,21 @@ const fetchEvents = async () => {
           minimumFractionDigits: 0
         }).format(price).replace('Rp', 'Rp');
 
+        let formattedDateId = 'TBA';
+        let formattedDateEn = 'TBA';
+        if (ticket.event_schedule_date) {
+          const d = new Date(ticket.event_schedule_date);
+          if (!isNaN(d)) {
+            const monthsId = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+            const monthsEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            formattedDateId = `${d.getDate()} ${monthsId[d.getMonth()]} ${d.getFullYear()}`;
+            formattedDateEn = `${d.getDate()} ${monthsEn[d.getMonth()]} ${d.getFullYear()}`;
+          } else {
+            formattedDateId = ticket.event_schedule_date;
+            formattedDateEn = ticket.event_schedule_date;
+          }
+        }
+
         return {
           id: ev.id,
           title: ev.name || ev.title || 'Event Mocca',
@@ -349,8 +364,8 @@ const fetchEvents = async () => {
           category: ev.has_event_topic?.name?.toLowerCase() || 'others',
           categoryNameId: ev.has_event_topic?.name || 'Lainnya',
           categoryNameEn: ev.has_event_topic?.name || 'Others',
-          dateId: ticket.event_schedule_date || 'TBA',
-          dateEn: ticket.event_schedule_date || 'TBA',
+          dateId: formattedDateId,
+          dateEn: formattedDateEn,
           time: ticket.starting_time ? `${ticket.starting_time.slice(0, 5)} WIB` : 'TBA',
           location: ticket.detail_venue_name || ev.location_name || ev.location_city || ev.location || 'TBA',
           priceLabel: formattedPrice,

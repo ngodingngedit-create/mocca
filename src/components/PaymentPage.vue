@@ -347,7 +347,7 @@
 
               <!-- Actions -->
               <div class="summary-actions">
-                <button class="primary-checkout-btn font-bold" @click="submitOrder" :disabled="isSubmitting">
+                <button class="primary-checkout-btn font-bold" @click="submitOrder" :disabled="isSubmitting || !isFormComplete">
                   <span v-if="isSubmitting" class="spinner"></span>
                   <span v-else>Bayar Sekarang</span>
                 </button>
@@ -802,6 +802,16 @@ const backToCheckout = () => {
 const isSubmitting = ref(false);
 const showSuccessModal = ref(false);
 const transactionId = ref('');
+
+const isFormComplete = computed(() => {
+  if (!profile.value.name || !profile.value.email || !profile.value.phone) return false;
+  if (!activeAddress.value.province_id || !activeAddress.value.city_id || !activeAddress.value.zip || !activeAddress.value.street || !activeAddress.value.nama_penerima || !activeAddress.value.phone) return false;
+  if (!isShippingReady.value || !shippingType.value) return false;
+  if (shippingType.value === 'courier') {
+    if (!selectedCourier.value || !selectedServiceId.value || shippingPrice.value <= 0) return false;
+  }
+  return true;
+});
 
 const submitOrder = async () => {
   if (!activeAddress.value.province_id || !shippingType.value) {
@@ -2263,7 +2273,7 @@ const formatPrice = (price) => {
 }
 
 .primary-checkout-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.4;
   cursor: not-allowed;
   transform: none;
 }

@@ -316,9 +316,17 @@
                   <!-- Header Left: Title & Badge -->
                   <div class="ticket-header-left">
                     <h3 class="ticket-item-title">{{ ticket.name }}</h3>
-                    <div class="ticket-status-badge-inline" :class="ticket.status">
+                    <div class="ticket-status-badge-inline" :class="ticket.status === 'on-sale' ? 'on-sale' : 'sold-out'">
                       <span class="status-dot"></span>
-                      {{ ticket.status === 'on-sale' ? (currentLang === 'id' ? 'PENJUALAN BERLANGSUNG' : 'ON SALE') : (currentLang === 'id' ? 'TIKET HABIS' : 'SOLD OUT') }}
+                      <template v-if="ticket.status === 'on-sale'">
+                        {{ currentLang === 'id' ? 'PENJUALAN BERLANGSUNG' : 'ON SALE' }}
+                      </template>
+                      <template v-else-if="ticket.status === 'sold-out'">
+                        {{ currentLang === 'id' ? 'TIKET HABIS' : 'SOLD OUT' }}
+                      </template>
+                      <template v-else-if="ticket.status === 'closed'">
+                        {{ currentLang === 'id' ? 'PENJUALAN SELESAI' : 'SALES ENDED' }}
+                      </template>
                     </div>
                   </div>
 
@@ -430,9 +438,9 @@
                   <div class="ticket-bottom-right-desktop">
                     <!-- Add Button or Adjuster -->
                     <div class="ticket-action-wrapper-desktop">
-                      <template v-if="ticket.status === 'sold-out'">
+                      <template v-if="ticket.status === 'sold-out' || ticket.status === 'closed'">
                         <button class="add-ticket-btn-card-desktop disabled" disabled>
-                          {{ currentLang === 'id' ? 'Habis' : 'Sold Out' }}
+                          {{ ticket.status === 'sold-out' ? (currentLang === 'id' ? 'Habis' : 'Sold Out') : (currentLang === 'id' ? 'Selesai' : 'Ended') }}
                         </button>
                       </template>
                       <template v-else-if="isTicketSelected(ticket.id)">
@@ -481,9 +489,9 @@
                   <!-- Action row for button / adjuster -->
                   <div class="ticket-bottom-action-row">
                     <div class="ticket-action-wrapper">
-                      <template v-if="ticket.status === 'sold-out'">
+                      <template v-if="ticket.status === 'sold-out' || ticket.status === 'closed'">
                         <button class="add-ticket-btn-card disabled" disabled>
-                          {{ currentLang === 'id' ? 'Habis' : 'Sold Out' }}
+                          {{ ticket.status === 'sold-out' ? (currentLang === 'id' ? 'Habis' : 'Sold Out') : (currentLang === 'id' ? 'Selesai' : 'Ended') }}
                         </button>
                       </template>
                       <template v-else-if="isTicketSelected(ticket.id)">
@@ -929,28 +937,63 @@ const fetchTickets = async () => {
       }
 
       ticketCategories.value = data.map(t => {
-        const tDate = new Date(t.ticket_date || Date.now());
+        // Parse event date
+        const eventTimestamp = displayEvent.value.timestamp || Date.now();
+        const tDateStr = t.event_schedule_date || t.ticket_date || t.ticket_start;
+        const tDate = tDateStr ? new Date(tDateStr) : new Date(eventTimestamp);
+        
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         
         let monthName = months[tDate.getMonth()] || '';
         let dayNum = tDate.getDate() || '';
         let dayName = days[tDate.getDay()] || '';
-        let startTime = t.starting_time ? t.starting_time.slice(0, 5) : '00:00';
+        
+        // Prioritize ticket starting_time, then displayEvent time
+        let startTime = '00:00';
+        if (t.starting_time) {
+          startTime = t.starting_time.slice(0, 5);
+        } else if (displayEvent.value.time) {
+          startTime = displayEvent.value.time.split('-')[0].trim();
+        }
         let fullDate = `${dayNum} ${monthName} ${tDate.getFullYear()}, ${startTime} WIB`;
         
-        const eDate = new Date(t.ticket_end || Date.now());
+        // Parse ticket end/expiration date
+        const eDateStr = t.ticket_end;
+        const eDate = eDateStr ? new Date(eDateStr) : new Date(eventTimestamp);
+        
         let eMonth = months[eDate.getMonth()] || '';
         let eDayNum = eDate.getDate() || '';
-        let endTime = t.ending_time ? t.ending_time.slice(0, 5) : '23:59';
+        
+        let endTime = '23:59';
+        if (t.ending_time) {
+          endTime = t.ending_time.slice(0, 5);
+        } else if (displayEvent.value.time && displayEvent.value.time.includes('-')) {
+          endTime = displayEvent.value.time.split('-')[1].trim().replace(' WIB', '');
+        }
         let expiration = `${eDayNum} ${eMonth} ${eDate.getFullYear()}, ${endTime} WIB`;
+
+        let tStatus = 'on-sale';
+        if (t.is_soldout) {
+          tStatus = 'sold-out';
+        } else if (t.ticket_end) {
+          // Parse ending_time if available, e.g. "18:00:00"
+          let endDateTimeStr = t.ticket_end;
+          if (t.ending_time && !t.ticket_end.includes('T') && !t.ticket_end.includes(' ')) {
+            endDateTimeStr = `${t.ticket_end}T${t.ending_time}`;
+          }
+          const endDateTime = new Date(endDateTimeStr);
+          if (endDateTime < new Date()) {
+            tStatus = 'closed';
+          }
+        }
 
         return {
           id: t.id,
           name: t.name,
           price: t.price,
           isBundle: t.is_bundling === 1,
-          status: t.is_soldout ? 'sold-out' : 'on-sale',
+          status: tStatus,
           description: t.description || '',
           ticket_fee: t.ticket_fee !== undefined ? t.ticket_fee : 0,
           benefits: [],
@@ -981,7 +1024,7 @@ const getSelectedTicketQty = (ticketId) => {
 };
 
 const selectTicket = (ticket) => {
-  if (ticket.status === 'sold-out') return;
+  if (ticket.status === 'sold-out' || ticket.status === 'closed') return;
   const idx = selectedTickets.value.findIndex(t => t.id === ticket.id);
   if (idx !== -1) {
     selectedTickets.value.splice(idx, 1);
@@ -1033,7 +1076,7 @@ const formatCurrency = (price) => {
 };
 
 const selectTicketCard = (ticket) => {
-  if (ticket.status === 'sold-out') return;
+  if (ticket.status === 'sold-out' || ticket.status === 'closed') return;
   const idx = selectedTickets.value.findIndex(t => t.id === ticket.id);
   if (idx === -1) {
     selectedTickets.value.push({
@@ -1316,13 +1359,28 @@ const fetchRecommendedEvents = async () => {
           minimumFractionDigits: 0
         }).format(price).replace('Rp', 'Rp');
 
+        let formattedDateId = 'TBA';
+        let formattedDateEn = 'TBA';
+        if (ticket.event_schedule_date) {
+          const d = new Date(ticket.event_schedule_date);
+          if (!isNaN(d)) {
+            const monthsId = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+            const monthsEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            formattedDateId = `${d.getDate()} ${monthsId[d.getMonth()]} ${d.getFullYear()}`;
+            formattedDateEn = `${d.getDate()} ${monthsEn[d.getMonth()]} ${d.getFullYear()}`;
+          } else {
+            formattedDateId = ticket.event_schedule_date;
+            formattedDateEn = ticket.event_schedule_date;
+          }
+        }
+
         return {
           id: ev.id,
           title: ev.name || ev.title || 'Event Mocca',
           image: ev.image_url || '/banner/bannerevent.webp',
           category: ev.has_event_topic?.name?.toLowerCase() || 'others',
-          dateId: ticket.event_schedule_date || 'TBA',
-          dateEn: ticket.event_schedule_date || 'TBA',
+          dateId: formattedDateId,
+          dateEn: formattedDateEn,
           time: ticket.starting_time ? `${ticket.starting_time.slice(0, 5)} WIB` : 'TBA',
           location: ticket.detail_venue_name || ev.location_name || ev.location_city || ev.location || 'TBA',
           priceLabel: formattedPrice,

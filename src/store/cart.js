@@ -1,11 +1,32 @@
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 // Reactive state
 export const cartItems = ref([]);
 export const isCartOpen = ref(false);
 export const searchQuery = ref('');
 export const currentLang = ref('id');
-export const currentPage = ref('home');
+const getInitialPage = () => {
+  const path = window.location.pathname.replace(/^\/+/, '');
+  return path || 'home';
+};
+export const currentPage = ref(getInitialPage());
+
+// Sync URL on state change
+watch(currentPage, (newPage) => {
+  const currentPath = window.location.pathname.replace(/^\/+/, '') || 'home';
+  if (currentPath !== newPage) {
+    const url = newPage === 'home' ? '/' : `/${newPage}`;
+    window.history.pushState({ page: newPage }, '', url);
+  }
+});
+
+// Sync state on browser back/forward
+window.addEventListener('popstate', () => {
+  const path = window.location.pathname.replace(/^\/+/, '') || 'home';
+  if (currentPage.value !== path) {
+    currentPage.value = path;
+  }
+});
 export const isSearchOpen = ref(false);
 export const isMobileMenuOpen = ref(false);
 export const triggerProfile = ref(false);
@@ -38,6 +59,7 @@ export const addToCart = (product, color, quantity = 1) => {
       image: product.image,
       color: color || 'default',
       quantity: quantity,
+      variant_id: product.variant_id || null,
       store_location: product.has_store_location || null
     });
   }

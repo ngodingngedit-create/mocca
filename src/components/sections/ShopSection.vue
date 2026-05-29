@@ -30,18 +30,6 @@
               <span class="product-price">{{ formatPrice(product.price) }}</span>
             </div>
 
-            <!-- Color Swatches Row (underneath price, aligned to the left) -->
-            <div class="color-swatches-row">
-              <div class="color-swatches">
-                <span 
-                  v-for="color in product.colors" 
-                  :key="color"
-                  :class="['swatch', `swatch-${color}`, { active: selectedColors[product.id] === color }]" 
-                  @click="selectedColors[product.id] = color"
-                  :title="color"
-                ></span>
-              </div>
-            </div>
 
             <!-- Interactive Quantity Selector -->
             <div class="product-actions">
@@ -202,14 +190,19 @@ const fetchProducts = async () => {
     if (data) {
       products.value = data.map(p => {
         let price = parseInt(p.price);
+        let variantId = null;
         if (price === 0 && p.product_varian && p.product_varian.length > 0) {
           price = parseInt(p.product_varian[0].price);
+          variantId = p.product_varian[0].id;
+        } else if (p.product_varian && p.product_varian.length > 0) {
+          variantId = p.product_varian[0].id;
         }
         return {
           id: p.id,
           slug: p.slug,
           title: p.product_name,
           price: price,
+          variant_id: variantId,
           image: p.product_image?.[0]?.image_url || '/mocca_group_tee.png',
           colors: ['cream'],
           creator: { 

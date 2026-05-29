@@ -142,27 +142,8 @@
       <!-- ================= RIGHT PANEL: DYNAMIC CARD ================= -->
       <div class="login-right-panel">
         <div class="login-card-container">
-          <!-- Card Switch Tabs -->
-          <div class="login-tabs">
-            <button 
-              class="tab-btn" 
-              :class="{ active: activeMode === 'login' }"
-              @click="switchMode('login')"
-            >
-              Login
-            </button>
-            <button 
-              class="tab-btn" 
-              :class="{ active: activeMode === 'register' }"
-              @click="switchMode('register')"
-            >
-              {{ currentLang === 'id' ? 'Registrasi' : 'Register' }}
-            </button>
-          </div>
-
           <div class="login-card-content">
-            <!-- Mode 1: LOGIN VIEW -->
-            <div v-if="activeMode === 'login'" class="form-wrapper">
+            <div class="form-wrapper">
               <div class="form-header">
                 <h3 class="form-title">
                   {{ currentLang === 'id' ? 'Selamat datang kembali!' : 'Welcome back!' }}
@@ -231,164 +212,6 @@
               </form>
             </div>
 
-            <!-- Mode 2: REGISTRATION VIEW -->
-            <div v-else class="form-wrapper">
-              <div class="form-header">
-                <h3 class="form-title">
-                  {{ currentLang === 'id' ? 'Buat akun Mocca kamu' : 'Create your Mocca account' }}
-                </h3>
-                <p class="form-subtext">
-                  {{ currentLang === 'id' ? 'Mulai perjalanan belanja merch Mocca favoritmu.' : 'Start your journey shopping cozy Mocca merchandise.' }}
-                </p>
-              </div>
-
-              <form @submit.prevent="submitRegister" class="auth-form-fields">
-                <div class="form-input-group">
-                  <label class="form-label">{{ currentLang === 'id' ? 'Nama Lengkap' : 'Full Name' }}</label>
-                  <div class="input-icon-wrapper">
-                    <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                    <input 
-                      v-model="registerForm.fullName"
-                      type="text"
-                      required
-                      :placeholder="currentLang === 'id' ? 'Nama lengkap Anda' : 'Your full name'"
-                      class="auth-input-field"
-                    />
-                  </div>
-                </div>
-
-                <div class="form-input-group">
-                  <label class="form-label">Email</label>
-                  <div class="input-icon-wrapper">
-                    <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                      <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
-                    <input 
-                      v-model="registerForm.email"
-                      type="email"
-                      required
-                      :placeholder="currentLang === 'id' ? 'Masukkan email kamu' : 'Enter your email'"
-                      class="auth-input-field"
-                    />
-                  </div>
-                </div>
-
-                <div class="form-input-group">
-                  <label class="form-label">{{ currentLang === 'id' ? 'Kata Sandi' : 'Password' }}</label>
-                  <div class="input-icon-wrapper">
-                    <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
-                    <input 
-                      v-model="registerForm.password"
-                      :type="showPassword ? 'text' : 'password'"
-                      required
-                      :placeholder="currentLang === 'id' ? 'Buat kata sandi minimal 6 karakter' : 'Create at least 6 characters'"
-                      class="auth-input-field"
-                    />
-                    <button type="button" class="eye-toggle-btn" @click="showPassword = !showPassword" aria-label="Toggle password visibility">
-                      <svg v-if="showPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                      </svg>
-                      <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <div class="form-input-group">
-                  <label class="form-label">{{ currentLang === 'id' ? 'Konfirmasi Kata Sandi' : 'Confirm Password' }}</label>
-                  <div class="input-icon-wrapper">
-                    <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
-                    <input 
-                      v-model="registerForm.confirmPassword"
-                      :type="showConfirmPassword ? 'text' : 'password'"
-                      required
-                      :placeholder="currentLang === 'id' ? 'Ulangi kata sandi Anda' : 'Repeat your password'"
-                      class="auth-input-field"
-                    />
-                    <button type="button" class="eye-toggle-btn" @click="showConfirmPassword = !showConfirmPassword" aria-label="Toggle password visibility">
-                      <svg v-if="showConfirmPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                      </svg>
-                      <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <button type="submit" class="btn-auth-submit font-bold" :disabled="isSubmitting">
-                  <span v-if="isSubmitting" class="spinner-mini"></span>
-                  <span v-else>{{ currentLang === 'id' ? 'Daftar' : 'Sign Up' }}</span>
-                </button>
-              </form>
-            </div>
-
-            <!-- Social Login Integration Options -->
-            <div class="social-auth-block">
-              <div class="social-divider">
-                <span class="divider-line"></span>
-                <span class="divider-text">
-                  {{ activeMode === 'login' 
-                    ? (currentLang === 'id' ? 'atau masuk dengan' : 'or sign in with')
-                    : (currentLang === 'id' ? 'atau daftar dengan' : 'or sign up with') 
-                  }}
-                </span>
-                <span class="divider-line"></span>
-              </div>
-
-              <div class="social-buttons-row">
-                <!-- Google Button -->
-                <button type="button" class="btn-social-auth" @click="socialLogin('Google')">
-                  <svg class="social-logo" width="16" height="16" viewBox="0 0 24 24">
-                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.85z" fill="#FBBC05"/>
-                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.85c.87-2.6 3.3-4.53 6-4.53z" fill="#EA4335"/>
-                  </svg>
-                  <span>Google</span>
-                </button>
-
-                <!-- Apple Button -->
-                <button type="button" class="btn-social-auth" @click="socialLogin('Apple')">
-                  <svg class="social-logo" width="15" height="15" viewBox="0 0 170 170" fill="currentColor">
-                    <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.39.13-9.14-1.78-14.24-5.75-3.56-2.77-7.38-7.44-11.47-14-11.69-19.16-17.54-38.31-17.54-57.44 0-14.77 3.56-26.68 10.68-35.73 7.13-9.06 16.03-13.59 26.7-13.59 5.02 0 10.42 1.48 16.19 4.43 5.77 2.95 9.35 4.42 10.75 4.42 1.52 0 5.25-1.54 11.19-4.63 5.95-3.08 11.22-4.56 15.82-4.43 16.51 1.39 28.76 7.64 36.75 18.75-14.07 8.56-20.97 20.1-20.72 34.63.26 11.43 4.25 21.08 11.97 28.94 7.72 7.87 17.2 12.18 28.44 12.94 1.02 2.76 2.06 5.86 3.12 9.3zM119.5 29.54C119.5 22.18 122.1 15.6 127.3 9.8c5.2-5.8 11.58-9.1 19.16-9.8.13 1.13.2 2.12.2 2.97 0 7.23-2.68 13.91-8.04 20.02-5.36 6.1-11.83 9.47-19.42 10.09-.45-1.12-.7-2.28-.7-3.54z"/>
-                  </svg>
-                  <span>Apple</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Bottom form switcher text -->
-            <div class="auth-bottom-switch">
-              <span v-if="activeMode === 'login'">
-                {{ currentLang === 'id' ? 'Belum punya akun?' : "Don't have an account?" }}
-                <a href="#" class="switch-link font-bold" @click.prevent="switchMode('register')">
-                  {{ currentLang === 'id' ? 'Daftar sekarang' : 'Register now' }}
-                </a>
-              </span>
-              <span v-else>
-                {{ currentLang === 'id' ? 'Sudah punya akun?' : 'Already have an account?' }}
-                <a href="#" class="switch-link font-bold" @click.prevent="switchMode('login')">
-                  {{ currentLang === 'id' ? 'Masuk sekarang' : 'Sign in now' }}
-                </a>
-              </span>
-            </div>
-
             <!-- Kembali ke Beranda Button inside Card -->
             <div class="card-back-home-wrapper">
               <button type="button" class="btn-back-home" @click="goToHome">
@@ -429,11 +252,8 @@
 import { ref, reactive } from 'vue';
 import { currentLang, currentPage, triggerProfile, isLoggedIn } from '../store/cart.js';
 
-// Tabs Mode: 'login' or 'register'
-const activeMode = ref('login');
 const isSubmitting = ref(false);
 const showPassword = ref(false);
-const showConfirmPassword = ref(false);
 
 const toastActive = ref(false);
 const toastMessage = ref('');
@@ -443,19 +263,6 @@ const loginForm = reactive({
   email: '',
   password: ''
 });
-
-const registerForm = reactive({
-  fullName: '',
-  email: '',
-  password: '',
-  confirmPassword: ''
-});
-
-const switchMode = (mode) => {
-  activeMode.value = mode;
-  showPassword.value = false;
-  showConfirmPassword.value = false;
-};
 
 const goToHome = () => {
   currentPage.value = 'home';
@@ -469,58 +276,55 @@ const triggerToast = (msg) => {
   }, 2500);
 };
 
-const submitLogin = () => {
+const submitLogin = async () => {
   if (!loginForm.email || !loginForm.password) return;
   
   isSubmitting.value = true;
   
-  setTimeout(() => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const response = await fetch(`${apiUrl}/api/login-auth`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: loginForm.email,
+        password: loginForm.password
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (response.ok && result) {
+      const token = result.token || result.access_token || (result.data && result.data.token) || '';
+      if (token) {
+        localStorage.setItem('token', token);
+      }
+      const user = result.user || (result.data && result.data.user) || result.data;
+      if (user) {
+        localStorage.setItem('user_name', user.name || user.customer_name || 'User');
+        localStorage.setItem('user_email', user.email || '');
+      }
+      
+      triggerToast(currentLang.value === 'id' ? 'Berhasil masuk! Selamat datang kembali.' : 'Login successful! Welcome back.');
+      
+      // Redirect to profile page after login
+      setTimeout(() => {
+        isLoggedIn.value = true;
+        currentPage.value = 'profile';
+      }, 1000);
+    } else {
+      triggerToast(result.message || (currentLang.value === 'id' ? 'Gagal masuk. Silakan periksa kembali email & kata sandi Anda.' : 'Login failed. Please check your credentials.'));
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    triggerToast(currentLang.value === 'id' ? 'Terjadi kesalahan pada sistem.' : 'A system error occurred.');
+  } finally {
     isSubmitting.value = false;
-    triggerToast(currentLang.value === 'id' ? 'Berhasil masuk! Selamat datang kembali.' : 'Login successful! Welcome back.');
-    
-    // Redirect to profile page after login
-    setTimeout(() => {
-      isLoggedIn.value = true;
-      currentPage.value = 'profile';
-    }, 1000);
-  }, 1200);
-};
-
-const submitRegister = () => {
-  if (!registerForm.fullName || !registerForm.email || !registerForm.password || !registerForm.confirmPassword) return;
-  
-  if (registerForm.password !== registerForm.confirmPassword) {
-    triggerToast(currentLang.value === 'id' ? 'Konfirmasi kata sandi tidak cocok!' : 'Confirm password does not match!');
-    return;
   }
-
-  if (registerForm.password.length < 6) {
-    triggerToast(currentLang.value === 'id' ? 'Kata sandi minimal 6 karakter!' : 'Password must be at least 6 characters!');
-    return;
-  }
-  
-  isSubmitting.value = true;
-  
-  setTimeout(() => {
-    isSubmitting.value = false;
-    triggerToast(currentLang.value === 'id' ? 'Pendaftaran berhasil! Akun Anda telah dibuat.' : 'Registration successful! Your account is created.');
-    
-    // Autofill login and switch tab
-    loginForm.email = registerForm.email;
-    loginForm.password = '';
-    
-    setTimeout(() => {
-      switchMode('login');
-    }, 1500);
-  }, 1500);
 };
 
 const triggerForgot = () => {
   triggerToast(currentLang.value === 'id' ? 'Link pemulihan kata sandi telah dikirim ke email Anda.' : 'Password recovery link has been sent to your email.');
-};
-
-const socialLogin = (provider) => {
-  triggerToast(currentLang.value === 'id' ? `Menghubungkan layanan masuk dengan ${provider}...` : `Connecting sign in service with ${provider}...`);
 };
 </script>
 
