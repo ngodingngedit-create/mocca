@@ -347,19 +347,9 @@
 
               <!-- Actions -->
               <div class="summary-actions">
-                <button class="primary-checkout-btn font-bold" @click="submitOrder" :disabled="isSubmitting || !isFormComplete">
-                  <span v-if="isSubmitting" class="spinner"></span>
-                  <span v-else>Bayar Sekarang</span>
-                </button>
-                
                 <div class="terms-text text-center mt-0-75">
                   Dengan melanjutkan, Anda menyetujui Syarat & Ketentuan dan Kebijakan Privasi kami.
                 </div>
-
-                <button class="back-to-cart-link-btn" @click="backToCheckout">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="back-icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                  Kembali ke Keranjang
-                </button>
               </div>
             </div>
           </div>
@@ -368,6 +358,21 @@
       </div>
     </div>
 
+    
+    <!-- Fixed Bottom Action Bar -->
+    <div class="fixed-payment-actions">
+      <div class="fixed-payment-actions-inner">
+        <button class="back-to-cart-link-btn fixed-back-btn" @click="backToCheckout">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="back-icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Kembali ke Keranjang
+        </button>
+        
+        <button class="primary-checkout-btn font-bold fixed-pay-btn" @click="submitOrder" :disabled="isSubmitting || !isFormComplete">
+          <span v-if="isSubmitting" class="spinner"></span>
+          <span v-else>Bayar Sekarang</span>
+        </button>
+      </div>
+    </div>
     <!-- Success Modal Transition -->
     <Transition name="modal-fade">
       <div v-if="showSuccessModal" class="success-modal-backdrop" @click="closeSuccessModal">
@@ -2676,6 +2681,62 @@ const formatPrice = (price) => {
   .card-inner-compact .primary-checkout-btn {
     padding: 0.75rem !important;
     font-size: 0.85rem !important;
+  }
+}
+
+.fixed-payment-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-bg-light);
+  border-top: 1px solid var(--color-mocca-border);
+  padding: 1rem 2rem;
+  z-index: 1000;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.fixed-payment-actions-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.fixed-back-btn {
+  margin-top: 0 !important;
+  color: var(--color-mocca-dark) !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+  text-decoration: none !important;
+}
+
+.fixed-pay-btn {
+  margin-top: 0 !important;
+  max-width: 250px !important;
+}
+
+.payment-page-wrapper {
+  padding-bottom: 80px; /* Add padding to prevent content being hidden behind the fixed bar */
+}
+
+@media (max-width: 768px) {
+  .fixed-payment-actions {
+    padding: 1rem 1.25rem;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+  .fixed-back-btn {
+    font-size: 0.8rem !important;
+  }
+  .fixed-pay-btn {
+    max-width: 180px !important;
+    font-size: 0.85rem !important;
+    padding: 0.6rem 1rem !important;
+  }
+  .payment-page-wrapper {
+    padding-bottom: 100px;
   }
 }
 </style>

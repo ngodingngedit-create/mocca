@@ -38,7 +38,7 @@
         </div>
       </Transition>
     </main>
-    <Footer v-if="currentPage !== 'login'" />
+    <Footer v-if="currentPage !== 'login' && currentPage !== 'payment' && currentPage !== 'checkout'" />
     <CartDrawer v-if="currentPage !== 'login'" />
     <BottomCartBar v-if="currentPage !== 'checkout' && currentPage !== 'event-checkout' && currentPage !== 'payment' && currentPage !== 'login' && currentPage !== 'profile' && currentPage !== 'event-detail'" />
     <MobileNavbar v-if="currentPage !== 'checkout' && currentPage !== 'event-checkout' && currentPage !== 'login'" />

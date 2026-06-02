@@ -172,16 +172,7 @@
               
 
 
-            <!-- Action Buttons -->
-            <div class="summary-actions">
-              <button class="primary-checkout-btn" @click="processPayment">
-                Lanjut ke Pembayaran
-              </button>
-              <button class="back-to-shop-btn" @click="backToShop">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="back-arrow"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                Kembali ke Toko
-              </button>
-            </div>
+            <!-- Action Buttons moved to fixed bottom navbar -->
           </div>
 
           <!-- Trust Signals Card as Accordion -->
@@ -224,6 +215,21 @@
       </div>
     </Transition>
   </div>
+
+    <!-- Fixed Bottom Action Bar -->
+    <div class="fixed-payment-actions">
+      <div class="fixed-payment-actions-inner">
+        <button class="back-to-cart-link-btn fixed-back-btn" @click="backToShop">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="back-icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Kembali ke Toko
+        </button>
+        
+        <button class="primary-checkout-btn font-bold fixed-pay-btn" @click="processPayment">
+          Lanjut ke Pembayaran
+        </button>
+      </div>
+    </div>
+
 </template>
 
 <script setup>
@@ -1384,5 +1390,72 @@ const showToast = (msg) => {
   background-color: #FAF8F5;
   border-radius: 8px;
   border: 1px dashed var(--color-mocca-border);
+}
+
+.fixed-payment-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-bg-light);
+  border-top: 1px solid var(--color-mocca-border);
+  padding: 1rem 2rem;
+  z-index: 1000;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.fixed-payment-actions-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.fixed-back-btn {
+  margin-top: 0 !important;
+  color: var(--color-mocca-dark) !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+  text-decoration: none !important;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0;
+}
+.fixed-back-btn:hover {
+  opacity: 0.8 !important;
+}
+
+.fixed-pay-btn {
+  margin-top: 0 !important;
+  max-width: 250px !important;
+  padding: 0.75rem 1.5rem !important;
+}
+
+.checkout-page {
+  padding-bottom: 80px; /* Add padding to prevent content being hidden behind the fixed bar */
+}
+
+@media (max-width: 768px) {
+  .fixed-payment-actions {
+    padding: 1rem 1.25rem;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+  .fixed-back-btn {
+    font-size: 0.8rem !important;
+  }
+  .fixed-pay-btn {
+    max-width: 180px !important;
+    font-size: 0.85rem !important;
+    padding: 0.6rem 1rem !important;
+  }
+  .checkout-page {
+    padding-bottom: 100px;
+  }
 }
 </style>

@@ -29,13 +29,14 @@
               <h4 class="variant-title">{{ currentLang === 'id' ? 'Pilih Varian' : 'Select Variant' }}</h4>
               <div class="size-selector">
                 <button 
-                  v-for="size in availableSizes" 
-                  :key="size" 
+                  v-for="v in availableVariantsWithStock" 
+                  :key="v.name" 
                   class="size-btn" 
-                  :class="{ active: selectedSize === size }"
-                  @click="selectedSize = size"
+                  :class="{ active: selectedSize === v.name, 'sold-out': v.soldOut }"
+                  @click="!v.soldOut ? selectedSize = v.name : null"
+                  :disabled="v.soldOut"
                 >
-                  {{ size }}
+                  {{ v.name }}
                 </button>
               </div>
             </div>
@@ -51,9 +52,9 @@
             </div>
 
             <!-- Add to Cart Button -->
-            <button class="add-cart-btn" @click="handleAddToCart">
+            <button class="add-cart-btn" :class="{ 'disabled-btn': isCurrentSelectedSoldOut }" @click="handleAddToCart" :disabled="isCurrentSelectedSoldOut">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-              <span>{{ currentLang === 'id' ? 'Tambah ke Keranjang' : 'Add to Cart' }}</span>
+              <span>{{ isCurrentSelectedSoldOut ? (currentLang === 'id' ? 'Stok Habis' : 'Out of Stock') : (currentLang === 'id' ? 'Tambah ke Keranjang' : 'Add to Cart') }}</span>
             </button>
           </div>
         </div>
@@ -102,11 +103,26 @@ const availableVariants = computed(() => {
   return [];
 });
 
-const availableSizes = computed(() => {
+const availableVariantsWithStock = computed(() => {
   if (availableVariants.value.length > 0) {
-    return availableVariants.value.map(v => v.varian_name);
+    return availableVariants.value.map(v => {
+      // Force sold out if is_soldout is 1 or stock is empty
+      const isSoldOut = v.is_soldout === 1 || v.is_soldout === true || (v.stock_summary && v.stock_summary.sisa_stock <= 0) || v.stock === 0;
+      return {
+        ...v,
+        name: v.varian_name,
+        soldOut: isSoldOut
+      };
+    });
   }
-  return ['One Size'];
+  
+  const isProductSoldOut = props.product && (props.product.is_soldout === 1 || props.product.stock === 0);
+  return [{ name: 'One Size', soldOut: isProductSoldOut }];
+});
+
+const isCurrentSelectedSoldOut = computed(() => {
+  const selected = availableVariantsWithStock.value.find(v => v.name === selectedSize.value);
+  return selected ? selected.soldOut : false;
 });
 
 const currentVariant = computed(() => {
@@ -139,7 +155,8 @@ watch(() => props.isOpen, async (newVal) => {
           fetchedProductDetails.value = resJson.data;
           const variants = resJson.data.productVarian || resJson.data.product_varian || [];
           if (variants.length > 0) {
-            selectedSize.value = variants[0].varian_name;
+            const firstAvailable = variants.find(v => v.is_soldout !== 1 && (!v.stock_summary || v.stock_summary.sisa_stock > 0) && v.stock !== 0);
+            selectedSize.value = firstAvailable ? firstAvailable.varian_name : variants[0].varian_name;
           } else {
             selectedSize.value = 'One Size';
           }
@@ -364,6 +381,15 @@ const handleAddToCart = () => {
   border-color: var(--color-mocca-dark);
 }
 
+.size-btn.sold-out {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+  text-decoration: line-through;
+  border-color: var(--color-mocca-border);
+  color: var(--color-mocca-muted);
+}
+
 .qty-control {
   display: flex;
   align-items: center;
@@ -422,9 +448,16 @@ const handleAddToCart = () => {
   margin-top: 1rem;
 }
 
-.add-cart-btn:hover {
+.add-cart-btn:hover:not(:disabled) {
   background-color: #A03820;
   transform: translateY(-2px);
+}
+
+.add-cart-btn:disabled, .add-cart-btn.disabled-btn {
+  background-color: #d1d1d1;
+  color: #7a7a7a;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Transitions */
