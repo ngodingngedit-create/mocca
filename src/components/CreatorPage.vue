@@ -273,7 +273,7 @@
               </svg>
             </div>
             <div class="creator-info">
-              <span class="creator-label">{{ currentLang === 'id' ? 'Partner Store' : 'Provided by' }}</span>
+              <span class="creator-label">{{ currentLang === 'id' ? 'Official Store' : 'Official Store' }}</span>
               <span class="creator-name">{{ creatorData?.name || 'Loading...' }}</span>
             </div>
           </div>
@@ -1142,14 +1142,14 @@ const filteredProducts = computed(() => {
 }
 
 .creator-label {
-  font-family: var(--font-body);
-  font-size: 0.7rem;
+    font-family: var(--font-body);
+    font-size: 0.55rem;
   color: var(--color-mocca-muted);
 }
 
 .creator-name {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
   font-weight: 700;
   color: var(--color-mocca-dark);
 }

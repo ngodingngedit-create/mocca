@@ -413,16 +413,16 @@ const getMenuLabel = (key) => {
 }
 
 .header-container {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 0.1rem 6rem 0rem 6rem;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 6rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 .logo-img {
-  width: 120px;
+    width: 75px;
   height: auto;
   margin-right: 1rem;
 }
@@ -748,7 +748,7 @@ const getMenuLabel = (key) => {
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .header-container {
-    padding: 1.25rem 3rem;
+      padding: 0 3rem;
   }
   .main-nav ul {
     gap: 1.75rem;
@@ -922,7 +922,7 @@ const getMenuLabel = (key) => {
   }
   
   .header-container {
-    padding: 0.5rem 1.25rem;
+      padding: 0 1.25rem;
   }
   
   .mobile-hidden {
@@ -934,7 +934,7 @@ const getMenuLabel = (key) => {
   }
   
   .logo-img {
-    width: 80px;
+      width: 55px;
   }
   
   .logo-text {

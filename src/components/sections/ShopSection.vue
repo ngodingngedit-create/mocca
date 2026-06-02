@@ -65,8 +65,8 @@
               <img :src="product.creator?.image_url || '/logo_mocca.png'" :alt="product.creator?.name" class="creator-avatar" />
             </div>
             <div class="creator-info">
-              <span class="creator-label">{{ currentLang === 'id' ? 'Partner Store' : 'Provided by' }}</span>
-              <span class="creator-name">{{ product.creator?.name || 'deelestari' }}</span>
+              <span class="creator-label">{{ currentLang === 'id' ? 'Official Store' : 'Official Store' }}</span>
+              <span class="creator-name">{{ product.creator?.name || 'Loading...' }}</span>
             </div>
           </div>
         </div>
@@ -302,7 +302,7 @@ const t = (key) => {
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
-  padding: 6rem 6rem 3rem 6rem; /* Softened bottom padding */
+  padding: 2.5rem 6rem 3rem 6rem; /* Softened bottom padding */
 }
 
 .section-header {
@@ -562,14 +562,14 @@ const t = (key) => {
 }
 
 .creator-label {
-  font-family: var(--font-body);
-  font-size: 0.7rem;
+    font-family: var(--font-body);
+    font-size: 0.55rem;
   color: var(--color-mocca-muted);
 }
 
 .creator-name {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
   font-weight: 700;
   color: var(--color-mocca-dark);
 }
@@ -845,10 +845,10 @@ const t = (key) => {
     height: 30px;
   }
   .creator-label {
-    font-size: 0.65rem;
+      font-size: 0.45rem;
   }
   .creator-name {
-    font-size: 0.75rem;
+      font-size: 0.85rem;
   }
 }
 

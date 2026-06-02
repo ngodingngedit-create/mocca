@@ -2,14 +2,21 @@
   <div class="shop-page-wrapper">
     <!-- Header Spacing to sit perfectly below sticky header -->
     <div class="shop-page-container">
-      <!-- Main Title Section -->
-      <div class="shop-title-section">
-        <h1 class="shop-main-title">{{ t('shopTitle') }}</h1>
-        
-      </div>
-
       <!-- Controls: Filters & Search -->
       <div class="shop-controls">
+        <!-- Category Filters -->
+        <div class="category-filters">
+          <button 
+            v-for="cat in categories" 
+            :key="cat.id" 
+            class="filter-btn" 
+            :class="{ active: activeCategory === cat.id }"
+            @click="activeCategory = cat.id"
+          >
+            {{ currentLang === 'id' ? cat.nameId : cat.nameEn }}
+          </button>
+        </div>
+
         <!-- Search Bar -->
         <div class="shop-search-bar" :class="{ 'mobile-visible': isSearchOpen }">
           <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -22,19 +29,6 @@
             :placeholder="currentLang === 'id' ? 'Cari merchandise...' : 'Search merchandise...'" 
             class="shop-search-input"
           />
-        </div>
-
-        <!-- Category Filters -->
-        <div class="category-filters">
-          <button 
-            v-for="cat in categories" 
-            :key="cat.id" 
-            class="filter-btn" 
-            :class="{ active: activeCategory === cat.id }"
-            @click="activeCategory = cat.id"
-          >
-            {{ currentLang === 'id' ? cat.nameId : cat.nameEn }}
-          </button>
         </div>
       </div>
 
@@ -112,8 +106,8 @@
               <img :src="product.creator?.image_url || '/logo_mocca.png'" :alt="product.creator?.name" class="creator-avatar" />
             </div>
             <div class="creator-info">
-              <span class="creator-label">{{ currentLang === 'id' ? 'Partner Store' : 'Provided by' }}</span>
-              <span class="creator-name">{{ product.creator?.name || 'deelestari' }}</span>
+              <span class="creator-label">{{ currentLang === 'id' ? 'Official Store' : 'Official Store' }}</span>
+              <span class="creator-name">{{ product.creator?.name || 'Loading...' }}</span>
             </div>
           </div>
         </div>
@@ -312,10 +306,10 @@ const t = (key) => {
 }
 
 .shop-page-container {
-  max-width: 1440px; /* Slightly wider to accommodate 4 columns beautifully */
-  margin: 0 auto;
-  padding: 3rem 4rem 6rem 4rem;
-}
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 3rem 4rem 6rem 4rem;
+  }
 
 /* Beautiful Title styling in elegant serif typography */
 .shop-title-section {
@@ -357,10 +351,9 @@ const t = (key) => {
 
 /* Controls: Filters & Search */
 .shop-controls {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: row; justify-content: space-between; flex-wrap: wrap; width: 100%;
   align-items: center;
-  justify-content: center;
   margin-bottom: 3.5rem;
   gap: 1.75rem;
 }
@@ -369,9 +362,8 @@ const t = (key) => {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
-  justify-content: center;
-  position: relative;
-  right: 350px;
+  justify-content: space-between;
+  
 }
 
 .filter-btn {
@@ -397,7 +389,9 @@ const t = (key) => {
 }
 
 .shop-search-bar {
-  position: relative;
+    max-width: 400px;
+    width: 100%;
+    position: relative;
   display: flex;
   align-items: center;
   width: 100%;
@@ -433,7 +427,6 @@ const t = (key) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 4rem 2rem;
   background-color: var(--color-bg-light);
   border-radius: 12px;
@@ -515,7 +508,6 @@ const t = (key) => {
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
-  justify-content: center;
   opacity: 0;
   transition: var(--transition-smooth);
   z-index: 2;
@@ -627,7 +619,6 @@ const t = (key) => {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
 .creator-avatar {
@@ -646,14 +637,14 @@ const t = (key) => {
 }
 
 .creator-label {
-  font-family: var(--font-body);
-  font-size: 0.7rem;
+    font-family: var(--font-body);
+    font-size: 0.55rem;
   color: var(--color-mocca-muted);
 }
 
 .creator-name {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
   font-weight: 700;
   color: var(--color-mocca-dark);
 }
@@ -688,7 +679,6 @@ const t = (key) => {
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
   color: #FFFFFF;
   cursor: pointer;
   opacity: 0.8;
@@ -750,8 +740,8 @@ const t = (key) => {
 
 @media (max-width: 768px) {
   .shop-search-bar {
-    display: none;
-  }
+      display: none;
+    }
   .shop-search-bar.mobile-visible {
     display: flex;
   }
@@ -764,17 +754,22 @@ const t = (key) => {
     height: 30px;
   }
   .creator-label {
-    font-size: 0.65rem;
+      font-size: 0.45rem;
   }
   .creator-name {
-    font-size: 0.75rem;
-  }
+      font-size: 0.85rem;
+    }
+    .creator-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
 }
 
 @media (max-width: 600px) {
   .shop-page-container {
-    padding: 1.5rem 1.25rem 4rem 1.25rem;
-  }
+        padding: 2.25rem 1.25rem 4rem 1.25rem;
+      }
   .shop-main-title {
     font-size: 2.2rem;
   }
