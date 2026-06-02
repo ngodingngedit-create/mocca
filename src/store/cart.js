@@ -89,6 +89,18 @@ export const getItemQuantity = (productId, color) => {
   return existingItem ? existingItem.quantity : 0;
 };
 
+export const getProductTotalQuantity = (productId) => {
+  return cartItems.value.filter(item => item.id === productId).reduce((sum, item) => sum + item.quantity, 0);
+};
+
+export const decreaseProductQuantity = (productId) => {
+  // Find the first variant of this product in the cart
+  const item = cartItems.value.find(item => item.id === productId);
+  if (item) {
+    updateQuantity(item.id, item.color, -1);
+  }
+};
+
 // Computed properties
 export const totalItems = computed(() => {
   return cartItems.value.reduce((sum, item) => sum + item.quantity, 0);

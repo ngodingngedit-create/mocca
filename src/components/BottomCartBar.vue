@@ -10,14 +10,18 @@
             </span>
             <span class="total-price-text">{{ formatPrice(totalPrice) }}</span>
           </div>
-          <button class="detail-link" @click="isDetailSheetOpen = true">Detail</button>
         </div>
 
         <!-- Right: Buy Now -->
-        <button class="buy-now-btn" @click="openCart">
-          {{ currentLang === 'id' ? 'Beli Sekarang' : 'Buy Now' }}
-          
-        </button>
+        <div class="cart-info-right">
+          <button class="expand-sheet-btn" @click="isDetailSheetOpen = !isDetailSheetOpen">
+            <svg v-if="!isDetailSheetOpen" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <button class="buy-now-btn" @click="openCart">
+            {{ currentLang === 'id' ? 'Beli Sekarang' : 'Buy Now' }}
+          </button>
+        </div>
       </div>
 
       <!-- Detail Bottom Sheet -->
@@ -113,6 +117,12 @@ const formatPrice = (price) => {
   align-items: center;
 }
 
+.cart-info-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .cart-info-left {
   display: flex;
   align-items: center;
@@ -133,7 +143,7 @@ const formatPrice = (price) => {
   letter-spacing: 0.05em;
   font-weight: 600;
   position: relative;
-  left:30px;
+  
 }
 
 .total-price-text {
@@ -142,7 +152,7 @@ const formatPrice = (price) => {
   font-weight: 700;
   color: var(--color-mocca-dark);
    position: relative;
-  left:30px;
+  
 
 }
 
@@ -161,8 +171,6 @@ const formatPrice = (price) => {
   gap: 0.75rem;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 12px rgba(59, 35, 20, 0.15);
-  position: relative;
-  right:30px;
 }
 
 .buy-now-btn:hover {
@@ -177,6 +185,21 @@ const formatPrice = (price) => {
 
 .buy-now-btn:hover .arrow-icon {
   transform: translateX(4px);
+}
+
+.expand-sheet-btn {
+  background: none;
+  border: none;
+  color: var(--color-mocca-dark);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+.expand-sheet-btn:hover {
+  transform: translateY(-2px);
 }
 
 /* Detail Link */
@@ -407,6 +430,13 @@ const formatPrice = (price) => {
 
 /* Responsive */
 @media (max-width: 768px) {
+  .cart-info-right {
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .bottom-cart-bar {
     padding: 0.25rem 0;
     padding-bottom: calc(0.25rem + env(safe-area-inset-bottom, 0px));
@@ -417,14 +447,17 @@ const formatPrice = (price) => {
   }
   .bottom-bar-container {
     padding: 0 1.25rem;
-    flex-direction: column;
-    gap: 0.25rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
   }
   .cart-info-left {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    width: auto;
+    flex: 1;
   }
   .price-info {
     display: flex;
@@ -454,7 +487,7 @@ const formatPrice = (price) => {
     white-space: nowrap;
   }
   .buy-now-btn {
-    width: 100%;
+    flex: 1;
     justify-content: center;
     padding: 0.55rem 1rem;
     border-radius: 8px;

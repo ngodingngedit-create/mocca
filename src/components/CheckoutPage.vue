@@ -68,8 +68,7 @@
                       <div class="product-meta">
                         <h3 class="product-name">{{ item.name }}</h3>
                         <div class="product-attributes">
-                          <span class="attr-tag" v-if="item.color">Warna: {{ item.color }}</span>
-                          <span class="attr-tag" v-if="item.size">Ukuran: {{ item.size }}</span>
+                          <span class="attr-tag" v-if="item.color">Varian: {{ item.color }}</span>
                         </div>
                       </div>
                     </div>

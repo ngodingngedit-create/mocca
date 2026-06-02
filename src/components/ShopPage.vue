@@ -78,13 +78,13 @@
                 <button 
                   class="card-qty-btn" 
                   @click.stop="changeQty(product, selectedColors[product.id], -1)" 
-                  :disabled="getQty(product.id, selectedColors[product.id]) === 0"
+                  :disabled="getProductTotal(product.id) === 0"
                   aria-label="Decrease quantity"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </button>
-                <span class="card-qty-value" :class="{ 'is-zero': getQty(product.id, selectedColors[product.id]) === 0 }">
-                  {{ getQty(product.id, selectedColors[product.id]) }}
+                <span class="card-qty-value" :class="{ 'is-zero': getProductTotal(product.id) === 0 }">
+                  {{ getProductTotal(product.id) }}
                 </span>
                 <button 
                   class="card-qty-btn" 
@@ -122,12 +122,19 @@
       @close="closeModal" 
     />
   </div>
+  <VariantSelectModal 
+      v-if="activeVariantProduct" 
+      :isOpen="isVariantModalOpen" 
+      :product="activeVariantProduct" 
+      @close="closeVariantModal" 
+    />
 </template>
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import ProductModal from './ProductModal.vue';
-import { addToCart, updateQuantity, getItemQuantity, currentLang, isSearchOpen, searchQuery, currentPage, activeCreatorSlug } from '../store/cart.js';
+import VariantSelectModal from './VariantSelectModal.vue';
+import { addToCart, updateQuantity, getItemQuantity, getProductTotalQuantity, decreaseProductQuantity, currentLang, isSearchOpen, searchQuery, currentPage, activeCreatorSlug } from '../store/cart.js';
 
 const isModalOpen = ref(false);
 const activeModalProduct = ref(null);
@@ -258,16 +265,25 @@ const getProductTitle = (product) => {
 };
 
 // Quantity handlers
-const getQty = (productId, color) => {
-  return getItemQuantity(productId, color);
+const getProductTotal = (productId) => { return getProductTotalQuantity(productId); };
+
+const isVariantModalOpen = ref(false);
+const activeVariantProduct = ref(null);
+
+const openVariantModal = (product) => {
+  activeVariantProduct.value = product;
+  isVariantModalOpen.value = true;
+};
+
+const closeVariantModal = () => {
+  isVariantModalOpen.value = false;
 };
 
 const changeQty = (product, color, delta) => {
-  const currentQty = getQty(product.id, color);
-  if (currentQty === 0 && delta > 0) {
-    addToCart(product, color);
+  if (delta > 0) {
+    openVariantModal(product);
   } else {
-    updateQuantity(product.id, color, delta);
+    decreaseProductQuantity(product.id);
   }
 };
 
@@ -508,6 +524,7 @@ const t = (key) => {
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
+    justify-content: center;
   opacity: 0;
   transition: var(--transition-smooth);
   z-index: 2;
