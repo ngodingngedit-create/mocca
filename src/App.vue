@@ -7,7 +7,7 @@
           <HeroSection />
           <FeaturesSection />
           <ShopSection />
-          <EventSection />
+          <!-- <EventSection /> -->
         </div>
         <div v-else-if="currentPage === 'shop'" key="shop">
           <ShopPage />

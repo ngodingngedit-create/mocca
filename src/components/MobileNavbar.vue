@@ -32,6 +32,7 @@
 
         <!-- Event -->
         <button 
+          v-if="false"
           class="nav-item" 
           :class="{ active: currentPage === 'event' }" 
           @click="navigateTo('event')"
