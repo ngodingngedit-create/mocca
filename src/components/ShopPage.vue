@@ -107,7 +107,7 @@
           <div class="card-divider"></div>
 
           <!-- Creator Section -->
-          <div class="card-creator-section" @click.stop="currentPage = 'creator'">
+          <div class="card-creator-section" @click.stop="openCreator(product.creator)">
             <div class="creator-avatar-wrapper">
               <img :src="product.creator?.image_url || '/logo_mocca.png'" :alt="product.creator?.name" class="creator-avatar" />
             </div>
@@ -133,12 +133,19 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import ProductModal from './ProductModal.vue';
-import { addToCart, updateQuantity, getItemQuantity, currentLang, isSearchOpen, searchQuery, currentPage } from '../store/cart.js';
+import { addToCart, updateQuantity, getItemQuantity, currentLang, isSearchOpen, searchQuery, currentPage, activeCreatorSlug } from '../store/cart.js';
 
 const isModalOpen = ref(false);
 const activeModalProduct = ref(null);
 const activeCategory = ref('all');
 const localSearchQuery = ref(searchQuery.value);
+
+const openCreator = (creator) => {
+  if (creator) {
+    activeCreatorSlug.value = creator.slug || creator.id || '';
+  }
+  currentPage.value = 'creator';
+};
 
 watch(searchQuery, (newVal) => {
   localSearchQuery.value = newVal;
@@ -213,11 +220,14 @@ const fetchProducts = async () => {
           image: p.product_image?.[0]?.image_url || '/mocca_group_tee.png',
           colors: ['cream'],
           creator: { 
+            id: p.creator?.id,
+            slug: p.creator?.slug_url || p.creator?.slug,
             name: p.creator?.name || 'My Diary Records', 
             image_url: p.creator?.image_url || '/logo_mocca.png',
             avatarInitial: p.creator?.name?.[0] || 'M' 
           },
-          has_store_location: p.has_store_location
+          has_store_location: p.has_store_location,
+            admin_fee: p.admin_fee || 0
         };
       });
       

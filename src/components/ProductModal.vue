@@ -389,7 +389,7 @@ const handleAddToCart = () => {
     price: props.product.price,
     image: props.product.image,
     variant_id: variantId,
-    has_store_location: fetchedProductDetails.value?.has_store_location || props.product?.has_store_location || null
+    has_store_location: fetchedProductDetails.value?.has_store_location || props.product?.has_store_location || null, admin_fee: fetchedProductDetails.value?.admin_fee || props.product?.admin_fee || 0
   };
   
   const variantVal = selectedSize.value || '-';
@@ -434,7 +434,8 @@ const handleBuyNow = () => {
     image: props.product.image,
     note: '',
     variant_id: variantId,
-    store_location: storeLocation
+    store_location: storeLocation,
+    admin_fee: fetchedProductDetails.value?.admin_fee || props.product?.admin_fee || 0
   }];
   
   triggerToast(currentLang.value === 'id' ? 'Mengarahkan ke halaman checkout...' : 'Directing to checkout page...');

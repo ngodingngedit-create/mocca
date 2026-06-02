@@ -16,20 +16,20 @@
           {{ currentLang === 'id' ? 'Kreator' : 'Creators' }}
         </span>
         <span class="breadcrumb-separator">></span>
-        <span class="breadcrumb-item active">deelestari</span>
+        <span class="breadcrumb-item active">{{ creatorData?.name || 'Kreator' }}</span>
       </div>
 
       <!-- Creator Profile Banner & Cover Hero -->
       <div class="creator-profile-hero">
         <!-- Cover Photo Banner (Wide banner) -->
         <div class="creator-cover-banner">
-          <img src="/deelestari_banner.png" alt="deelestari cover banner" class="cover-image" />
+          <img :src="creatorData?.banner_url || '/deelestari_banner.png'" alt="cover banner" class="cover-image" />
           
           <!-- Profile Logo overlapping bottom-left edge -->
           <div class="profile-logo-overlap-container">
             <div class="profile-logo-card">
-              <!-- Custom white stylized 'L' logo inside a black double circle SVG -->
-              <svg class="creator-large-logo" viewBox="0 0 100 100" width="76" height="76" xmlns="http://www.w3.org/2000/svg">
+              <img v-if="creatorData?.image_url" :src="creatorData.image_url" alt="logo" style="width: 100%; height: 100%; object-fit: cover;" />
+              <svg v-else class="creator-large-logo" viewBox="0 0 100 100" width="76" height="76" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="50" cy="50" r="48" fill="#1C1C1C" />
                 <circle cx="50" cy="50" r="42" fill="none" stroke="#FFFFFF" stroke-width="1.5" />
                 <path d="M52.5,28.5 C56.5,28.5 59.5,31.5 59.5,36.5 C59.5,43.5 51.5,53.5 44.5,60.5 C42.5,62.5 40.5,64.5 38.5,64.5 C36.5,64.5 35.5,62.5 35.5,59.5 C35.5,54.5 41.5,45.5 49.5,36.5 C54.5,30.5 51.5,26.5 44.5,32.5 C38.5,37.5 33.5,44.5 33.5,50.5 C33.5,58.5 40.5,66.5 49.5,66.5 C57.5,66.5 64.5,60.5 64.5,55.5 C64.5,53.5 62.5,53.5 61.5,55.5 C58.5,60.5 53.5,62.5 49.5,62.5 C44.5,62.5 40.5,58.5 40.5,53.5 C40.5,47.5 46.5,38.5 52.5,28.5 Z" fill="#FFFFFF" />
@@ -42,7 +42,7 @@
         <div class="creator-profile-header-details">
           <!-- Left side: Name and status -->
           <div class="creator-header-left">
-            <h1 class="creator-name-bold">deelestari</h1>
+            <h1 class="creator-name-bold">{{ creatorData?.name || 'Loading...' }}</h1>
             <span class="creator-member-since">{{ currentLang === 'id' ? 'Member sejak 2024' : 'Member since 2024' }}</span>
           </div>
 
@@ -57,9 +57,9 @@
         <div class="creator-additional-info-row">
           <div class="info-row-left">
             <p class="creator-bio">
-              {{ currentLang === 'id' 
+              {{ creatorData?.description || (currentLang === 'id' 
                 ? 'Kreator yang menghadirkan karya, cerita, dan inspirasi untuk keseharianmu.' 
-                : 'A creator bringing stories, art, and daily inspiration to your life.' }}
+                : 'A creator bringing stories, art, and daily inspiration to your life.') }}
             </p>
             <div class="creator-social-links">
               <a href="#" class="social-icon" aria-label="Instagram">
@@ -92,11 +92,11 @@
                 <line x1="3" y1="6" x2="21" y2="6"></line>
                 <path d="M16 10a4 4 0 0 1-8 0"></path>
               </svg>
-              <span class="stat-value"><strong>12</strong> {{ currentLang === 'id' ? 'Produk' : 'Products' }}</span>
+              <span class="stat-value"><strong>{{ products.length }}</strong> {{ currentLang === 'id' ? 'Produk' : 'Products' }}</span>
             </div>
 
             <!-- 2. Pengikut -->
-            <div class="stat-item">
+            <div class="stat-item" v-if="false">
               <svg class="stat-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                 <circle cx="9" cy="7" r="4"></circle>
@@ -107,7 +107,7 @@
             </div>
 
             <!-- 3. Rating -->
-            <div class="stat-item">
+            <div class="stat-item" v-if="false">
               <svg class="stat-icon star-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
               </svg>
@@ -115,7 +115,7 @@
             </div>
 
             <!-- 4. Terjual -->
-            <div class="stat-item">
+            <div class="stat-item" v-if="false">
               <svg class="stat-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="9" cy="21" r="1"></circle>
                 <circle cx="20" cy="21" r="1"></circle>
@@ -262,11 +262,11 @@
           <!-- Divider Line -->
           <div class="card-divider"></div>
 
-          <!-- Creator Footer (Always deelestari for this page) -->
+          <!-- Creator Footer -->
           <div class="card-creator-section">
             <div class="creator-avatar-wrapper">
-              <!-- Custom white stylized 'L' logo inside a black double circle SVG -->
-              <svg class="creator-avatar" viewBox="0 0 100 100" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+              <img v-if="creatorData?.image_url" :src="creatorData.image_url" alt="avatar" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;" />
+              <svg v-else class="creator-avatar" viewBox="0 0 100 100" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="50" cy="50" r="48" fill="#1C1C1C" />
                 <circle cx="50" cy="50" r="42" fill="none" stroke="#FFFFFF" stroke-width="1.5" />
                 <path d="M52.5,28.5 C56.5,28.5 59.5,31.5 59.5,36.5 C59.5,43.5 51.5,53.5 44.5,60.5 C42.5,62.5 40.5,64.5 38.5,64.5 C36.5,64.5 35.5,62.5 35.5,59.5 C35.5,54.5 41.5,45.5 49.5,36.5 C54.5,30.5 51.5,26.5 44.5,32.5 C38.5,37.5 33.5,44.5 33.5,50.5 C33.5,58.5 40.5,66.5 49.5,66.5 C57.5,66.5 64.5,60.5 64.5,55.5 C64.5,53.5 62.5,53.5 61.5,55.5 C58.5,60.5 53.5,62.5 49.5,62.5 C44.5,62.5 40.5,58.5 40.5,53.5 C40.5,47.5 46.5,38.5 52.5,28.5 Z" fill="#FFFFFF" />
@@ -274,7 +274,7 @@
             </div>
             <div class="creator-info">
               <span class="creator-label">{{ currentLang === 'id' ? 'Partner Store' : 'Provided by' }}</span>
-              <span class="creator-name">deelestari</span>
+              <span class="creator-name">{{ creatorData?.name || 'Loading...' }}</span>
             </div>
           </div>
         </div>
@@ -295,14 +295,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import ProductModal from './ProductModal.vue';
 import { 
   addToCart, 
   updateQuantity, 
   getItemQuantity, 
   currentLang, 
-  currentPage 
+  currentPage,
+  activeCreatorSlug
 } from '../store/cart.js';
 
 // UI State
@@ -313,6 +314,9 @@ const sortBy = ref('newest');
 const layoutView = ref('grid'); // 'grid' | 'list'
 const currentPageNum = ref(1);
 
+const creatorData = ref(null);
+const isLoading = ref(true);
+
 // Static categories configuration
 const categories = [
   { id: 'all', nameId: 'Semua Produk', nameEn: 'All Products' },
@@ -322,52 +326,74 @@ const categories = [
   { id: 'home', nameId: 'Home & Living', nameEn: 'Home & Living' }
 ];
 
-// Deelestari products list
-const products = [
-  {
-    id: 'tee',
-    category: 'apparel',
-    title: 'Mocca Group Tee',
-    price: 199000,
-    image: '/mocca_group_tee.png',
-    colors: ['cream', 'black'],
-    creator: { name: 'deelestari', avatarInitial: 'D' }
-  },
-  {
-    id: 'tote',
-    category: 'accessories',
-    title: 'Mocca Logo Tote Bag',
-    price: 149000,
-    image: '/mocca_tote_bag.png',
-    colors: ['green', 'cream', 'black'],
-    creator: { name: 'deelestari', avatarInitial: 'D' }
-  },
-  {
-    id: 'mug',
-    category: 'home',
-    title: 'Mocca Enamel Mug',
-    price: 119000,
-    image: '/mocca_enamel_mug.png',
-    colors: ['cream'],
-    creator: { name: 'deelestari', avatarInitial: 'D' }
-  },
-  {
-    id: 'cap',
-    category: 'accessories',
-    title: 'Mocca Logo Cap',
-    price: 179000,
-    image: '/mocca_logo_cap.png',
-    colors: ['beige', 'black'],
-    creator: { name: 'deelestari', avatarInitial: 'D' }
-  }
-];
+const products = ref([]);
+const selectedColors = ref({});
 
-// Swatches selection state
-const selectedColors = ref({
-  tee: 'cream',
-  tote: 'green',
-  mug: 'cream',
-  cap: 'beige'
+const fetchCreatorData = async () => {
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+  
+  if (!activeCreatorSlug.value) {
+    activeCreatorSlug.value = apiUrl.includes('my.id') ? 48 : 127;
+  }
+
+  isLoading.value = true;
+  try {
+    const res = await fetch(`${apiUrl}/api/creator/${activeCreatorSlug.value}`);
+    const json = await res.json();
+    if (json.data) {
+      creatorData.value = json.data;
+      
+      const prodRes = await fetch(`${apiUrl}/api/product?creator_id=${json.data.id}`);
+      const prodJson = await prodRes.json();
+      const pData = Array.isArray(prodJson) ? prodJson : prodJson.data;
+      
+      if (pData) {
+        products.value = pData.map(p => {
+          let price = parseInt(p.price);
+          let variantId = null;
+          if (price === 0 && p.product_varian && p.product_varian.length > 0) {
+            price = parseInt(p.product_varian[0].price);
+            variantId = p.product_varian[0].id;
+          } else if (p.product_varian && p.product_varian.length > 0) {
+            variantId = p.product_varian[0].id;
+          }
+          return {
+            id: p.id,
+            slug: p.slug,
+            category: 'apparel',
+            title: p.product_name,
+            price: price,
+            variant_id: variantId,
+            image: p.product_image?.[0]?.image_url || '/mocca_group_tee.png',
+            colors: ['cream'],
+            creator: { 
+              name: json.data.name, 
+              image_url: json.data.image_url,
+              avatarInitial: json.data.name?.[0] || 'M' 
+            },
+            has_store_location: p.has_store_location,
+            admin_fee: p.admin_fee || 0
+          };
+        });
+        
+        pData.forEach(p => {
+          selectedColors.value[p.id] = 'cream';
+        });
+      }
+    }
+  } catch (err) {
+    console.error('Failed to fetch creator data:', err);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchCreatorData();
+});
+
+watch(activeCreatorSlug, () => {
+  fetchCreatorData();
 });
 
 // Helper actions
@@ -416,7 +442,7 @@ const formatPrice = (price) => {
 
 // Filtered products computed list
 const filteredProducts = computed(() => {
-  let list = [...products];
+  let list = [...products.value];
 
   // Category filter
   if (activeCategory.value !== 'all') {

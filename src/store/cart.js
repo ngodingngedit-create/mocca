@@ -10,6 +10,7 @@ const getInitialPage = () => {
   return path || 'home';
 };
 export const currentPage = ref(getInitialPage());
+export const activeCreatorSlug = ref('');
 
 // Sync URL on state change
 watch(currentPage, (newPage) => {
@@ -60,7 +61,7 @@ export const addToCart = (product, color, quantity = 1) => {
       color: color || 'default',
       quantity: quantity,
       variant_id: product.variant_id || null,
-      store_location: product.has_store_location || null
+      store_location: product.has_store_location || null, admin_fee: product.admin_fee || 0
     });
   }
 };
