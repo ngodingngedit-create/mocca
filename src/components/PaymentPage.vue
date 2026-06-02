@@ -373,6 +373,19 @@
         </button>
       </div>
     </div>
+    <!-- Payment Popup Iframe -->
+    <Transition name="modal-fade">
+      <div v-if="paymentPopupUrl" class="payment-popup-overlay">
+        <div class="payment-popup-container">
+          <div class="payment-popup-header">
+            <span class="font-bold">Selesaikan Pembayaran</span>
+            <button class="close-popup-btn" @click="closePaymentPopup">Tutup</button>
+          </div>
+          <iframe :src="paymentPopupUrl" class="payment-iframe" frameborder="0"></iframe>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Success Modal Transition -->
     <Transition name="modal-fade">
       <div v-if="showSuccessModal" class="success-modal-backdrop" @click="closeSuccessModal">
@@ -805,6 +818,8 @@ const backToCheckout = () => {
 
 // Submit Order / Bayar Sekarang handler
 const isSubmitting = ref(false);
+  const paymentPopupUrl = ref("");
+  const closePaymentPopup = () => { paymentPopupUrl.value = ""; };
 const showSuccessModal = ref(false);
 const transactionId = ref('');
 
@@ -927,12 +942,22 @@ const submitOrder = async () => {
     });
 
     const result = await response.json();
-    
-    const xenditUrl = result.xendit_url || result.data?.xendit_url;
-    if (result.success || result.status === 'success' || xenditUrl) {
-      if (xenditUrl) {
-        window.location.href = xenditUrl; // Redirect to Xendit
-      } else {
+        
+      const findXenditUrl = (obj) => {
+        if (!obj || typeof obj !== 'object') return null;
+        if (obj.xendit_url) return obj.xendit_url;
+        if (obj.invoice_url) return obj.invoice_url;
+        for (const key in obj) {
+          const found = findXenditUrl(obj[key]);
+          if (found) return found;
+        }
+        return null;
+      };
+      const xenditUrl = findXenditUrl(result);
+      if (result.success || result.status === 'success' || result.status === true || xenditUrl) {
+        if (xenditUrl) {
+          window.location.href = xenditUrl;
+        } else {
         transactionId.value = result.data?.invoice_number || Math.floor(100000 + Math.random() * 900000).toString();
         showSuccessModal.value = true;
       }
@@ -2737,6 +2762,75 @@ const formatPrice = (price) => {
   }
   .payment-page-wrapper {
     padding-bottom: 100px;
+  }
+}
+.payment-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(59, 35, 20, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.payment-popup-container {
+  width: 100%;
+  max-width: 800px;
+  height: 90vh;
+  background-color: #fff;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.payment-popup-header {
+  padding: 1.25rem 1.5rem;
+  background-color: var(--color-bg-light);
+  border-bottom: 1px solid var(--color-mocca-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-mocca-dark);
+}
+
+.close-popup-btn {
+  background: none;
+  border: 1px solid var(--color-mocca-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-mocca-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-popup-btn:hover {
+  background-color: var(--color-mocca-border);
+  color: var(--color-mocca-dark);
+}
+
+.payment-iframe {
+  width: 100%;
+  flex: 1;
+  border: none;
+  background-color: #f9f9f9;
+}
+
+@media (max-width: 768px) {
+  .payment-popup-container {
+    height: 95vh;
+    max-width: 100%;
+    border-radius: 12px;
   }
 }
 </style>
