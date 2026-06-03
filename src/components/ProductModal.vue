@@ -86,6 +86,9 @@
             <!-- Size Chart (Visible only for apparel) -->
             <div v-if="productData && productData.sizes && productData.sizes.length > 1" class="size-chart-container">
               <h3 class="size-chart-title">Size Chart (cm)</h3>
+              <div class="size-chart-img-wrapper">
+                <img src="/assets/sizechartmocca.png" alt="Mocca Size Chart" class="size-chart-img" />
+              </div>
               <div class="table-scroll-wrapper">
                 <table class="size-chart-table">
                   <thead>
@@ -153,8 +156,8 @@
           <div class="trust-item">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="trust-icon"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             <div class="trust-text">
-              <span class="trust-title">Garansi Retur</span>
-              <span class="trust-desc">7 Hari</span>
+              <span class="trust-title">Garansi Original</span>
+              <span class="trust-desc">100% Asli</span>
             </div>
           </div>
           <div class="trust-item">
@@ -768,6 +771,24 @@ const formatPrice = (price) => {
   letter-spacing: 0.05em;
 }
 
+.size-chart-img-wrapper {
+  width: 100%;
+  background-color: var(--color-bg-light);
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--color-mocca-border);
+}
+
+.size-chart-img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
 .size-chart-table {
   width: 100%;
   border-collapse: collapse;
@@ -1250,8 +1271,9 @@ const formatPrice = (price) => {
   .modal-images-column {
     padding: 0;
     width: 100%;
-    flex-direction: column;
+    flex-direction: column-reverse;
     border: none;
+    flex-shrink: 0;
   }
   .main-display-frame {
     width: 100%;
@@ -1267,7 +1289,21 @@ const formatPrice = (price) => {
     padding: 1rem;
   }
   .thumbnails-sidebar {
-    display: none; /* Hide thumbnails on mobile as per requirement "dibuat full bagian atas aja" */
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    overflow-x: auto;
+    padding: 0 1rem 1rem 1rem;
+    gap: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .thumbnails-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+  .thumbnails-sidebar .thumb-btn {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
   }
   .modal-info-column {
     max-height: none;

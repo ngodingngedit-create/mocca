@@ -12,7 +12,7 @@
           <div class="form-card">
             <div class="card-inner-compact">
               <h2 class="section-title">1. Data Diri</h2>
-              <div class="form-grid-3">
+              <div class="form-col-group">
                 <div class="input-group">
                   <label class="field-label">Nama Lengkap</label>
                   <input type="text" v-model="profile.name" class="text-input" placeholder="Masukkan nama lengkap" />
@@ -23,7 +23,12 @@
                 </div>
                 <div class="input-group">
                   <label class="field-label">Nomor Telepon</label>
-                  <input type="tel" v-model="profile.phone" class="text-input" placeholder="0812xxxx" />
+                  <div class="phone-input-grid">
+                    <select class="select-input phone-prefix-select">
+                      <option value="+62">+62</option>
+                    </select>
+                    <input type="tel" v-model="profile.phone" class="text-input" placeholder="812xxxx" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -91,7 +96,12 @@
 
                 <div class="input-group mb-1-5">
                   <label class="field-label">Nomor Telepon</label>
-                  <input type="text" v-model="activeAddress.phone" class="text-input" placeholder="08..." />
+                  <div class="phone-input-grid">
+                    <select class="select-input phone-prefix-select">
+                      <option value="+62">+62</option>
+                    </select>
+                    <input type="text" v-model="activeAddress.phone" class="text-input" placeholder="8..." />
+                  </div>
                 </div>
 
                 <div class="form-grid-2 mb-1-5">
@@ -1198,6 +1208,12 @@ const formatPrice = (price) => {
   gap: 1.25rem;
 }
 
+.form-col-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
 .form-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1958,6 +1974,8 @@ const formatPrice = (price) => {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .prod-name {
@@ -2014,6 +2032,7 @@ const formatPrice = (price) => {
 
 .summary-note-input {
   width: 100%;
+  box-sizing: border-box;
   background-color: #FFFFFF;
   border: 1px solid var(--color-mocca-border);
   border-radius: 6px;
@@ -2583,10 +2602,10 @@ const formatPrice = (price) => {
   
   .form-card {
     padding: 1rem;
-    width: 92% !important;
-    max-width: 480px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     box-sizing: border-box !important;
   }
   
@@ -2607,10 +2626,10 @@ const formatPrice = (price) => {
   
   .summary-card {
     padding: 1rem;
-    width: 92% !important;
-    max-width: 480px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     box-sizing: border-box !important;
   }
   
@@ -2681,6 +2700,24 @@ const formatPrice = (price) => {
   .card-inner-compact .summary-prod-item {
     padding: 0.5rem 0 !important;
     gap: 0.5rem !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  
+  .card-inner-compact .prod-left {
+    width: 100% !important;
+  }
+  
+  .card-inner-compact .prod-right {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin-top: 0.25rem !important;
+  }
+  
+  .card-inner-compact .summary-qty-adjuster {
+    margin-top: 0 !important;
   }
   
   .card-inner-compact .prod-name {
@@ -2832,5 +2869,15 @@ const formatPrice = (price) => {
     max-width: 100%;
     border-radius: 12px;
   }
+}
+
+.phone-input-grid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.5rem;
+}
+.phone-prefix-select {
+  padding: 0.8rem 0.5rem;
+  text-align: center;
 }
 </style>
