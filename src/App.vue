@@ -36,12 +36,15 @@
         <div v-else-if="currentPage === 'login'" key="login">
           <LoginPage />
         </div>
+        <div v-else-if="currentPage === 'info'" key="info">
+          <InfoPage />
+        </div>
       </Transition>
     </main>
     <Footer v-if="currentPage !== 'login' && currentPage !== 'payment' && currentPage !== 'checkout'" />
     <CartDrawer v-if="currentPage !== 'login'" />
     <BottomCartBar v-if="currentPage !== 'checkout' && currentPage !== 'event-checkout' && currentPage !== 'payment' && currentPage !== 'login' && currentPage !== 'profile' && currentPage !== 'event-detail'" />
-    <MobileNavbar v-if="currentPage !== 'checkout' && currentPage !== 'event-checkout' && currentPage !== 'login'" />
+    <MobileNavbar v-if="currentPage !== 'checkout' && currentPage !== 'event-checkout' && currentPage !== 'login' && currentPage !== 'payment'" />
   </div>
 </template>
 
@@ -60,6 +63,7 @@ import EventCheckoutPage from './components/EventCheckoutPage.vue'
 import PaymentPage from './components/PaymentPage.vue'
 import ProfilePage from './components/ProfilePage.vue'
 import LoginPage from './components/LoginPage.vue'
+import InfoPage from './components/InfoPage.vue'
 import Footer from './components/Footer.vue'
 import CartDrawer from './components/CartDrawer.vue'
 import BottomCartBar from './components/BottomCartBar.vue'

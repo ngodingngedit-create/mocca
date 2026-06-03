@@ -1,6 +1,6 @@
 <template>
   <Transition name="slide-up">
-    <div v-if="!isMobileMenuOpen && (totalItems === 0 || currentPage === 'payment' || currentPage === 'profile')" class="mobile-navbar">
+    <div v-if="!isMobileMenuOpen && (totalItems === 0 || currentPage === 'profile')" class="mobile-navbar">
       <div class="nav-items-container">
         <!-- Home / Beranda -->
         <button 

@@ -83,6 +83,29 @@
               </div>
             </div>
 
+            <!-- Size Chart (Visible only for apparel) -->
+            <div v-if="productData && productData.sizes && productData.sizes.length > 1" class="size-chart-container">
+              <h3 class="size-chart-title">Size Chart (cm)</h3>
+              <div class="table-scroll-wrapper">
+                <table class="size-chart-table">
+                  <thead>
+                    <tr>
+                      <th>SIZE</th>
+                      <th>LENGTH</th>
+                      <th>WIDTH</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>S</td><td>68-69</td><td>45-47</td></tr>
+                    <tr><td>M</td><td>73-75</td><td>52-53</td></tr>
+                    <tr><td>L</td><td>76-78</td><td>54-57</td></tr>
+                    <tr><td>XL</td><td>78-81</td><td>58-61</td></tr>
+                    <tr><td>XXL</td><td>81-83</td><td>62-64</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             <!-- Price and Quantity add to cart action panel -->
             <div class="checkout-control-section">
               <div class="modal-price-row">
@@ -717,6 +740,76 @@ const formatPrice = (price) => {
   margin-bottom: 0.5rem;
 }
 
+/* Size Chart */
+.size-chart-container {
+  margin-bottom: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-mocca-border);
+  background-color: var(--color-mocca-dark);
+}
+
+.table-scroll-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: var(--color-bg-light);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.size-chart-title {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-bg-light);
+  background-color: var(--color-mocca-dark);
+  padding: 0.65rem 1rem;
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+.size-chart-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  text-align: center;
+  background-color: var(--color-bg-light);
+}
+
+.size-chart-table th {
+  background-color: #FAF6F0;
+  color: var(--color-mocca-dark);
+  font-weight: 700;
+  padding: 0.65rem;
+  border-bottom: 1px solid var(--color-mocca-border);
+  border-right: 1px solid var(--color-mocca-border);
+}
+
+.size-chart-table th:last-child {
+  border-right: none;
+}
+
+.size-chart-table td {
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--color-mocca-border);
+  border-right: 1px solid var(--color-mocca-border);
+  color: var(--color-mocca-dark);
+  font-weight: 500;
+}
+
+.size-chart-table td:last-child {
+  border-right: none;
+}
+
+.size-chart-table tr:last-child td {
+  border-bottom: none;
+}
+
+.size-chart-table tr:nth-child(even) {
+  background-color: #FAF6F0;
+}
+
 /* Feature grid */
 .feature-bar {
   display: grid;
@@ -1161,9 +1254,17 @@ const formatPrice = (price) => {
     border: none;
   }
   .main-display-frame {
-    height: 350px;
+    width: 100%;
+    height: auto;
+    min-height: 350px;
+    aspect-ratio: 1 / 1;
     border-radius: 24px 24px 0 0;
     border: none;
+    background-color: var(--color-bg-light);
+  }
+  .main-display-img {
+    object-fit: contain;
+    padding: 1rem;
   }
   .thumbnails-sidebar {
     display: none; /* Hide thumbnails on mobile as per requirement "dibuat full bagian atas aja" */
@@ -1172,6 +1273,10 @@ const formatPrice = (price) => {
     max-height: none;
     overflow-y: visible;
     padding: 1.5rem;
+  }
+  .size-chart-container {
+    width: 100%;
+    margin-top: 1rem;
   }
   .bottom-trust-features {
     display: flex;

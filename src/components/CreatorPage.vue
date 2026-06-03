@@ -322,8 +322,8 @@ const categories = [
   { id: 'all', nameId: 'Semua Produk', nameEn: 'All Products' },
   { id: 'accessories', nameId: 'Aksesoris', nameEn: 'Accessories' },
   { id: 'stationery', nameId: 'Alat Tulis', nameEn: 'Stationery' },
-  { id: 'apparel', nameId: 'Pakaian', nameEn: 'Apparel' },
-  { id: 'home', nameId: 'Home & Living', nameEn: 'Home & Living' }
+  { id: 'apparel', nameId: 'Apparel', nameEn: 'Apparel' },
+  { id: 'home', nameId: 'Record store', nameEn: 'Record store' }
 ];
 
 const products = ref([]);

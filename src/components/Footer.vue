@@ -39,11 +39,9 @@
         <div class="footer-col">
           <h4 class="footer-col-title">{{ t('toko') }}</h4>
           <ul class="footer-list">
-            <li><a href="#" class="footer-link" @click.prevent="currentPage = 'shop'">{{ t('allProducts') }}</a></li>
-            <li><a href="#" class="footer-link">{{ t('apparel') }}</a></li>
-            <li><a href="#" class="footer-link">{{ t('accessories') }}</a></li>
-            <li><a href="#" class="footer-link">{{ t('homeLiving') }}</a></li>
-            <li><a href="#" class="footer-link">{{ t('bundles') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToShop('all')">{{ t('allProducts') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToShop('apparel')">{{ t('apparel') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToShop('accessories')">{{ t('accessories') }}</a></li>
           </ul>
         </div>
 
@@ -51,11 +49,11 @@
         <div class="footer-col">
           <h4 class="footer-col-title">{{ t('informasi') }}</h4>
           <ul class="footer-list">
-            <li><a href="#" class="footer-link">{{ t('aboutUs') }}</a></li>
-            <li><a href="#" class="footer-link">{{ t('shipping') }}</a></li>
-            <li><a href="#" class="footer-link">{{ t('payment') }}</a></li>
-            <li><a href="#" class="footer-link">{{ t('refundReturn') }}</a></li>
-            <li><a href="#" class="footer-link">FAQ</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToInfo('aboutUs')">{{ t('aboutUs') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToInfo('shipping')">{{ t('shipping') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToInfo('payment')">{{ t('payment') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToInfo('refundReturn')">{{ t('refundReturn') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToInfo('faq')">FAQ</a></li>
           </ul>
         </div>
 
@@ -63,10 +61,10 @@
         <div class="footer-col">
           <h4 class="footer-col-title">{{ t('bantuan') }}</h4>
           <ul class="footer-list">
-            <li><a href="#" class="footer-link">{{ t('contactUs') }}</a></li>
-            <li><a href="#" class="footer-link">{{ t('sizing') }}</a></li>
-            <li><a href="#" class="footer-link">{{ t('howToOrder') }}</a></li>
-            <li><a href="#" class="footer-link">{{ t('orderStatus') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToInfo('contactUs')">{{ t('contactUs') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToInfo('sizing')">{{ t('sizing') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToInfo('howToOrder')">{{ t('howToOrder') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToInfo('orderStatus')">{{ t('orderStatus') }}</a></li>
           </ul>
         </div>
 
@@ -74,8 +72,8 @@
         <div class="footer-col">
           <h4 class="footer-col-title">Legal</h4>
           <ul class="footer-list">
-            <li><a href="#" class="footer-link">{{ t('terms') }}</a></li>
-            <li><a href="#" class="footer-link">{{ t('privacy') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToInfo('terms')">{{ t('terms') }}</a></li>
+            <li><a href="#" class="footer-link" @click.prevent="goToInfo('privacy')">{{ t('privacy') }}</a></li>
           </ul>
         </div>
       </div>
@@ -91,7 +89,19 @@
 </template>
 
 <script setup>
-import { currentLang, currentPage } from '../store/cart.js';
+import { currentLang, currentPage, activeCategory, activeInfoPage } from '../store/cart.js';
+
+const goToShop = (category) => {
+  activeCategory.value = category;
+  currentPage.value = 'shop';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+const goToInfo = (pageId) => {
+  activeInfoPage.value = pageId;
+  currentPage.value = 'info';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
 const footerTranslations = {
   id: {

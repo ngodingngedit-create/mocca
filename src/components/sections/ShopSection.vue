@@ -103,7 +103,7 @@
             <div class="thumbnail-image-wrapper">
               <img src="/mocca_col_apparel.png" alt="Mocca Apparel Curated Flat Lay" class="thumbnail-image" />
             </div>
-            <h4 class="thumbnail-title">{{ currentLang === 'id' ? 'Pakaian' : 'Apparel' }}</h4>
+            <h4 class="thumbnail-title">{{ currentLang === 'id' ? 'Apparel' : 'Apparel' }}</h4>
           </div>
 
           <!-- Item 2: Accessories -->
@@ -119,7 +119,7 @@
             <div class="thumbnail-image-wrapper">
               <img src="/mocca_col_everyday.png" alt="Mocca Everyday Items Curated Flat Lay" class="thumbnail-image" />
             </div>
-            <h4 class="thumbnail-title">{{ currentLang === 'id' ? 'Kebutuhan Harian' : 'Everyday Items' }}</h4>
+            <h4 class="thumbnail-title">{{ currentLang === 'id' ? 'Record store' : 'Record store' }}</h4>
           </div>
         </div>
       </div>

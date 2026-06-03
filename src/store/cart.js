@@ -11,6 +11,8 @@ const getInitialPage = () => {
 };
 export const currentPage = ref(getInitialPage());
 export const activeCreatorSlug = ref('');
+export const activeCategory = ref('all');
+export const activeInfoPage = ref('aboutUs');
 
 // Sync URL on state change
 watch(currentPage, (newPage) => {

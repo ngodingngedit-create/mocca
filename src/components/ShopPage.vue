@@ -134,11 +134,11 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import ProductModal from './ProductModal.vue';
 import VariantSelectModal from './VariantSelectModal.vue';
-import { addToCart, updateQuantity, getItemQuantity, getProductTotalQuantity, decreaseProductQuantity, currentLang, isSearchOpen, searchQuery, currentPage, activeCreatorSlug } from '../store/cart.js';
+import { addToCart, updateQuantity, getItemQuantity, getProductTotalQuantity, decreaseProductQuantity, currentLang, isSearchOpen, searchQuery, currentPage, activeCreatorSlug, activeCategory } from '../store/cart.js';
 
 const isModalOpen = ref(false);
 const activeModalProduct = ref(null);
-const activeCategory = ref('all');
+
 const localSearchQuery = ref(searchQuery.value);
 
 const openCreator = (creator) => {
@@ -158,9 +158,9 @@ watch(localSearchQuery, (newVal) => {
 
 const categories = [
   { id: 'all', nameId: 'Semua', nameEn: 'All' },
-  { id: 'apparel', nameId: 'Pakaian', nameEn: 'Apparel' },
+  { id: 'apparel', nameId: 'Apparel', nameEn: 'Apparel' },
   { id: 'accessories', nameId: 'Aksesoris', nameEn: 'Accessories' },
-  { id: 'home', nameId: 'Kebutuhan Harian', nameEn: 'Home & Living' },
+  { id: 'home', nameId: 'Record store', nameEn: 'Record store' },
   { id: 'bundles', nameId: 'Bundling', nameEn: 'Bundles' }
 ];
 
@@ -367,19 +367,22 @@ const t = (key) => {
 
 /* Controls: Filters & Search */
 .shop-controls {
-    display: flex;
-    flex-direction: row; justify-content: space-between; flex-wrap: wrap; width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 100%;
   align-items: center;
-  margin-bottom: 3.5rem;
-  gap: 1.75rem;
+  margin-bottom: 3rem;
+  gap: 1.5rem;
 }
 
 .category-filters {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
-  justify-content: space-between;
-  
+  justify-content: flex-start;
+  flex: 1 1 auto;
 }
 
 .filter-btn {
@@ -405,13 +408,12 @@ const t = (key) => {
 }
 
 .shop-search-bar {
-    max-width: 400px;
-    width: 100%;
-    position: relative;
+  position: relative;
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 500px; /* Made longer as requested */
+  max-width: 450px;
+  flex: 1 1 250px;
 }
 
 .search-icon {
@@ -422,12 +424,12 @@ const t = (key) => {
 
 .shop-search-input {
   width: 100%;
-  padding: 0.85rem 1.25rem 0.85rem 3rem; /* Slightly larger padding */
+  padding: 0.85rem 1.25rem 0.85rem 3rem;
   border: 1px solid rgba(59, 35, 20, 0.15);
   border-radius: 25px;
   background-color: var(--color-bg-light);
   font-family: var(--font-body);
-  font-size: 0.95rem; /* Larger text */
+  font-size: 0.95rem;
   color: var(--color-mocca-dark);
   outline: none;
   transition: var(--transition-smooth);
@@ -750,15 +752,20 @@ const t = (key) => {
     flex-direction: column;
     align-items: stretch;
   }
+  .category-filters {
+    justify-content: center;
+    flex: none;
+  }
   .shop-search-bar {
     max-width: 100%;
+    flex: none;
   }
 }
 
 @media (max-width: 768px) {
   .shop-search-bar {
-      display: none;
-    }
+    display: none;
+  }
   .shop-search-bar.mobile-visible {
     display: flex;
   }
@@ -771,22 +778,22 @@ const t = (key) => {
     height: 30px;
   }
   .creator-label {
-      font-size: 0.45rem;
+    font-size: 0.45rem;
   }
   .creator-name {
-      font-size: 0.85rem;
-    }
-    .creator-info {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
+    font-size: 0.85rem;
+  }
+  .creator-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 @media (max-width: 600px) {
   .shop-page-container {
-        padding: 2.25rem 1.25rem 4rem 1.25rem;
-      }
+    padding: 2.25rem 1.25rem 4rem 1.25rem;
+  }
   .shop-main-title {
     font-size: 2.2rem;
   }
