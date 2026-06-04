@@ -105,19 +105,39 @@
                 </div>
 
                 <div class="form-grid-2 mb-1-5">
-                  <div class="input-group">
+                  <div class="input-group relative-dropdown">
                     <label class="field-label">Provinsi</label>
-                    <select v-model="activeAddress.province_id" class="select-input" @change="onProvinceChange">
-                      <option value="">Pilih Provinsi</option>
-                      <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
-                    </select>
+                    <div class="custom-select-container">
+                      <div class="select-input custom-select-display combobox-wrapper" @click="openProvinceDropdown">
+                        <input type="text" v-model="provinceInputValue" @focus="openProvinceDropdown" placeholder="Pilih Provinsi" class="combobox-input" />
+                        <svg class="chevron-icon" :class="{ 'rotate': isProvinceDropdownOpen }" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </div>
+                      <div class="custom-dropdown-menu" v-if="isProvinceDropdownOpen">
+                        <ul class="dropdown-list pt-0">
+                          <li v-for="prov in filteredProvinces" :key="prov.id" @click="selectProvince(prov)" class="dropdown-item" :class="{ 'active': activeAddress.province_id === prov.id }">
+                            {{ prov.name }}
+                          </li>
+                          <li v-if="filteredProvinces.length === 0" class="dropdown-empty">Provinsi tidak ditemukan</li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
-                  <div class="input-group">
+                  <div class="input-group relative-dropdown">
                     <label class="field-label">Kota / Kabupaten</label>
-                    <select v-model="activeAddress.city_id" class="select-input" :disabled="!activeAddress.province_id">
-                      <option value="">Pilih Kota</option>
-                      <option v-for="city in cities" :key="city.id" :value="city.id">{{ city.name }}</option>
-                    </select>
+                    <div class="custom-select-container" :class="{ 'disabled-select': !activeAddress.province_id }">
+                      <div class="select-input custom-select-display combobox-wrapper" @click="activeAddress.province_id && openCityDropdown()">
+                        <input type="text" v-model="cityInputValue" @focus="activeAddress.province_id && openCityDropdown()" placeholder="Pilih Kota / Kabupaten" class="combobox-input" :disabled="!activeAddress.province_id" />
+                        <svg class="chevron-icon" :class="{ 'rotate': isCityDropdownOpen }" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </div>
+                      <div class="custom-dropdown-menu" v-if="isCityDropdownOpen">
+                        <ul class="dropdown-list pt-0">
+                          <li v-for="city in filteredCities" :key="city.id" @click="selectCity(city)" class="dropdown-item" :class="{ 'active': activeAddress.city_id === city.id }">
+                            {{ city.name }}
+                          </li>
+                          <li v-if="filteredCities.length === 0" class="dropdown-empty">Kota tidak ditemukan</li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -512,6 +532,90 @@ const onProvinceChange = async () => {
   }
 };
 
+const isProvinceDropdownOpen = ref(false);
+const provinceInputValue = ref('');
+const isCityDropdownOpen = ref(false);
+const cityInputValue = ref('');
+
+const filteredProvinces = computed(() => {
+  if (!provinceInputValue.value) return provinces.value;
+  const lowerCaseQuery = provinceInputValue.value.toLowerCase();
+  
+  const selectedProv = provinces.value.find(p => p.id === activeAddress.value.province_id);
+  if (selectedProv && selectedProv.name.toLowerCase() === lowerCaseQuery) return provinces.value;
+  
+  return provinces.value.filter(prov => prov.name.toLowerCase().includes(lowerCaseQuery));
+});
+
+const filteredCities = computed(() => {
+  if (!cityInputValue.value) return cities.value;
+  const lowerCaseQuery = cityInputValue.value.toLowerCase();
+  
+  const selectedCity = cities.value.find(c => c.id === activeAddress.value.city_id);
+  if (selectedCity && selectedCity.name.toLowerCase() === lowerCaseQuery) return cities.value;
+  
+  return cities.value.filter(city => city.name.toLowerCase().includes(lowerCaseQuery));
+});
+
+const openProvinceDropdown = () => {
+  isProvinceDropdownOpen.value = true;
+};
+
+const openCityDropdown = () => {
+  if (activeAddress.value.province_id) {
+    isCityDropdownOpen.value = true;
+  }
+};
+
+const selectProvince = (prov) => {
+  activeAddress.value.province_id = prov.id;
+  provinceInputValue.value = prov.name;
+  isProvinceDropdownOpen.value = false;
+  onProvinceChange();
+};
+
+const selectCity = (city) => {
+  activeAddress.value.city_id = city.id;
+  cityInputValue.value = city.name;
+  isCityDropdownOpen.value = false;
+};
+
+// Reset values if user types but doesn't select
+const resetInputsToSelected = () => {
+  const prov = provinces.value.find(p => p.id === activeAddress.value.province_id);
+  provinceInputValue.value = prov ? prov.name : '';
+  
+  const city = cities.value.find(c => c.id === activeAddress.value.city_id);
+  cityInputValue.value = city ? city.name : '';
+};
+
+// Close dropdowns when clicking outside
+const handleClickOutside = (e) => {
+  const dropdowns = document.querySelectorAll('.custom-select-container');
+  let clickedInside = false;
+  dropdowns.forEach(el => {
+    if (el.contains(e.target)) clickedInside = true;
+  });
+  if (!clickedInside) {
+    if (isProvinceDropdownOpen.value || isCityDropdownOpen.value) {
+      resetInputsToSelected();
+    }
+    isProvinceDropdownOpen.value = false;
+    isCityDropdownOpen.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+  fetchProvinces();
+  initGoogleMaps();
+  if (checkedCheckoutItems.value && checkedCheckoutItems.value.length > 0) {
+    activeCartItems.value = checkedCheckoutItems.value.map(item => ({ ...item }));
+  } else {
+    activeCartItems.value = [];
+  }
+});
+
 const initGoogleMaps = () => {
   if (window.google && window.google.maps) {
     initAutocomplete();
@@ -687,16 +791,7 @@ const saveAddressAndFetchShipping = async () => {
   }
 };
 
-// Initialize addresses & cart items
-onMounted(() => {
-  fetchProvinces();
-  initGoogleMaps();
-  if (checkedCheckoutItems.value && checkedCheckoutItems.value.length > 0) {
-    activeCartItems.value = checkedCheckoutItems.value.map(item => ({ ...item }));
-  } else {
-    activeCartItems.value = [];
-  }
-});
+// Initialize addresses & cart items (Moved above)
 
 // 3. Metode Pengiriman
 const shippingType = ref('courier'); // 'courier' or 'cod'
@@ -2880,4 +2975,112 @@ const formatPrice = (price) => {
   padding: 0.8rem 0.5rem;
   text-align: center;
 }
+
+/* Custom Select Dropdown */
+.relative-dropdown {
+  position: relative;
+}
+
+.custom-select-container {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background-color: #fff;
+  user-select: none;
+  padding-right: 1rem !important; /* Override native select 2.5rem right padding for the icon */
+}
+
+.custom-select-container.disabled-select .custom-select-display {
+  background-color: var(--color-bg-cream);
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.chevron-icon {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+  color: var(--color-mocca-muted);
+}
+.chevron-icon.rotate {
+  transform: rotate(180deg);
+}
+
+.custom-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid var(--color-mocca-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 100;
+  max-height: 250px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.combobox-wrapper {
+  cursor: text;
+}
+
+.combobox-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 0.85rem; /* Match exactly with native text-input */
+  font-family: inherit;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+  line-height: normal;
+}
+
+.combobox-input:disabled {
+  cursor: not-allowed;
+}
+
+.dropdown-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.dropdown-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: var(--color-mocca-light);
+}
+
+.dropdown-item.active {
+  background-color: var(--color-coffee);
+  color: #fff;
+  font-weight: bold;
+}
+
+.dropdown-empty {
+  padding: 12px 16px;
+  color: #6b7280;
+  text-align: center;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
 </style>
