@@ -348,7 +348,7 @@ const fetchCreatorData = async () => {
       const pData = Array.isArray(prodJson) ? prodJson : prodJson.data;
       
       if (pData) {
-        products.value = pData.map(p => {
+        products.value = pData.filter(p => p.product_status_id == 2).map(p => {
           let price = parseInt(p.price);
           let variantId = null;
           if (price === 0 && p.product_varian && p.product_varian.length > 0) {

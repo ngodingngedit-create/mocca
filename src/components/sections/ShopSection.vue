@@ -192,7 +192,7 @@ const fetchProducts = async () => {
     const data = Array.isArray(json) ? json : json.data;
     
     if (data) {
-      products.value = data.map(p => {
+      products.value = data.filter(p => p.product_status_id == 2).map(p => {
         let price = parseInt(p.price);
         let variantId = null;
         if (price === 0 && p.product_varian && p.product_varian.length > 0) {
