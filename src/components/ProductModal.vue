@@ -61,28 +61,6 @@
 
 
 
-            <!-- Size selection -->
-            <div class="selection-section">
-              <span class="selection-title">Varian</span>
-              <div class="selection-options sizes-row">
-                <button 
-                  v-for="sz in productData.sizes" 
-                  :key="sz"
-                  :class="['size-selector-btn', { active: selectedSize === sz }]"
-                  @click="selectedSize = sz"
-                >
-                  {{ sz }}
-                </button>
-              </div>
-              <!-- Stock Info -->
-              <div v-if="productData.variants" class="stock-indicator">
-                <span v-if="isCurrentSoldOut" class="stock-badge sold-out">Stok Habis</span>
-                <span v-else class="stock-badge available">
-                  {{ currentStockCount !== null ? `Sisa stok: ${currentStockCount}` : 'Tersedia' }}
-                </span>
-              </div>
-            </div>
-
             <!-- Size Chart (Visible only for apparel) -->
             <div v-if="productData && productData.sizes && productData.sizes.length > 1" class="size-chart-container">
               <h3 class="size-chart-title">Size Chart (cm)</h3>
@@ -106,6 +84,40 @@
                     <tr><td>XXL</td><td>81-83</td><td>62-64</td></tr>
                   </tbody>
                 </table>
+              </div>
+            </div>
+
+            <!-- Size selection -->
+            <div class="selection-section">
+              <span class="selection-title">Varian</span>
+              <div class="selection-options sizes-row">
+                <button 
+                  v-for="sz in productData.sizes" 
+                  :key="sz"
+                  :class="['size-selector-btn', { active: selectedSize === sz }]"
+                  @click="selectedSize = sz"
+                >
+                  {{ sz }}
+                </button>
+              </div>
+              <!-- Stock Info -->
+              <div v-if="productData.variants" class="stock-indicator">
+                <span v-if="isCurrentSoldOut" class="stock-badge sold-out">Stok Habis</span>
+                <span v-else class="stock-badge available">
+                  {{ currentStockCount !== null ? `Sisa stok: ${currentStockCount}` : 'Tersedia' }}
+                </span>
+              </div>
+
+              <!-- Store Location Info -->
+              <div v-if="storeLocationInfo" class="store-location-info">
+                <span class="selection-title" style="display: block; font-size: 0.75rem; color: var(--color-mocca-muted);">Dikirim dari:</span>
+                <div class="store-location-card">
+                  <div class="store-name">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="store-icon"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    {{ storeLocationInfo.store_name }}
+                  </div>
+                  <div class="store-address">{{ storeLocationInfo.full_address }}</div>
+                </div>
               </div>
             </div>
 
@@ -325,6 +337,10 @@ const currentStockCount = computed(() => {
     return currentVariant.value.stock_summary.sisa_stock;
   }
   return null;
+});
+
+const storeLocationInfo = computed(() => {
+  return fetchedProductDetails.value?.has_store_location || props.product?.has_store_location || null;
 });
 
 const isCurrentSoldOut = computed(() => {
@@ -922,6 +938,45 @@ const formatPrice = (price) => {
 .sizes-row {
   display: flex;
   gap: 0.5rem;
+}
+
+.store-location-info {
+  margin-top: 0.5rem;
+  background-color: var(--color-bg-light);
+  border: 1px solid var(--color-mocca-border);
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.store-location-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.4rem;
+}
+
+.store-name {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-mocca-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.store-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-mocca-muted);
+}
+
+.store-address {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-mocca-muted);
+  line-height: 1.4;
+  padding-left: 1.3rem;
 }
 
 .size-selector-btn {
