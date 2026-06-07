@@ -763,7 +763,7 @@ const saveAddressAndFetchShipping = async () => {
           id: cost.service || cost.type,
           name: cost.service || cost.type,
           desc: cost.etd ? `${cost.etd} hari` : 'Layanan',
-          price: parseInt(cost.price) || 0,
+          price: (parseInt(cost.price) || 0) + 4000,
           originalName: cost.courier
         });
       });
