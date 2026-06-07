@@ -195,21 +195,23 @@ const selectedColors = ref({});
 const fetchProducts = async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
-    const creatorId = apiUrl.includes('my.id') ? 48 : 127;
-    const response = await fetch(`${apiUrl}/api/product?creator_id=${creatorId}`);
+    const response = await fetch(`${apiUrl}/api/creator-maping-product/tokomocca.id`);
     const json = await response.json();
-    const data = Array.isArray(json) ? json : json.data;
+    const data = json.products?.data || (Array.isArray(json) ? json : json.data);
     
     if (data) {
       products.value = data.filter(p => p.product_status_id == 2).map(p => {
         let price = parseInt(p.price);
         let variantId = null;
-        if (price === 0 && p.product_varian && p.product_varian.length > 0) {
-          price = parseInt(p.product_varian[0].price);
-          variantId = p.product_varian[0].id;
-        } else if (p.product_varian && p.product_varian.length > 0) {
-          variantId = p.product_varian[0].id;
+        let varians = p.varians || p.product_varian;
+        if (price === 0 && varians && varians.length > 0) {
+          price = parseInt(varians[0].price);
+          variantId = varians[0].id;
+        } else if (varians && varians.length > 0) {
+          variantId = varians[0].id;
         }
+        
+        let images = p.images || p.product_image;
         return {
           id: p.id,
           slug: p.slug,
@@ -218,7 +220,7 @@ const fetchProducts = async () => {
           titleId: p.product_name,
           price: price,
           variant_id: variantId,
-          image: p.product_image?.[0]?.image_url || '/mocca_group_tee.png',
+          image: images?.[0]?.image_url || '/mocca_group_tee.png',
           colors: ['cream'],
           creator: { 
             id: p.creator?.id,

@@ -981,9 +981,9 @@ const submitOrder = async () => {
         type: activeServiceLabel.value,
         courier_company: selectedCourierName,
         courier_type: selectedServiceId.value,
-        origin_contact_name: "Dee Lestari Store",
-        origin_contact_phone: "081234567890",
-        origin_address: "Cimanggis, Depok, Jawa Barat",
+        origin_contact_name: originStore.store_name || originStore.name || "",
+        origin_contact_phone: originStore.phone_number || originStore.phone || "",
+        origin_address: originStore.full_address || originStore.address || "",
         origin_postal_code: originStore.postal_code || "",
         destination_postal_code: activeAddress.value.zip,
         origin_latitude: originStore.latitude || "",
@@ -1013,14 +1013,12 @@ const submitOrder = async () => {
       is_active: 1
     };
 
-    const creatorId = apiUrl.includes('my.id') ? 48 : 127;
-
     const payload = {
       user_id: null,
       name_pemesan: profile.value.name,
       email_pemesan: profile.value.email,
       phone_pemesan: profile.value.phone,
-      creator_id: creatorId,
+      creator_id: null,
       total_price: cartSubtotalPrice.value,
       grandtotal: totalPaymentsPrice.value,
       admin_fee: totalAdminFee,
