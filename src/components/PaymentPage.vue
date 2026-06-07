@@ -183,44 +183,39 @@
                   Maaf, tidak ada layanan pengiriman yang tersedia untuk alamat pengiriman ini.
                 </div>
 
-                <!-- JNE Express -->
-                <div class="courier-card" v-if="courierServices.jne.length > 0" :class="{ open: expandedCourier === 'jne' }">
-                  <div class="courier-header" @click="toggleCourier('jne')">
+                <!-- Dynamic Couriers -->
+                <div v-for="(services, carrier) in courierServices" :key="carrier" class="courier-card" v-show="services && services.length > 0" :class="{ open: expandedCourier === carrier }">
+                  <div class="courier-header" @click="toggleCourier(carrier)">
                     <div class="header-left-col">
-                      <span class="courier-dot" :class="{ checked: selectedCourier === 'jne' }"></span>
+                      <span class="courier-dot" :class="{ checked: selectedCourier === carrier }"></span>
                       <div class="courier-brand">
-                        <!-- Inline JNE Red/Blue mockup Logo -->
-                        <span class="jne-logo">
-                          <span class="blue-text">JNE</span><span class="red-text">express</span>
-                        </span>
-                        <span class="courier-title">JNE Express</span>
+                        <span class="courier-title font-bold" style="text-transform: capitalize;">{{ services[0]?.originalName || carrier }}</span>
                       </div>
                     </div>
                     <div class="header-right-col">
-                      <span class="courier-price-range">Mulai dari Rp 7.000</span>
-                      <svg class="chevron-arrow" :class="{ rotate: expandedCourier === 'jne' }" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                      <span class="courier-price-range">Mulai dari {{ formatPrice(services[0]?.price || 0) }}</span>
+                      <svg class="chevron-arrow" :class="{ rotate: expandedCourier === carrier }" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                         <polyline points="6 9 12 15 18 9"></polyline>
                       </svg>
                     </div>
                   </div>
 
-                  <!-- JNE Services List (Sub-accordion expanded) -->
-                  <div class="courier-services-body" v-if="expandedCourier === 'jne'">
+                  <!-- Services List -->
+                  <div class="courier-services-body" v-if="expandedCourier === carrier">
                     <h4 class="services-title">Layanan Pengiriman</h4>
-                    
                     <div class="services-grid">
                       <label 
-                        v-for="service in courierServices.jne" 
+                        v-for="service in services" 
                         :key="service.id" 
                         class="service-row" 
-                        :class="{ selected: selectedCourier === 'jne' && selectedServiceId === service.id }"
-                        @click="selectCourierService('jne', service)"
+                        :class="{ selected: selectedCourier === carrier && selectedServiceId === service.id }"
+                        @click="selectCourierService(carrier, service)"
                       >
                         <div class="service-left">
                           <input 
                             type="radio" 
-                            name="jne_service" 
-                            :checked="selectedCourier === 'jne' && selectedServiceId === service.id" 
+                            :name="`${carrier}_service`" 
+                            :checked="selectedCourier === carrier && selectedServiceId === service.id" 
                           />
                           <span class="service-radio-dot"></span>
                           <div class="service-meta">
@@ -745,24 +740,41 @@ const saveAddressAndFetchShipping = async () => {
     const resData = await response.json();
     const ratesData = resData.rates || resData.data || resData; 
     
-    const newCourierServices = { jne: [] };
+    const newCourierServices = {};
     
-    if (ratesData && typeof ratesData === 'object' && !Array.isArray(ratesData)) {
+    const processServiceArray = (arr) => {
+      arr.forEach(cost => {
+        const code = (cost.courier || '').toLowerCase();
+        let carrierKey = code.replace(/[^a-z0-9]/g, '');
+        if (carrierKey.includes('jnt') || carrierKey.includes('jt')) carrierKey = 'jnt';
+        if (carrierKey.includes('pos')) carrierKey = 'pos';
+        
+        const serviceName = (cost.service || cost.type || '').toLowerCase();
+        // Only allow 'Reguler', 'EZ', or 'Standard'
+        if (!serviceName.includes('regul') && serviceName !== 'ez' && !serviceName.includes('standard')) {
+          return;
+        }
+
+        if (!newCourierServices[carrierKey]) {
+          newCourierServices[carrierKey] = [];
+        }
+
+        newCourierServices[carrierKey].push({
+          id: cost.service || cost.type,
+          name: cost.service || cost.type,
+          desc: cost.etd ? `${cost.etd} hari` : 'Layanan',
+          price: parseInt(cost.price) || 0,
+          originalName: cost.courier
+        });
+      });
+    };
+
+    if (Array.isArray(ratesData)) {
+      processServiceArray(ratesData);
+    } else if (ratesData && typeof ratesData === 'object') {
       Object.values(ratesData).forEach(serviceArray => {
         if (Array.isArray(serviceArray)) {
-          serviceArray.forEach(cost => {
-            const code = (cost.courier || '').toLowerCase();
-            const serviceObj = {
-              id: cost.service || cost.type,
-              name: cost.service || cost.type,
-              desc: cost.etd ? `${cost.etd} hari` : 'Layanan',
-              price: parseInt(cost.price) || 0
-            };
-            
-            if (code.includes('jne')) {
-              newCourierServices.jne.push(serviceObj);
-            }
-          });
+          processServiceArray(serviceArray);
         }
       });
     }
@@ -799,9 +811,7 @@ const selectedCourier = ref('jne');  // 'jne', 'jnt', 'sicepat', 'anteraja'
 const expandedCourier = ref('jne');  // sub-accordion expander
 const selectedServiceId = ref('next_day'); // default selected service
 
-const courierServices = ref({
-  jne: []
-});
+const courierServices = ref({});
 
 const shippingPrice = ref(0); // flat tracking of shipping price
 
@@ -826,8 +836,8 @@ const selectCourierService = (carrier, service) => {
 
 // Courier text helpers
 const activeCourierLabel = computed(() => {
-  const mapping = { jne: 'JNE' };
-  return mapping[selectedCourier.value] || 'Kurir';
+  const services = courierServices.value[selectedCourier.value] || [];
+  return services.length > 0 ? (services[0].originalName || selectedCourier.value) : 'Kurir';
 });
 
 const activeServiceLabel = computed(() => {
