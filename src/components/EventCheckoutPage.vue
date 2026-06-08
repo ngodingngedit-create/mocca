@@ -335,6 +335,20 @@
                 </span>
                 <span class="pricing-right">{{ formatPrice(serviceFee) }}</span>
               </div>
+
+              <div class="pricing-row" v-if="taxFee > 0">
+                <span class="pricing-left align-items-center-flex">
+                  {{ currentLang === 'id' ? 'Pajak (PPN)' : 'Tax (PPN)' }}
+                  <span class="info-circle-tooltip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                  </span>
+                </span>
+                <span class="pricing-right">{{ formatPrice(taxFee) }}</span>
+              </div>
             </div>
 
             <div class="summary-price-divider"></div>
@@ -498,8 +512,40 @@ const serviceFee = computed(() => {
   return feeTotal;
 });
 
+const fetchedEventDetails = ref(null);
+
+const fetchEventDetails = async () => {
+  try {
+    const slug = displayEvent.value.slug || displayEvent.value.slug_url || displayEvent.value.id;
+    if (!slug) return;
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const response = await fetch(`${apiUrl}/api/event/${slug}`);
+    const json = await response.json();
+    if (json.data) {
+      fetchedEventDetails.value = json.data;
+    }
+  } catch (error) {
+    console.error('Failed to fetch event details for tax', error);
+  }
+};
+
+const taxFee = computed(() => {
+  const ev = fetchedEventDetails.value || displayEvent.value;
+  if (!ev) return 0;
+  
+  const type = (ev.ppn_type || ev.tax_type || '').toLowerCase();
+  const amount = Number(ev.ppn !== undefined && ev.ppn !== null ? ev.ppn : (ev.tax_amount || 0));
+  
+  if (type === 'nominal') {
+    return amount;
+  } else if (type === 'percentage') {
+    return (subtotalPrice.value * amount) / 100;
+  }
+  return 0;
+});
+
 const grandTotalPrice = computed(() => {
-  return subtotalPrice.value + serviceFee.value;
+  return subtotalPrice.value + serviceFee.value + taxFee.value;
 });
 
 // Form countdown timer logic (15 minutes limit)
@@ -519,6 +565,7 @@ const dashOffset = computed(() => {
 });
 
 onMounted(() => {
+  fetchEventDetails();
   timerId = setInterval(() => {
     if (timeLeft.value > 0) {
       timeLeft.value--;

@@ -7,7 +7,7 @@
           <HeroSection />
           <FeaturesSection />
           <ShopSection />
-          <!-- <EventSection /> -->
+          <EventSection />
         </div>
         <div v-else-if="currentPage === 'shop'" key="shop">
           <ShopPage />
@@ -36,6 +36,9 @@
         <div v-else-if="currentPage === 'login'" key="login">
           <LoginPage />
         </div>
+        <div v-else-if="currentPage === 'dashboard-user'" key="dashboard-user">
+          <DashboardUserPage />
+        </div>
         <div v-else-if="currentPage === 'info'" key="info">
           <InfoPage />
         </div>
@@ -43,7 +46,7 @@
     </main>
     <Footer v-if="currentPage !== 'login' && currentPage !== 'payment' && currentPage !== 'checkout'" />
     <CartDrawer v-if="currentPage !== 'login'" />
-    <BottomCartBar v-if="currentPage !== 'checkout' && currentPage !== 'event-checkout' && currentPage !== 'payment' && currentPage !== 'login' && currentPage !== 'profile' && currentPage !== 'event-detail'" />
+    <BottomCartBar v-if="currentPage !== 'checkout' && currentPage !== 'event-checkout' && currentPage !== 'payment' && currentPage !== 'login' && currentPage !== 'profile' && currentPage !== 'dashboard-user' && currentPage !== 'event-detail'" />
     <MobileNavbar v-if="currentPage !== 'checkout' && currentPage !== 'event-checkout' && currentPage !== 'login' && currentPage !== 'payment'" />
   </div>
 </template>
@@ -62,6 +65,7 @@ import CheckoutPage from './components/CheckoutPage.vue'
 import EventCheckoutPage from './components/EventCheckoutPage.vue'
 import PaymentPage from './components/PaymentPage.vue'
 import ProfilePage from './components/ProfilePage.vue'
+import DashboardUserPage from './components/DashboardUserPage.vue'
 import LoginPage from './components/LoginPage.vue'
 import InfoPage from './components/InfoPage.vue'
 import Footer from './components/Footer.vue'

@@ -273,8 +273,13 @@
               </svg>
             </div>
             <div class="creator-info">
-              <span class="creator-label">{{ currentLang === 'id' ? 'Official Store' : 'Official Store' }}</span>
-              <span class="creator-name">{{ creatorData?.name || 'Loading...' }}</span>
+              <span class="creator-label">{{ creatorData?.creator_title || 'Official Store' }}</span>
+              <div class="creator-name-wrapper" style="display: flex; align-items: center; gap: 4px;">
+                <span class="creator-name">{{ creatorData?.name || 'Loading...' }}</span>
+                <svg v-if="creatorData?.is_verified == 1" width="14" height="14" viewBox="0 0 24 24" fill="#3b82f6" stroke="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
@@ -369,7 +374,8 @@ const fetchCreatorData = async () => {
             creator: { 
               name: json.data.name, 
               image_url: json.data.image_url,
-              avatarInitial: json.data.name?.[0] || 'M' 
+              avatarInitial: json.data.name?.[0] || 'M',
+              creator_title: json.data.creator_title || 'Official Store'
             },
             has_store_location: p.has_store_location,
             admin_fee: p.admin_fee || 0

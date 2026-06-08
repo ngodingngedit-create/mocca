@@ -12,7 +12,7 @@
         <ul>
           <li><a href="#" class="nav-item" :class="{ active: activeSection === 'home' }" @click.prevent="navigateToSection('home')">{{ getMenuLabel('home') }}</a></li>
           <li><a href="#" class="nav-item" :class="{ active: activeSection === 'collections' }" @click.prevent="navigateToSection('collections')">{{ getMenuLabel('collections') }}</a></li>
-          <!-- <li><a href="#" class="nav-item" :class="{ active: activeSection === 'event' }" @click.prevent="navigateToSection('event')">{{ getMenuLabel('event') }}</a></li> -->
+          <li><a href="#" class="nav-item" :class="{ active: activeSection === 'event' }" @click.prevent="navigateToSection('event')">{{ getMenuLabel('event') }}</a></li>
           <li><a href="#" class="nav-item" :class="{ active: activeSection === 'shop' }" @click.prevent="navigateToSection('shop')">{{ getMenuLabel('shop') }}</a></li>
         </ul>
       </nav>
@@ -108,7 +108,7 @@
           <ul class="mobile-nav-list">
             <li><a href="#" :class="{ active: activeSection === 'home' }" @click.prevent="navigateToSection('home'); isMobileMenuOpen = false;">{{ getMenuLabel('home') }}</a></li>
             <li><a href="#" :class="{ active: activeSection === 'collections' }" @click.prevent="navigateToSection('collections'); isMobileMenuOpen = false;">{{ getMenuLabel('collections') }}</a></li>
-            <!-- <li><a href="#" :class="{ active: activeSection === 'event' }" @click.prevent="navigateToSection('event'); isMobileMenuOpen = false;">{{ getMenuLabel('event') }}</a></li> -->
+            <li><a href="#" :class="{ active: activeSection === 'event' }" @click.prevent="navigateToSection('event'); isMobileMenuOpen = false;">{{ getMenuLabel('event') }}</a></li>
             <li><a href="#" :class="{ active: activeSection === 'shop' }" @click.prevent="navigateToSection('shop'); isMobileMenuOpen = false;">{{ getMenuLabel('shop') }}</a></li>
           </ul>
           

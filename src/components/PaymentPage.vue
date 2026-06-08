@@ -11,7 +11,10 @@
           <!-- 1. Data Diri Section -->
           <div class="form-card">
             <div class="card-inner-compact">
-              <h2 class="section-title">1. Data Diri</h2>
+              <h2 class="section-title" style="margin-bottom: 0.25rem;">1. Data Diri</h2>
+              <p style="font-size: 0.7rem; color: var(--color-mocca-muted); margin-bottom: 1.5rem; margin-top: 0; line-height: 1.4;">
+                Email pemesan dapat digunakan untuk login dan melihat riwayat transaksi.
+              </p>
               <div class="form-col-group">
                 <div class="input-group">
                   <label class="field-label">Nama Lengkap</label>
@@ -37,10 +40,12 @@
           <!-- 2. Alamat Pengiriman Section -->
           <div class="form-card">
             <div class="card-inner-compact">
-              <div class="card-header-row mb-1-5">
-                <h2 class="section-title text-alamat-pengiriman">2. Alamat Pengiriman</h2>
+              <div class="card-header-row mb-1-5" @click="isAlamatExpanded = !isAlamatExpanded" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="section-title text-alamat-pengiriman" style="margin-bottom: 0;">2. Alamat Pengiriman</h2>
+                <svg :style="{ transform: isAlamatExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s', color: 'var(--color-mocca-dark)' }" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
               </div>
               
+              <div v-show="isAlamatExpanded">
               <!-- Address Stepper -->
               <div class="address-stepper">
                 <div class="step-indicator" :class="{ active: addressStep >= 1 }">
@@ -154,9 +159,10 @@
                 <div style="display: flex; gap: 1rem;">
                   <button class="back-to-shop-btn" @click="addressStep = 2">Ubah Pinpoint</button>
                   <button class="primary-checkout-btn" @click="saveAddressAndFetchShipping" :disabled="isFetchingShipping">
-                    {{ isFetchingShipping ? 'Menghitung Ongkir...' : 'Simpan & Hitung Ongkir' }}
+                    {{ isFetchingShipping ? 'Mencari...' : 'Pilih Metode Pengiriman' }}
                   </button>
                 </div>
+              </div>
               </div>
             </div>
           </div>
@@ -164,8 +170,12 @@
           <!-- 3. Metode Pengiriman Section -->
           <div class="form-card" v-if="isShippingReady">
             <div class="card-inner-compact">
-              <h2 class="section-title">3. Metode Pengiriman</h2>
+              <div class="card-header-row mb-1-5" @click="isMetodeExpanded = !isMetodeExpanded" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="section-title" style="margin-bottom: 0;">3. Metode Pengiriman</h2>
+                <svg :style="{ transform: isMetodeExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s', color: 'var(--color-mocca-dark)' }" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </div>
               
+              <div v-show="isMetodeExpanded">
               <!-- Courier shipping radio -->
               <div class="shipping-method-choice mb-1-5">
                 <label class="shipping-radio-label">
@@ -231,6 +241,7 @@
 
 
               </div>
+              </div>
             </div>
           </div>
 
@@ -259,6 +270,13 @@
                     <div class="prod-info">
                       <h4 class="prod-name font-bold">{{ item.name }}</h4>
                       <span class="prod-meta" v-if="(item.size && item.size !== '-') || (item.color && item.color !== 'default')">Varian: {{ item.size && item.size !== '-' ? item.size : item.color }}</span>
+                      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem; margin-top: 6px;">
+                        <span style="font-size: 0.65rem; color: var(--color-mocca-muted);">Dikirim dari :</span>
+                        <div style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.7rem; color: var(--color-mocca-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 10px; height: 10px; color: var(--color-mocca-dark); flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                          <span style="font-weight: 700;">TOKOMOCCA</span>, DKI Jakarta
+                        </div>
+                      </div>
                       
                       <!-- Notes Input -->
                       <div class="summary-note-edit-wrapper mt-0-5">
@@ -310,11 +328,13 @@
                     class="voucher-apply-btn" 
                     :class="{ applied: voucherApplied }"
                     @click="applyVoucherCode"
+                    :disabled="isVerifyingVoucher || voucherApplied"
                   >
-                    {{ voucherApplied ? 'Gunakan ✓' : 'Gunakan' }}
+                    {{ isVerifyingVoucher ? 'Loading...' : (voucherApplied ? 'Gunakan ✓' : 'Gunakan') }}
                   </button>
                 </div>
-                <p class="voucher-success-text" v-if="voucherApplied">Voucher diskon 10% berhasil digunakan! <span class="remove-btn" @click="removeVoucherCode">Hapus</span></p>
+                <p class="voucher-success-text" v-if="voucherApplied">Voucher {{ activeVoucherData?.name }} berhasil digunakan! <span class="remove-btn" @click="removeVoucherCode">Hapus</span></p>
+                <p v-if="voucherError" style="color: #E21E26; font-size: 0.7rem; margin-top: 0.5rem; font-weight: 500;">{{ voucherError }}</p>
               </div>
 
               <div class="summary-divider"></div>
@@ -346,8 +366,8 @@
 
                 <!-- Voucher Discount -->
                 <div class="breakdown-row discount" v-if="voucherApplied">
-                  <span class="breakdown-label">Diskon Voucher (10%)</span>
-                  <span class="breakdown-value">- {{ formatPrice(voucherDiscount) }}</span>
+                  <span class="breakdown-label">Diskon Voucher ({{ activeVoucherData?.code }})</span>
+                  <span class="breakdown-value" style="color: var(--color-mocca-dark); font-weight: 600;">- {{ formatPrice(voucherDiscount) }}</span>
                 </div>
 
                 <div class="summary-divider"></div>
@@ -387,10 +407,30 @@
     <!-- Fixed Bottom Action Bar -->
     <div class="fixed-payment-actions">
       <div class="fixed-payment-actions-inner">
-        <button class="back-to-cart-link-btn fixed-back-btn" @click="backToCheckout">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="back-icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-          Kembali ke Keranjang
-        </button>
+        <div style="display: flex; align-items: center; gap: 2.5rem;">
+          <button class="back-to-cart-link-btn fixed-back-btn" @click="backToCheckout">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="back-icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Kembali
+          </button>
+          
+          <div class="payment-timer-wrapper">
+            <svg viewBox="0 0 36 36" class="circular-chart">
+              <path class="circle-bg"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              />
+              <path class="circle-progress"
+                :stroke-dasharray="100"
+                :stroke-dashoffset="paymentTimeProgress"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              />
+            </svg>
+            <div class="timer-text">{{ formattedPaymentTime }}</div>
+          </div>
+        </div>
         
         <button class="primary-checkout-btn font-bold fixed-pay-btn" @click="submitOrder" :disabled="isSubmitting || !isFormComplete">
           <span v-if="isSubmitting" class="spinner"></span>
@@ -451,8 +491,45 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { currentPage, cartItems, clearCart, updateQuantity, removeFromCart, checkedCheckoutItems } from '../store/cart.js';
+
+// Timer Logic
+const paymentTimeLeft = ref(15 * 60);
+let paymentTimerInterval = null;
+
+const startPaymentTimer = () => {
+  paymentTimeLeft.value = 15 * 60;
+  if (paymentTimerInterval) clearInterval(paymentTimerInterval);
+  paymentTimerInterval = setInterval(() => {
+    if (paymentTimeLeft.value > 0) {
+      paymentTimeLeft.value--;
+    } else {
+      clearInterval(paymentTimerInterval);
+      currentPage.value = 'home';
+    }
+  }, 1000);
+};
+
+onMounted(() => {
+  startPaymentTimer();
+});
+
+onUnmounted(() => {
+  if (paymentTimerInterval) clearInterval(paymentTimerInterval);
+});
+
+const formattedPaymentTime = computed(() => {
+  const m = Math.floor(paymentTimeLeft.value / 60).toString().padStart(2, '0');
+  const s = (paymentTimeLeft.value % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+});
+
+const paymentTimeProgress = computed(() => {
+  const total = 15 * 60;
+  const progress = (paymentTimeLeft.value / total) * 100;
+  return 100 - progress; // Decreases stroke-dashoffset to show depletion
+});
 
 // 1. Data Diri
 const profile = ref({
@@ -460,6 +537,9 @@ const profile = ref({
   email: '',
   phone: ''
 });
+
+const isAlamatExpanded = ref(true);
+const isMetodeExpanded = ref(true);
 
 // 2. Alamat Pengiriman (Google Maps Flow)
 const GOOGLE_MAPS_API_KEY = "AIzaSyBxZekg89Ut1U72fFpQldJAenvgTy197As";
@@ -601,6 +681,7 @@ const handleClickOutside = (e) => {
 };
 
 onMounted(() => {
+  window.scrollTo(0, 0);
   document.addEventListener('click', handleClickOutside);
   fetchProvinces();
   initGoogleMaps();
@@ -896,22 +977,76 @@ const cartAdminFee = computed(() => {
 // Voucher
 const voucherCode = ref('');
 const voucherApplied = ref(false);
+const activeVoucherData = ref(null);
+const isVerifyingVoucher = ref(false);
+const voucherError = ref('');
+
 const voucherDiscount = computed(() => {
-  if (!voucherApplied.value) return 0;
-  return Math.round(cartSubtotalPrice.value * 0.1); // 10% discount
+  if (!voucherApplied.value || !activeVoucherData.value) return 0;
+  
+  const v = activeVoucherData.value;
+  let discountValue = 0;
+  
+  if (v.is_percentage === 1 || v.type === 'percentage') {
+    discountValue = Math.round(cartSubtotalPrice.value * (v.discount / 100));
+  } else {
+    discountValue = v.discount;
+    if (v.is_multiply === 1) {
+      discountValue = discountValue * cartProductCount.value;
+    }
+  }
+  
+  return Math.min(discountValue, cartSubtotalPrice.value);
 });
 
-const applyVoucherCode = () => {
-  if (voucherCode.value.trim().toUpperCase() === 'MOCCA10') {
-    voucherApplied.value = true;
-  } else {
-    alert('Kode voucher tidak valid. Gunakan kode MOCCA10');
+const applyVoucherCode = async () => {
+  if (!voucherCode.value.trim() || isVerifyingVoucher.value) return;
+  
+  isVerifyingVoucher.value = true;
+  
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const productId = activeCartItems.value.length > 0 ? (activeCartItems.value[0].product_id || activeCartItems.value[0].id) : '';
+    
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const response = await fetch(`${apiUrl}/api/vouchers-merch/validate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        module_id: "2",
+        product_id: productId ? productId.toString() : "",
+        code: voucherCode.value.trim(),
+        date: today
+      })
+    });
+    
+    const resData = await response.json();
+    
+    if (response.ok && (resData.status === 200 || resData.voucher)) {
+      voucherApplied.value = true;
+      activeVoucherData.value = resData.voucher;
+      voucherError.value = '';
+    } else {
+      voucherApplied.value = false;
+      activeVoucherData.value = null;
+      voucherError.value = (resData.message && !resData.message.toLowerCase().includes('server')) ? resData.message : 'Kode voucher tidak valid.';
+    }
+  } catch (e) {
+    console.error('Voucher verification failed:', e);
+    voucherError.value = 'Kode voucher tidak valid.';
+  } finally {
+    isVerifyingVoucher.value = false;
   }
 };
 
 const removeVoucherCode = () => {
   voucherApplied.value = false;
+  activeVoucherData.value = null;
   voucherCode.value = '';
+  voucherError.value = '';
 };
 
 // Total Payments calculation
@@ -2392,6 +2527,41 @@ const formatPrice = (price) => {
   font-size: 0.65rem;
   color: var(--color-mocca-muted);
   line-height: 1.4;
+}
+
+/* Payment Timer */
+.payment-timer-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+}
+
+.circular-chart {
+  width: 24px;
+  height: 24px;
+  transform: rotate(-90deg); /* Start at top */
+}
+
+.circle-bg {
+  fill: none;
+  stroke: rgba(140, 115, 85, 0.15);
+  stroke-width: 3.8;
+}
+
+.circle-progress {
+  fill: none;
+  stroke: var(--color-mocca-dark);
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timer-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-mocca-dark);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Actions */

@@ -106,8 +106,13 @@
               <img :src="product.creator?.image_url || '/logo_mocca.png'" :alt="product.creator?.name" class="creator-avatar" />
             </div>
             <div class="creator-info">
-              <span class="creator-label">{{ currentLang === 'id' ? 'Official Store' : 'Official Store' }}</span>
-              <span class="creator-name">{{ product.creator?.name || 'Loading...' }}</span>
+              <span class="creator-label">{{ product.creator?.creator_title || 'Official Store' }}</span>
+              <div class="creator-name-wrapper" style="display: flex; align-items: center; gap: 4px;">
+                <span class="creator-name">{{ product.creator?.name || 'Loading...' }}</span>
+                <svg v-if="product.creator?.is_verified == 1" width="14" height="14" viewBox="0 0 24 24" fill="#3b82f6" stroke="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
@@ -199,6 +204,8 @@ const fetchProducts = async () => {
     const json = await response.json();
     const data = json.products?.data || (Array.isArray(json) ? json : json.data);
     
+    const affiliateCreators = json.affiliate_creators || [];
+    
     if (data) {
       products.value = data.filter(p => p.product_status_id == 2).map(p => {
         let price = parseInt(p.price);
@@ -212,6 +219,7 @@ const fetchProducts = async () => {
         }
         
         let images = p.images || p.product_image;
+        const currentCreator = affiliateCreators.find(c => c.id === p.creator?.id) || {};
         return {
           id: p.id,
           slug: p.slug,
@@ -226,8 +234,10 @@ const fetchProducts = async () => {
             id: p.creator?.id,
             slug: p.creator?.slug_url || p.creator?.slug,
             name: p.creator?.name || 'My Diary Records', 
+            is_verified: p.creator?.is_verified,
             image_url: p.creator?.image_url || '/logo_mocca.png',
-            avatarInitial: p.creator?.name?.[0] || 'M' 
+            avatarInitial: p.creator?.name?.[0] || 'M',
+            creator_title: currentCreator.creator_title || 'Official Store'
           },
           has_store_location: p.has_store_location,
             admin_fee: p.admin_fee || 0

@@ -20,10 +20,17 @@
               >
                 <img :src="thumb" :alt="`${productTitle} thumb ${idx}`" class="thumb-img" />
               </button>
+              <button class="size-chart-side-btn" @click="activeTab = 'size-chart'">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="ruler-icon"><rect x="2" y="8" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="8" x2="6" y2="11"></line><line x1="10" y1="8" x2="10" y2="11"></line><line x1="14" y1="8" x2="14" y2="11"></line><line x1="18" y1="8" x2="18" y2="11"></line></svg>
+                <span>Size Chart</span>
+              </button>
             </div>
 
             <!-- 2. Main Product Display frame -->
-            <div class="main-display-frame">
+            <div class="main-display-frame" style="position: relative;">
+              <button :class="['wishlist-btn-image', { active: isWishlisted }]" @click.stop="toggleWishlist">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" :fill="isWishlisted ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="1.8" class="heart-icon"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              </button>
               <img :src="productData.thumbnails[activeImageIndex]" :alt="productTitle" class="main-display-img" />
             </div>
           </div>
@@ -32,58 +39,56 @@
           <div class="modal-info-column">
             <!-- Title Header -->
             <div class="info-header">
-              <span class="info-tag">Official Merch • Limited Collection</span>
               <h2 class="info-title">{{ productTitle }}</h2>
               
-              <!-- Rating and Wishlist row -->
-              <div class="info-meta-row">
-                <div class="rating-group">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="star-icon"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                  <span class="rating-val">4.9 <span class="reviews-count">(120 reviews)</span></span>
+              <!-- Product Tabs -->
+              <div class="product-tabs">
+                <button class="tab-btn" :class="{ active: activeTab === 'description' }" @click="activeTab = 'description'">Deskripsi</button>
+                <button class="tab-btn" :class="{ active: activeTab === 'size-chart' }" @click="activeTab = 'size-chart'">Size Chart</button>
+                <button class="tab-btn" :class="{ active: activeTab === 'reviews' }" @click="activeTab = 'reviews'">Ulasan</button>
+              </div>
+            </div>
+
+            <!-- Description Tab -->
+            <div v-show="activeTab === 'description'" class="tab-content">
+              <div class="product-description" v-html="productData.description"></div>
+              
+              <div class="feature-bar">
+                <template v-for="(feat, idx) in productData.features" :key="idx">
+                  <div v-if="feat.label === 'Official Merchandise Mocca'" class="feature-item" style="gap: 0.4rem;">
+                    <img :src="productData.creator?.image_url || '/logo_mocca.png'" alt="creator" class="creator-avatar" style="width: 24px; height: 24px; flex-shrink: 0;" />
+                    <div class="creator-name-wrap" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0;">
+                      <span class="feature-label" style="font-size: 0.65rem; color: var(--color-mocca-muted);">{{ productData.creator?.creator_title || 'Official Store' }}</span>
+                      <div style="display: flex; align-items: center; gap: 0.2rem;">
+                        <span class="feature-label" style="font-weight: 700; color: var(--color-mocca-dark);">{{ productData.creator?.name || 'Mocca' }}</span>
+                        <svg v-if="productData.creator?.is_verified == 1 || productData.creator?.is_verified === true || !productData.creator || productData.creator?.name === 'Mocca'" width="10" height="10" viewBox="0 0 24 24" fill="#3b82f6" stroke="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div v-else class="feature-item">
+                    <div class="feature-icon" v-html="feat.icon"></div>
+                    <span class="feature-label">{{ feat.label }}</span>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- Size Chart Tab -->
+            <div v-show="activeTab === 'size-chart'" class="tab-content">
+              <div v-if="productData?.product_size_chart && productData.product_size_chart.length > 0" class="size-chart-container">
+                <div v-for="chart in productData.product_size_chart" :key="chart.id" class="size-chart-img-wrapper" style="margin-bottom: 1rem;">
+                  <img :src="chart.image_url" :alt="chart.name || 'Size Chart'" class="size-chart-img" style="width: 100%; border-radius: 8px;" />
                 </div>
-                <button :class="['wishlist-btn', { active: isWishlisted }]" @click="toggleWishlist">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" :fill="isWishlisted ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="1.8" class="heart-icon"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                  <span class="wishlist-text">{{ isWishlisted ? 'Wishlisted' : 'Add to wishlist' }}</span>
-                </button>
               </div>
             </div>
 
-            <!-- Description -->
-            <div class="product-description" v-html="productData.description"></div>
-
-            <!-- Feature Bar Grid -->
-            <div class="feature-bar">
-              <div v-for="(feat, idx) in productData.features" :key="idx" class="feature-item">
-                <div class="feature-icon" v-html="feat.icon"></div>
-                <span class="feature-label">{{ feat.label }}</span>
-              </div>
-            </div>
-
-
-
-            <!-- Size Chart (Visible only for apparel) -->
-            <div v-if="productData && productData.sizes && productData.sizes.length > 1" class="size-chart-container">
-              <h3 class="size-chart-title">Size Chart (cm)</h3>
-              <div class="size-chart-img-wrapper">
-                <img src="/assets/sizechartmocca.png" alt="Mocca Size Chart" class="size-chart-img" />
-              </div>
-              <div class="table-scroll-wrapper">
-                <table class="size-chart-table">
-                  <thead>
-                    <tr>
-                      <th>SIZE</th>
-                      <th>LENGTH</th>
-                      <th>WIDTH</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr><td>S</td><td>68-69</td><td>45-47</td></tr>
-                    <tr><td>M</td><td>73-75</td><td>52-53</td></tr>
-                    <tr><td>L</td><td>76-78</td><td>54-57</td></tr>
-                    <tr><td>XL</td><td>78-81</td><td>58-61</td></tr>
-                    <tr><td>XXL</td><td>81-83</td><td>62-64</td></tr>
-                  </tbody>
-                </table>
+            <!-- Reviews Tab -->
+            <div v-show="activeTab === 'reviews'" class="tab-content">
+              <div class="reviews-empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <p>Belum ada ulasan untuk produk ini.</p>
               </div>
             </div>
 
@@ -109,14 +114,11 @@
               </div>
 
               <!-- Store Location Info -->
-              <div v-if="storeLocationInfo" class="store-location-info">
-                <span class="selection-title" style="display: block; font-size: 0.75rem; color: var(--color-mocca-muted);">Dikirim dari:</span>
-                <div class="store-location-card">
-                  <div class="store-name">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="store-icon"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                    {{ storeLocationInfo.store_name }}
-                  </div>
-                  <div class="store-address">{{ storeLocationInfo.full_address }}</div>
+              <div v-if="storeLocationInfo" class="store-location-info-simple" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem;">
+                <span style="font-size: 0.7rem; color: var(--color-mocca-muted);">Dikirim dari :</span>
+                <div style="display: flex; align-items: center; gap: 0.35rem;">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; color: var(--color-mocca-dark);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  <span style="font-weight: 700; text-transform: uppercase;">{{ storeLocationInfo.store_name }}</span>, {{ storeLocationInfo.city || 'DKI Jakarta' }}
                 </div>
               </div>
             </div>
@@ -139,11 +141,13 @@
                   </button>
                 </div>
 
-                <button class="add-to-cart-outline-btn" @click="handleAddToCart" :disabled="isCurrentSoldOut">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bag-icon"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                  Add to Cart
-                </button>
-                <button class="buy-now-solid-btn" @click="handleBuyNow" :disabled="isCurrentSoldOut">Buy Now</button>
+                <div class="cta-buttons-row">
+                  <button class="add-to-cart-outline-btn" @click="handleAddToCart" :disabled="isCurrentSoldOut">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bag-icon"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    + Cart
+                  </button>
+                  <button class="buy-now-solid-btn" @click="handleBuyNow" :disabled="isCurrentSoldOut">Buy Now</button>
+                </div>
               </div>
             </div>
           </div>
@@ -162,7 +166,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="trust-icon"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l-7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
             <div class="trust-text">
               <span class="trust-title">Stok Tersedia</span>
-              <span class="trust-desc">Tersedia</span>
+              <span class="trust-desc">{{ currentStockCount !== null ? currentStockCount : 'Tersedia' }}</span>
             </div>
           </div>
           <div class="trust-item">
@@ -176,7 +180,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="trust-icon"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
             <div class="trust-text">
               <span class="trust-title">Inspired by</span>
-              <span class="trust-desc">Mocca's warm tunes</span>
+              <span class="trust-desc">Mocca's Music</span>
             </div>
           </div>
         </div>
@@ -214,6 +218,7 @@ const selectedColor = ref('');
 const selectedSize = ref('');
 const qty = ref(1);
 const isWishlisted = ref(false);
+const activeTab = ref('description');
 const toastActive = ref(false);
 const toastMessage = ref('');
 
@@ -312,6 +317,8 @@ const productData = computed(() => {
       defaultSize: defaultSize,
       thumbnails: thumbnails,
       variants: variants,
+      product_size_chart: d.product_size_chart || [],
+      creator: d.creator ? { ...d.creator, creator_title: props.product?.creator?.creator_title } : props.product?.creator,
       features: [
         { label: 'Official Merchandise Mocca', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="f-icon"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8"/></svg>' }
       ]
@@ -321,6 +328,7 @@ const productData = computed(() => {
   const meta = productsMetadata[props.product?.id] || productsMetadata.tee;
   return {
     ...meta,
+    creator: props.product?.creator || null,
     thumbnails: props.product?.image ? [props.product.image] : meta.thumbnails
   };
 });
@@ -333,8 +341,37 @@ const currentVariant = computed(() => {
 });
 
 const currentStockCount = computed(() => {
-  if (currentVariant.value && currentVariant.value.stock_summary) {
-    return currentVariant.value.stock_summary.sisa_stock;
+  if (currentVariant.value) {
+    if (currentVariant.value.stock_summary && currentVariant.value.stock_summary.sisa_stock !== undefined) {
+      return currentVariant.value.stock_summary.sisa_stock;
+    }
+    if (currentVariant.value.stock !== undefined) {
+      return currentVariant.value.stock;
+    }
+    if (currentVariant.value.sisa_stock !== undefined) {
+      return currentVariant.value.sisa_stock;
+    }
+  }
+  
+  if (fetchedProductDetails.value) {
+    if (fetchedProductDetails.value.stock_summary && fetchedProductDetails.value.stock_summary.sisa_stock !== undefined) {
+      return fetchedProductDetails.value.stock_summary.sisa_stock;
+    }
+    if (fetchedProductDetails.value.sisa_stock !== undefined) {
+      return fetchedProductDetails.value.sisa_stock;
+    }
+  }
+
+  if (props.product) {
+    if (props.product.stock_summary && props.product.stock_summary.sisa_stock !== undefined) {
+      return props.product.stock_summary.sisa_stock;
+    }
+    if (props.product.sisa_stock !== undefined) {
+      return props.product.sisa_stock;
+    }
+    if (props.product.stock !== undefined) {
+      return props.product.stock;
+    }
   }
   return null;
 });
@@ -626,6 +663,36 @@ const formatPrice = (price) => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.size-chart-side-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.6rem 0;
+  background-color: transparent;
+  border: 1px solid var(--color-mocca-border);
+  border-radius: 8px;
+  color: var(--color-mocca-dark);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.size-chart-side-btn:hover {
+  background-color: var(--color-mocca-dark);
+  color: var(--color-bg-light);
+  border-color: var(--color-mocca-dark);
+}
+
+.size-chart-side-btn .ruler-icon {
+  width: 18px;
+  height: 18px;
 }
 
 /* 2. Main Frame display */
@@ -1242,6 +1309,159 @@ const formatPrice = (price) => {
   width: 18px;
   height: 18px;
   color: #92e0a9;
+}
+
+/* Custom Added Styles for Tabs and New Layout */
+.product-tabs {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.25rem;
+  border-bottom: 1px solid var(--color-mocca-border);
+}
+.tab-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-mocca-muted);
+  padding: 0.5rem 0;
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+.tab-btn:hover {
+  color: var(--color-mocca-dark);
+}
+.tab-btn.active {
+  color: var(--color-mocca-dark);
+  font-weight: 700;
+}
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-mocca-dark);
+}
+.tab-content {
+  padding-top: 1.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.creator-info-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-bg-cream);
+  border-radius: 8px;
+  border: 1px solid var(--color-mocca-border);
+  margin-bottom: 1.5rem;
+}
+.creator-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(59, 35, 20, 0.1);
+}
+.creator-name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.creator-name {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-mocca-dark);
+}
+
+.wishlist-btn-image {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: var(--transition-smooth);
+  z-index: 10;
+  color: var(--color-mocca-muted);
+}
+.wishlist-btn-image:hover {
+  transform: scale(1.05);
+}
+.wishlist-btn-image.active {
+  color: #ef4444;
+}
+
+.cta-buttons-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-grow: 1;
+}
+
+.no-size-chart {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-mocca-muted);
+  text-align: center;
+  padding: 2rem 0;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px dashed var(--color-mocca-border);
+}
+
+.reviews-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px dashed var(--color-mocca-border);
+}
+.reviews-empty-state .empty-icon {
+  width: 48px;
+  height: 48px;
+  color: #d1d5db;
+  margin-bottom: 1rem;
+}
+.reviews-empty-state p {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-mocca-muted);
+}
+
+.store-location-info-simple {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-mocca-dark);
+  font-weight: 500;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: var(--color-bg-cream);
+  border-radius: 6px;
+  border: 1px solid var(--color-mocca-border);
+  display: flex;
+  align-items: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Transitions */

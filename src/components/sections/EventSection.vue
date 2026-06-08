@@ -113,7 +113,7 @@ const featuredEvents = ref([]);
 const fetchEvents = async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
-    const creatorId = 11;
+    const creatorId = apiUrl.includes('my.id') ? 11 : 127;
     const response = await fetch(`${apiUrl}/api/event-by-creator/${creatorId}`);
     const json = await response.json();
     const data = Array.isArray(json) ? json : json.data;
@@ -146,6 +146,8 @@ const fetchEvents = async () => {
 
         return {
           id: ev.id,
+          slug: ev.slug,
+          slug_url: ev.slug_url,
           title: ev.name || ev.title || 'Event Mocca',
           image: ev.image_url || '/banner/bannerevent.webp',
           category: ev.has_event_topic?.name?.toLowerCase() || 'others',
