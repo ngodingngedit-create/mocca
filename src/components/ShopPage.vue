@@ -52,6 +52,7 @@
         >
           <!-- Product image container -->
           <div class="product-image-container">
+            <div v-if="product.is_preorder" class="preorder-badge">PREORDER</div>
             <img :src="product.image" :alt="product.titleEn" class="product-image" />
             <!-- Centered View Details Overlay Button -->
             <div class="product-card-overlay">
@@ -207,6 +208,15 @@ const fetchProducts = async () => {
     const affiliateCreators = json.affiliate_creators || [];
     
     if (data) {
+      const checkPreorderActive = (p) => {
+        if (p.is_preorder != 1) return false;
+        if (!p.preorder_date_start) return true;
+        const now = new Date();
+        const startStr = `${p.preorder_date_start}T${p.preorder_start_time || '00:00:00'}`;
+        const endStr = `${p.preorder_date_end || '2099-12-31'}T${p.preorder_end_time || '23:59:59'}`;
+        return now >= new Date(startStr) && now <= new Date(endStr);
+      };
+
       products.value = data.filter(p => p.product_status_id == 2).map(p => {
         let price = parseInt(p.price);
         let variantId = null;
@@ -240,7 +250,8 @@ const fetchProducts = async () => {
             creator_title: currentCreator.creator_title || 'Official Store'
           },
           has_store_location: p.has_store_location,
-            admin_fee: p.admin_fee || 0
+          admin_fee: p.admin_fee || 0,
+          is_preorder: checkPreorderActive(p)
         };
       });
       
@@ -521,6 +532,21 @@ const t = (key) => {
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
+}
+
+.preorder-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: var(--color-mocca-dark);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 3;
+  letter-spacing: 0.5px;
 }
 
 .product-card:hover .product-image {
