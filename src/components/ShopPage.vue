@@ -52,7 +52,12 @@
         >
           <!-- Product image container -->
           <div class="product-image-container">
-            <div v-if="product.is_preorder" class="preorder-badge">PREORDER</div>
+            <div class="badges-container" style="position: absolute; top: 8px; left: 8px; display: flex; flex-direction: column; gap: 4px; z-index: 3; align-items: flex-start;">
+              <div v-if="product.is_promo" class="promo-badge" style="background-color: #c94b4b; color: #fff; font-family: var(--font-body); font-size: 0.65rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.5px; text-transform: uppercase;">
+                {{ product.promo_title || 'PROMO' }}
+              </div>
+              <div v-if="product.is_preorder" class="preorder-badge" style="position: static;">PREORDER</div>
+            </div>
             <img :src="product.image" :alt="product.titleEn" class="product-image" />
             <!-- Centered View Details Overlay Button -->
             <div class="product-card-overlay">
@@ -68,8 +73,9 @@
             <h3 class="product-title">{{ getProductTitle(product) }}</h3>
             
             <!-- Price (aligned right, below name) -->
-            <div class="product-price-row">
-              <span class="product-price">{{ formatPrice(product.price) }}</span>
+            <div class="product-price-row" style="flex-direction: column; align-items: flex-end; gap: 2px;">
+              <span class="product-price">{{ formatPrice(product.original_price) }}</span>
+              <span v-if="product.is_promo" class="product-original-price" style="text-decoration: line-through; color: #c94b4b; font-size: 0.7rem; font-weight: 500;">{{ formatPrice(product.promo_price) }}</span>
             </div>
             
 
@@ -209,11 +215,31 @@ const fetchProducts = async () => {
     
     if (data) {
       const checkPreorderActive = (p) => {
-        if (p.is_preorder != 1) return false;
-        if (!p.preorder_date_start) return true;
+        if (!p.preorder_date_start) return p.is_preorder == 1;
         const now = new Date();
-        const startStr = `${p.preorder_date_start}T${p.preorder_start_time || '00:00:00'}`;
-        const endStr = `${p.preorder_date_end || '2099-12-31'}T${p.preorder_end_time || '23:59:59'}`;
+        const cleanStartDate = p.preorder_date_start.split(' ')[0];
+        const cleanEndDate = p.preorder_date_end ? p.preorder_date_end.split(' ')[0] : '2099-12-31';
+        const startStr = `${cleanStartDate}T${p.preorder_start_time || '00:00:00'}`;
+        const endStr = `${cleanEndDate}T${p.preorder_end_time || '23:59:59'}`;
+        return now >= new Date(startStr) && now <= new Date(endStr);
+      };
+
+      const checkPromoActive = (item, fallbackItem = null) => {
+        const isPromo = item.is_promo == 1 || (fallbackItem && fallbackItem.is_promo == 1);
+        if (!isPromo) return false;
+        
+        const startDate = item.promo_start_date || (fallbackItem && fallbackItem.promo_start_date) || null;
+        const startTime = item.promo_start_time || (fallbackItem && fallbackItem.promo_start_time) || null;
+        const endDate = item.promo_end_date || (fallbackItem && fallbackItem.promo_end_date) || null;
+        const endTime = item.promo_end_time || (fallbackItem && fallbackItem.promo_end_time) || null;
+        
+        if (!startDate && !startTime) return true;
+        
+        const now = new Date();
+        const cleanStartDate = startDate ? startDate.split(' ')[0] : now.toISOString().split('T')[0];
+        const cleanEndDate = endDate ? endDate.split(' ')[0] : '2099-12-31';
+        const startStr = `${cleanStartDate}T${startTime || '00:00:00'}`;
+        const endStr = `${cleanEndDate}T${endTime || '23:59:59'}`;
         return now >= new Date(startStr) && now <= new Date(endStr);
       };
 
@@ -221,12 +247,32 @@ const fetchProducts = async () => {
         let price = parseInt(p.price);
         let variantId = null;
         let varians = p.varians || p.product_varian;
+        let activeVarian = null;
+
         if (price === 0 && varians && varians.length > 0) {
           price = parseInt(varians[0].price);
           variantId = varians[0].id;
+          activeVarian = varians[0];
         } else if (varians && varians.length > 0) {
           variantId = varians[0].id;
+          activeVarian = varians[0];
         }
+
+        let isPromo = false;
+        let promoPrice = null;
+        let promoTitle = null;
+
+        if (activeVarian && checkPromoActive(activeVarian, p)) {
+          isPromo = true;
+          promoPrice = parseInt(activeVarian.promo_price || p.promo_price || price);
+          promoTitle = activeVarian.promo_title || p.promo_title || 'PROMO';
+        } else if (checkPromoActive(p)) {
+          isPromo = true;
+          promoPrice = parseInt(p.promo_price || price);
+          promoTitle = p.promo_title || 'PROMO';
+        }
+
+        let finalPrice = price;
         
         let images = p.images || p.product_image;
         const currentCreator = affiliateCreators.find(c => c.id === p.creator?.id) || {};
@@ -236,7 +282,11 @@ const fetchProducts = async () => {
           category: 'apparel', // Default category since API might not provide exact categories matching UI
           titleEn: p.product_name,
           titleId: p.product_name,
-          price: price,
+          price: finalPrice,
+          original_price: price,
+          promo_price: promoPrice,
+          is_promo: isPromo,
+          promo_title: promoTitle,
           variant_id: variantId,
           image: images?.[0]?.image_url || '/mocca_group_tee.png',
           colors: ['cream'],
@@ -245,7 +295,7 @@ const fetchProducts = async () => {
             slug: p.creator?.slug_url || p.creator?.slug,
             name: p.creator?.name || 'My Diary Records', 
             is_verified: p.creator?.is_verified,
-            image_url: p.creator?.image_url || '/logo_mocca.png',
+            image_url: currentCreator.image_url || p.creator?.image_url || '/logo_mocca.png',
             avatarInitial: p.creator?.name?.[0] || 'M',
             creator_title: currentCreator.creator_title || 'Official Store'
           },

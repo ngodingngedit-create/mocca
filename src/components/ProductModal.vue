@@ -39,7 +39,17 @@
           <div class="modal-info-column">
             <!-- Title Header -->
             <div class="info-header">
-              <h2 class="info-title">{{ productTitle }}</h2>
+              <div style="display: flex; align-items: flex-start; gap: 0.5rem; flex-direction: column;">
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; align-self: flex-start;">
+                  <div v-if="isPromoActive" class="promo-badge" style="background-color: #c94b4b; color: #fff; font-family: var(--font-body); font-size: 0.65rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.5px; text-transform: uppercase;">
+                    {{ promoTitle }}
+                  </div>
+                  <div v-if="activeProductItem && activeProductItem.is_preorder" class="preorder-badge" style="background-color: var(--color-mocca-dark); color: #fff; font-family: var(--font-body); font-size: 0.65rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.5px; text-transform: uppercase;">
+                    PREORDER
+                  </div>
+                </div>
+                <h2 class="info-title">{{ productTitle }}</h2>
+              </div>
               
               <!-- Product Tabs -->
               <div class="product-tabs">
@@ -127,7 +137,10 @@
             <div class="checkout-control-section">
               <div class="modal-price-row">
                 <span class="price-label">Price</span>
-                <span class="price-val">{{ formatPrice(product.price) }}</span>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+                  <span class="price-val">{{ formatPrice(originalPrice) }}</span>
+                  <span v-if="isPromoActive" class="price-original" style="text-decoration: line-through; color: #c94b4b; font-size: 0.7rem; font-weight: 500;">{{ formatPrice(promoPrice) }}</span>
+                </div>
               </div>
 
               <div class="actions-row">
@@ -380,6 +393,64 @@ const storeLocationInfo = computed(() => {
   return fetchedProductDetails.value?.has_store_location || props.product?.has_store_location || null;
 });
 
+const checkPromoActive = (item, fallbackItem = null) => {
+  if (!item && !fallbackItem) return false;
+  const isPromo = (item && item.is_promo == 1) || (fallbackItem && fallbackItem.is_promo == 1);
+  if (!isPromo) return false;
+  
+  const startDate = (item && item.promo_start_date) || (fallbackItem && fallbackItem.promo_start_date) || null;
+  const startTime = (item && item.promo_start_time) || (fallbackItem && fallbackItem.promo_start_time) || null;
+  const endDate = (item && item.promo_end_date) || (fallbackItem && fallbackItem.promo_end_date) || null;
+  const endTime = (item && item.promo_end_time) || (fallbackItem && fallbackItem.promo_end_time) || null;
+  
+  if (!startDate && !startTime) return true;
+  
+  const now = new Date();
+  const cleanStartDate = startDate ? startDate.split(' ')[0] : now.toISOString().split('T')[0];
+  const cleanEndDate = endDate ? endDate.split(' ')[0] : '2099-12-31';
+  const startStr = `${cleanStartDate}T${startTime || '00:00:00'}`;
+  const endStr = `${cleanEndDate}T${endTime || '23:59:59'}`;
+  return now >= new Date(startStr) && now <= new Date(endStr);
+};
+
+const activeProductItem = computed(() => {
+  return fetchedProductDetails.value || props.product || null;
+});
+
+const isPromoActive = computed(() => {
+  return checkPromoActive(currentVariant.value, activeProductItem.value);
+});
+
+const promoTitle = computed(() => {
+  if (currentVariant.value && currentVariant.value.promo_title) return currentVariant.value.promo_title;
+  if (activeProductItem.value && activeProductItem.value.promo_title) return activeProductItem.value.promo_title;
+  return 'PROMO';
+});
+
+const originalPrice = computed(() => {
+  if (currentVariant.value) {
+    return parseInt(currentVariant.value.price || 0);
+  }
+  return parseInt(props.product.original_price || props.product.price || 0);
+});
+
+const promoPrice = computed(() => {
+  if (isPromoActive.value) {
+    let pPrice = null;
+    if (currentVariant.value && currentVariant.value.promo_price) {
+      pPrice = parseInt(currentVariant.value.promo_price);
+    } else if (activeProductItem.value && activeProductItem.value.promo_price) {
+      pPrice = parseInt(activeProductItem.value.promo_price);
+    }
+    if (pPrice !== null && !isNaN(pPrice)) return pPrice;
+  }
+  return null;
+});
+
+const activePrice = computed(() => {
+  return originalPrice.value;
+});
+
 const isCurrentSoldOut = computed(() => {
   if (currentVariant.value) {
     return currentVariant.value.is_soldout === 1 || currentStockCount.value === 0;
@@ -465,7 +536,7 @@ const handleAddToCart = () => {
   const p = {
     id: props.product.id,
     title: productTitle.value,
-    price: props.product.price,
+    price: activePrice.value,
     image: props.product.image,
     variant_id: variantId,
     has_store_location: fetchedProductDetails.value?.has_store_location || props.product?.has_store_location || null, admin_fee: fetchedProductDetails.value?.admin_fee || props.product?.admin_fee || 0
@@ -498,7 +569,7 @@ const handleBuyNow = () => {
   if (isCurrentSoldOut.value) return;
   
   const productPrice = props.product.price || 0;
-  const currentPrice = currentVariant.value ? parseInt(currentVariant.value.price) : productPrice;
+  const currentPrice = activePrice.value;
   const variantId = currentVariant.value ? currentVariant.value.id : (props.product.variant_id || null);
 
   const storeLocation = fetchedProductDetails.value?.has_store_location || props.product?.has_store_location || null;

@@ -3,9 +3,8 @@
     <div class="hero-container">
       <!-- Left-aligned Content overlaying the full background -->
       <div class="hero-content">
-        <span class="tagline">OFFICIAL MERCHANDISE</span>
-        <h1 class="headline">Feel the Mocca Vibe.</h1>
-        <p class="subtext">Official merchandise for everyday your way.</p>
+        <span class="tagline">Mocca's Official Merchandise</span>
+        <h1 class="headline">Mocca's <br /> Official Merchandise</h1>
         
         <div class="cta-wrapper">
           <button class="shop-button">SHOP NOW</button>
@@ -44,7 +43,7 @@
     rgba(255, 255, 255, 0.55) 55%, 
     rgba(255, 255, 255, 0.10) 90%,
     rgba(255, 255, 255, 0.0) 100%
-  ), url('/mocca_collage.png') no-repeat;
+  ), url('/banner_baru.jpeg') no-repeat;
   background-position: 82% 50%; /* Perfect horizontal and vertical positioning to prevent product cut-off */
   background-size: cover; /* Beautiful responsive cover scale */
   transition: var(--transition-smooth);
@@ -61,7 +60,7 @@
 }
 
 .hero-content {
-  max-width: 540px;
+  max-width: 700px;
   display: flex;
   flex-direction: column;
   z-index: 10;
@@ -81,7 +80,7 @@
 
 .headline {
   font-family: var(--font-heading);
-  font-size: clamp(2.8rem, 4.8vw, 4.75rem); /* Elegant readable responsive size */
+  font-size: clamp(2.0rem, 3.2vw, 3.2rem); /* Reduced size to ensure text fits on one line */
   font-weight: 500;
   line-height: 1.1;
   color: var(--color-mocca-dark);
@@ -184,7 +183,7 @@
       rgba(255, 255, 255, 0.96) 0%, 
       rgba(255, 255, 255, 0.90) 60%, 
       rgba(255, 255, 255, 0.75) 100%
-    ), url('/mocca_collage.png') no-repeat center center;
+    ), url('/banner_baru.jpeg') no-repeat center center;
     background-size: cover;
   }
 

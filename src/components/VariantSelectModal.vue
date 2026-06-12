@@ -13,9 +13,20 @@
           <!-- Product Summary -->
           <div class="product-summary" v-if="product">
             <img :src="product.image" :alt="productTitle" class="summary-img" />
-            <div class="summary-details">
-              <h3 class="summary-title">{{ productTitle }}</h3>
-              <p class="summary-price">{{ formatPrice(currentPrice) }}</p>
+            <div class="summary-details" style="display: flex; flex-direction: column; align-items: flex-start;">
+              <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start; margin-bottom: 4px;">
+                <div v-if="isPromoActive" class="promo-badge" style="background-color: #c94b4b; color: #fff; font-family: var(--font-body); font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.5px; text-transform: uppercase;">
+                  {{ promoTitle }}
+                </div>
+                <div v-if="activeProductItem && activeProductItem.is_preorder" class="preorder-badge" style="background-color: var(--color-mocca-dark); color: #fff; font-family: var(--font-body); font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.5px; text-transform: uppercase;">
+                  PREORDER
+                </div>
+              </div>
+              <h3 class="summary-title" style="margin-bottom: 2px;">{{ productTitle }}</h3>
+              <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
+                <p class="summary-price">{{ formatPrice(originalPrice) }}</p>
+                <span v-if="isPromoActive" style="text-decoration: line-through; color: #c94b4b; font-size: 0.7rem; font-weight: 500;">{{ formatPrice(promoPrice) }}</span>
+              </div>
             </div>
           </div>
 
@@ -130,11 +141,62 @@ const currentVariant = computed(() => {
   return availableVariants.value.find(v => v.varian_name === selectedSize.value) || null;
 });
 
-const currentPrice = computed(() => {
-  if (currentVariant.value && currentVariant.value.price) {
-    return parseInt(currentVariant.value.price);
+const checkPromoActive = (item, fallbackItem = null) => {
+  if (!item && !fallbackItem) return false;
+  const isPromo = (item && item.is_promo == 1) || (fallbackItem && fallbackItem.is_promo == 1);
+  if (!isPromo) return false;
+  
+  const startDate = (item && item.promo_start_date) || (fallbackItem && fallbackItem.promo_start_date) || null;
+  const startTime = (item && item.promo_start_time) || (fallbackItem && fallbackItem.promo_start_time) || null;
+  const endDate = (item && item.promo_end_date) || (fallbackItem && fallbackItem.promo_end_date) || null;
+  const endTime = (item && item.promo_end_time) || (fallbackItem && fallbackItem.promo_end_time) || null;
+  
+  if (!startDate && !startTime) return true;
+  
+  const now = new Date();
+  const cleanStartDate = startDate ? startDate.split(' ')[0] : now.toISOString().split('T')[0];
+  const cleanEndDate = endDate ? endDate.split(' ')[0] : '2099-12-31';
+  const startStr = `${cleanStartDate}T${startTime || '00:00:00'}`;
+  const endStr = `${cleanEndDate}T${endTime || '23:59:59'}`;
+  return now >= new Date(startStr) && now <= new Date(endStr);
+};
+
+const activeProductItem = computed(() => {
+  return fetchedProductDetails.value || props.product || null;
+});
+
+const isPromoActive = computed(() => {
+  return checkPromoActive(currentVariant.value, activeProductItem.value);
+});
+
+const promoTitle = computed(() => {
+  if (currentVariant.value && currentVariant.value.promo_title) return currentVariant.value.promo_title;
+  if (activeProductItem.value && activeProductItem.value.promo_title) return activeProductItem.value.promo_title;
+  return 'PROMO';
+});
+
+const originalPrice = computed(() => {
+  if (currentVariant.value) {
+    return parseInt(currentVariant.value.price || 0);
   }
-  return props.product?.price || 0;
+  return parseInt(props.product?.original_price || props.product?.price || 0);
+});
+
+const promoPrice = computed(() => {
+  if (isPromoActive.value) {
+    let pPrice = null;
+    if (currentVariant.value && currentVariant.value.promo_price) {
+      pPrice = parseInt(currentVariant.value.promo_price);
+    } else if (activeProductItem.value && activeProductItem.value.promo_price) {
+      pPrice = parseInt(activeProductItem.value.promo_price);
+    }
+    if (pPrice !== null && !isNaN(pPrice)) return pPrice;
+  }
+  return null;
+});
+
+const currentPrice = computed(() => {
+  return originalPrice.value;
 });
 
 // Watch for product changes to reset selectors and fetch details
