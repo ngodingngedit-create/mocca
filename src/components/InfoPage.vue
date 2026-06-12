@@ -96,24 +96,16 @@ const pagesData = {
         <h3>Customer Service</h3>
         <p>Jika Anda memiliki pertanyaan lebih lanjut, kendala pesanan, atau penawaran kerja sama, silakan hubungi kami melalui:</p>
         <ul>
-          <li><strong>Email:</strong> support@kolektix.com / merchandise@mocca.com</li>
-          <li><strong>Jam Operasional:</strong> Senin - Jumat (09:00 - 17:00 WIB)</li>
+          <li><strong>Email:</strong> Moccamerch@gmail.com</li>
+          <li><strong>WA:</strong> +62 821 3224 4344</li>
         </ul>
       `
     },
     sizing: {
       title: 'Panduan Ukuran (Sizing)',
       content: `
-        <h3>Panduan Ukuran T-shirt & Apparel</h3>
-        <p>Pastikan Anda memilih ukuran yang sesuai. Semua ukuran dalam centimeter (Lebar Dada x Panjang):</p>
-        <ul>
-          <li><strong>S:</strong> 48 cm x 68 cm</li>
-          <li><strong>M:</strong> 50 cm x 70 cm</li>
-          <li><strong>L:</strong> 52 cm x 72 cm</li>
-          <li><strong>XL:</strong> 54 cm x 74 cm</li>
-          <li><strong>XXL:</strong> 56 cm x 76 cm</li>
-        </ul>
-        <p>Toleransi ukuran jahit adalah sekitar 1-2 cm.</p>
+        <h3>Panduan Ukuran T-Shirt & Apparel</h3>
+        <p>Setiap produk dapat memiliki ukuran yang berbeda. Mohon periksa panduan ukuran pada halaman produk dan pastikan ukuran yang Anda pesan sudah sesuai sebelum melakukan checkout.</p>
       `
     },
     howToOrder: {

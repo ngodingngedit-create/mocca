@@ -352,6 +352,7 @@ const verifyOtp = async () => {
       if (user) {
         localStorage.setItem('user_name', user.name || user.customer_name || 'User');
         localStorage.setItem('user_email', user.email || '');
+        localStorage.setItem('is_creator', (user.is_creator === 1 || user.is_creator === true) ? 'true' : 'false');
       }
       
       triggerToast('Verifikasi berhasil! Mengalihkan...');

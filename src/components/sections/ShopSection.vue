@@ -121,7 +121,7 @@
           <!-- Item 2: Accessories -->
           <div class="collection-thumbnail-card">
             <div class="thumbnail-image-wrapper">
-              <img src="/aksesoris.png" alt="Mocca Accessories Curated Flat Lay" class="thumbnail-image" />
+              <img src="/aksesoris.png" alt="Mocca Accessories Curated Flat Lay" class="thumbnail-image" style="padding: 1.5rem; object-fit: contain;" />
             </div>
             <h4 class="thumbnail-title">{{ currentLang === 'id' ? 'Aksesoris' : 'Accessories' }}</h4>
           </div>
