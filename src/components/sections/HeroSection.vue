@@ -1,7 +1,24 @@
 <template>
   <section class="hero-section">
+    <!-- Slider Track for the sliding background -->
+    <div class="slider-track" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
+      <div 
+        v-for="(slide, index) in slides" 
+        :key="index"
+        class="slide-bg"
+        :style="{ 
+          backgroundImage: `url(${slide.image})`,
+          '--pos-desktop': slide.posDesktop,
+          '--pos-mobile': slide.posMobile
+        }"
+      ></div>
+    </div>
+    
+    <!-- Gradient Overlay -->
+    <div class="hero-overlay"></div>
+
     <div class="hero-container">
-      <!-- Left-aligned Content overlaying the full background -->
+      <!-- Left-aligned Content -->
       <div class="hero-content">
         <span class="tagline">Mocca's Official Merchandise</span>
         <h1 class="headline">Mocca's <br /> Official Merchandise</h1>
@@ -12,11 +29,13 @@
         
         <!-- Slide Indicators -->
         <div class="slide-dots">
-          <span class="dot active"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
+          <span 
+            v-for="(slide, index) in slides" 
+            :key="index"
+            class="dot" 
+            :class="{ active: currentSlide === index }"
+            @click="setSlide(index)"
+          ></span>
         </div>
       </div>
     </div>
@@ -24,29 +43,77 @@
 </template>
 
 <script setup>
-// Interactive controls for slide dots can be added here if necessary
+import { ref, onMounted, onUnmounted } from 'vue';
+
+const slides = [
+  { image: '/banner_baru.jpeg', posDesktop: '82% 50%', posMobile: 'center center' },
+  { image: '/banner_2.jpeg', posDesktop: '82% 30%', posMobile: 'center 30%' }, // "aga atas"
+  { image: '/banner_3.jpeg', posDesktop: '82% 50%', posMobile: 'center center' },
+];
+
+const currentSlide = ref(0);
+
+const setSlide = (index) => {
+  currentSlide.value = index;
+};
+
+let interval;
+onMounted(() => {
+  interval = setInterval(() => {
+    currentSlide.value = (currentSlide.value + 1) % slides.length;
+  }, 5000);
+});
+
+onUnmounted(() => {
+  clearInterval(interval);
+});
 </script>
 
 <style scoped>
 .hero-section {
   width: 100%;
-  min-height: 520px; /* Shortened, compact height as requested */
+  min-height: 520px;
   display: flex;
   align-items: center;
   position: relative;
   overflow: hidden;
-  
-  /* Set full image background with precise right alignment (zoom and position) and contrast gradient */
+}
+
+.slider-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 1;
+}
+
+.slide-bg {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: var(--pos-desktop);
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
   background: linear-gradient(90deg, 
     rgba(255, 255, 255, 0.98) 0%, 
     rgba(255, 255, 255, 0.92) 25%, 
     rgba(255, 255, 255, 0.55) 55%, 
     rgba(255, 255, 255, 0.10) 90%,
     rgba(255, 255, 255, 0.0) 100%
-  ), url('/banner_baru.jpeg') no-repeat;
-  background-position: 82% 50%; /* Perfect horizontal and vertical positioning to prevent product cut-off */
-  background-size: cover; /* Beautiful responsive cover scale */
-  transition: var(--transition-smooth);
+  );
+  pointer-events: none;
 }
 
 .hero-container {
@@ -57,13 +124,13 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  z-index: 3;
 }
 
 .hero-content {
   max-width: 700px;
   display: flex;
   flex-direction: column;
-  z-index: 10;
   animation: fadeIn 1s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
@@ -80,7 +147,7 @@
 
 .headline {
   font-family: var(--font-heading);
-  font-size: clamp(2.0rem, 3.2vw, 3.2rem); /* Reduced size to ensure text fits on one line */
+  font-size: clamp(2.0rem, 3.2vw, 3.2rem);
   font-weight: 500;
   line-height: 1.1;
   color: var(--color-mocca-dark);
@@ -94,13 +161,13 @@
   font-weight: 300;
   color: var(--color-mocca-dark);
   opacity: 0.75;
-  margin-bottom: 2rem; /* Reduced bottom margin for compact fit */
+  margin-bottom: 2rem;
   max-width: 420px;
   line-height: 1.5;
 }
 
 .cta-wrapper {
-  margin-bottom: 2.5rem; /* Reduced vertical space for compact height */
+  margin-bottom: 2.5rem;
 }
 
 .shop-button {
@@ -110,7 +177,7 @@
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.1em;
-  padding: 0.95rem 2.5rem; /* Slightly more compact padding */
+  padding: 0.95rem 2.5rem;
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(59, 35, 20, 0.12);
   transition: var(--transition-smooth);
@@ -161,15 +228,11 @@
   .hero-container {
     padding: 0 4rem;
   }
-  .hero-section {
-    background-position: 85% 50%;
-  }
 }
 
 @media (max-width: 1024px) {
   .hero-section {
     min-height: 480px;
-    background-position: 90% 50%;
   }
   .hero-container {
     padding: 0 3rem;
@@ -179,12 +242,18 @@
 @media (max-width: 768px) {
   .hero-section {
     min-height: 450px;
+  }
+  
+  .slide-bg {
+    background-position: var(--pos-mobile);
+  }
+
+  .hero-overlay {
     background: linear-gradient(180deg, 
       rgba(255, 255, 255, 0.96) 0%, 
       rgba(255, 255, 255, 0.90) 60%, 
       rgba(255, 255, 255, 0.75) 100%
-    ), url('/banner_baru.jpeg') no-repeat center center;
-    background-size: cover;
+    );
   }
 
   .hero-container {

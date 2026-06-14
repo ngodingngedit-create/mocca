@@ -394,14 +394,22 @@ const storeLocationInfo = computed(() => {
 });
 
 const checkPromoActive = (item, fallbackItem = null) => {
-  if (!item && !fallbackItem) return false;
-  const isPromo = (item && item.is_promo == 1) || (fallbackItem && fallbackItem.is_promo == 1);
-  if (!isPromo) return false;
+  let targetItem = null;
+
+  // Variant specifically defines promo behavior
+  if (item && item.is_promo !== undefined) {
+    if (item.is_promo != 1) return false;
+    targetItem = item;
+  } else if (fallbackItem && fallbackItem.is_promo == 1) {
+    targetItem = fallbackItem;
+  }
+
+  if (!targetItem) return false;
   
-  const startDate = (item && item.promo_start_date) || (fallbackItem && fallbackItem.promo_start_date) || null;
-  const startTime = (item && item.promo_start_time) || (fallbackItem && fallbackItem.promo_start_time) || null;
-  const endDate = (item && item.promo_end_date) || (fallbackItem && fallbackItem.promo_end_date) || null;
-  const endTime = (item && item.promo_end_time) || (fallbackItem && fallbackItem.promo_end_time) || null;
+  const startDate = targetItem.promo_start_date || null;
+  const startTime = targetItem.promo_start_time || null;
+  const endDate = targetItem.promo_end_date || null;
+  const endTime = targetItem.promo_end_time || null;
   
   if (!startDate && !startTime) return true;
   
@@ -422,8 +430,8 @@ const isPromoActive = computed(() => {
 });
 
 const promoTitle = computed(() => {
-  if (currentVariant.value && currentVariant.value.promo_title) return currentVariant.value.promo_title;
-  if (activeProductItem.value && activeProductItem.value.promo_title) return activeProductItem.value.promo_title;
+  if (currentVariant.value && currentVariant.value.is_promo == 1 && currentVariant.value.promo_title) return currentVariant.value.promo_title;
+  if (activeProductItem.value && activeProductItem.value.is_promo == 1 && activeProductItem.value.promo_title) return activeProductItem.value.promo_title;
   return 'PROMO';
 });
 
@@ -437,9 +445,9 @@ const originalPrice = computed(() => {
 const promoPrice = computed(() => {
   if (isPromoActive.value) {
     let pPrice = null;
-    if (currentVariant.value && currentVariant.value.promo_price) {
+    if (currentVariant.value && currentVariant.value.is_promo == 1 && currentVariant.value.promo_price) {
       pPrice = parseInt(currentVariant.value.promo_price);
-    } else if (activeProductItem.value && activeProductItem.value.promo_price) {
+    } else if (activeProductItem.value && activeProductItem.value.is_promo == 1 && activeProductItem.value.promo_price) {
       pPrice = parseInt(activeProductItem.value.promo_price);
     }
     if (pPrice !== null && !isNaN(pPrice)) return pPrice;

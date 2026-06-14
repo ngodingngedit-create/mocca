@@ -1005,7 +1005,8 @@ const applyVoucherCode = async () => {
   isVerifyingVoucher.value = true;
   
   try {
-    const today = new Date().toISOString().split('T')[0];
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     const productId = activeCartItems.value.length > 0 ? (activeCartItems.value[0].product_id || activeCartItems.value[0].id) : '';
     
     const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
@@ -1168,6 +1169,11 @@ const submitOrder = async () => {
       grandtotal: totalPaymentsPrice.value,
       admin_fee: totalAdminFee,
       discount: voucherApplied.value ? voucherDiscount.value : 0,
+      vouchers: voucherApplied.value && activeVoucherData.value ? [{
+        voucher_id: activeVoucherData.value.id || activeVoucherData.value.voucher_id,
+        voucher_code: activeVoucherData.value.code || activeVoucherData.value.voucher_code,
+        voucher_amount: String(voucherDiscount.value)
+      }] : [],
       product: productsPayload,
       is_pickup_instore: is_pickup_instore,
       is_delivery: is_delivery,

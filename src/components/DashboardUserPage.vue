@@ -119,11 +119,17 @@
                       <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortTable('created_at')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
                         Tanggal <span v-if="sortKey==='created_at'">{{ sortOrder==='asc' ? '↑' : '↓' }}</span>
                       </th>
+                      <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortTable('description')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
+                        Keterangan <span v-if="sortKey==='description'">{{ sortOrder==='asc' ? '↑' : '↓' }}</span>
+                      </th>
                       <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortTable('grandtotal')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
                         Total Bayar <span v-if="sortKey==='grandtotal'">{{ sortOrder==='asc' ? '↑' : '↓' }}</span>
                       </th>
                       <th class="p-3 text-sm font-bold cursor-pointer hover:bg-stone-100" @click="sortTable('status')" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); cursor: pointer;">
                         Status <span v-if="sortKey==='status'">{{ sortOrder==='asc' ? '↑' : '↓' }}</span>
+                      </th>
+                      <th class="p-3 text-sm font-bold" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); text-align: center;">
+                        Aksi
                       </th>
                     </tr>
                   </thead>
@@ -132,15 +138,29 @@
                       <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark);">{{ (currentPageNum - 1) * itemsPerPage + index + 1 }}</td>
                       <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); font-weight: 500;">{{ item.invoice_no || item.invoice || '-' }}</td>
                       <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-muted);">{{ formatDate(item.created_at) }}</td>
+                      <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark);">{{ getOrderDescription(item) }}</td>
                       <td class="p-3 text-sm font-bold" style="padding: 0.75rem; font-size: 0.875rem; color: var(--color-mocca-dark); font-weight: bold;">{{ formatCurrency(item.grandtotal || item.total_price) }}</td>
                       <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem;">
                         <span class="px-2 py-1 text-xs rounded-full font-bold" :style="{ backgroundColor: getStatusColor(item.status || item.payment_status) }" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 9999px; font-weight: bold; color: #fff;">
                           {{ item.status || item.payment_status || '-' }}
                         </span>
                       </td>
+                      <td class="p-3 text-sm" style="padding: 0.75rem; font-size: 0.875rem; text-align: center;">
+                        <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                          <button @click="viewDetail(item)" class="action-btn" title="Lihat Detail">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                          </button>
+                          <button @click="downloadInvoice(item)" class="action-btn" title="Download Invoice">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                          </button>
+                          <button @click="directInvoice(item)" class="action-btn" title="Direct Invoice">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                     <tr v-if="processedTransactions.length === 0">
-                      <td colspan="5" class="p-3 text-sm text-center" style="padding: 1rem; text-align: center; color: var(--color-mocca-muted);">Tidak ada transaksi yang cocok dengan filter.</td>
+                      <td colspan="7" class="p-3 text-sm text-center" style="padding: 1rem; text-align: center; color: var(--color-mocca-muted);">Tidak ada transaksi yang cocok dengan filter.</td>
                     </tr>
                   </tbody>
                 </table>
@@ -159,6 +179,76 @@
         </main>
       </div>
     </div>
+
+    <!-- Detail Modal (Premium Receipt Style) -->
+    <div v-if="showDetailModal" class="modal-overlay" @click.self="showDetailModal = false">
+      <div class="receipt-card">
+        <!-- Header area -->
+        <div class="receipt-header">
+          <div class="receipt-brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+            <span>MOCCA MERCH</span>
+          </div>
+          <button @click="showDetailModal = false" class="close-receipt-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <div class="receipt-body" v-if="selectedTransaction">
+          <!-- Floating Status Badge -->
+          <div class="receipt-status-badge" :style="{ backgroundColor: getStatusColor(selectedTransaction.status || selectedTransaction.payment_status) }">
+            {{ selectedTransaction.status || selectedTransaction.payment_status || 'UNKNOWN' }}
+          </div>
+
+          <div class="receipt-title">
+            <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-mocca-dark); font-size: 1.4rem;">Detail Transaksi</h3>
+            <span style="font-size: 0.85rem; color: var(--color-mocca-muted);">{{ formatDate(selectedTransaction.created_at) }}</span>
+          </div>
+
+          <div class="receipt-divider"></div>
+
+          <div class="receipt-section" style="text-align: center;">
+            <span class="receipt-label">No. Invoice</span>
+            <span class="receipt-value invoice-text">{{ selectedTransaction.invoice_no || selectedTransaction.invoice || '-' }}</span>
+          </div>
+
+          <div class="receipt-divider"></div>
+
+          <!-- Items list -->
+          <div class="receipt-section" v-if="getOrderItems(selectedTransaction).length > 0">
+            <span class="receipt-label" style="margin-bottom: 0.75rem; display: block;">Item Pesanan</span>
+            <div class="receipt-item-list">
+              <div v-for="(item, idx) in getOrderItems(selectedTransaction)" :key="idx" class="receipt-item-row">
+                <div class="receipt-item-info">
+                  <span class="receipt-item-name">{{ formatItemName(item) }}</span>
+                  <span class="receipt-item-qty">{{ item.quantity || item.qty || 1 }} x {{ formatCurrency((item.price || item.total_price || item.ticket_price || 0) / (item.quantity || item.qty || 1)) }}</span>
+                </div>
+                <span class="receipt-item-total">{{ formatCurrency(item.price || item.total_price || item.ticket_price || 0) }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="receipt-divider dashed" v-if="getOrderItems(selectedTransaction).length > 0"></div>
+
+          <!-- Totals -->
+          <div class="receipt-totals">
+            <div class="receipt-total-row">
+              <span>Total Harga</span>
+              <span>{{ formatCurrency(selectedTransaction.grandtotal || selectedTransaction.total_price) }}</span>
+            </div>
+            <!-- Additional fees could be displayed here if available in API response -->
+            <div class="receipt-total-row grand-total">
+              <span>Total Bayar</span>
+              <span>{{ formatCurrency(selectedTransaction.grandtotal || selectedTransaction.total_price) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="receipt-footer">
+          <button @click="showDetailModal = false" class="btn-primary-mocca">Tutup Detail</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -172,6 +262,7 @@ const userEmail = ref(localStorage.getItem('user_email') || 'pengguna@email.com'
 const activeTab = ref('product');
 const loading = ref(false);
 const transactions = ref([]);
+const productCatalog = ref({});
 
 const searchQuery = ref('');
 const filterStatus = ref('');
@@ -179,6 +270,9 @@ const sortKey = ref('created_at');
 const sortOrder = ref('desc');
 const currentPageNum = ref(1);
 const itemsPerPage = 10;
+
+const showDetailModal = ref(false);
+const selectedTransaction = ref(null);
 
 const goToHome = () => {
   currentPage.value = 'home';
@@ -229,13 +323,31 @@ watch(activeTab, () => {
   fetchTransactions();
 });
 
-onMounted(() => {
+onMounted(async () => {
   if (!localStorage.getItem('token')) {
     currentPage.value = 'login';
     return;
   }
+  await fetchCatalog();
   fetchTransactions();
 });
+
+const fetchCatalog = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+    const response = await fetch(`${apiUrl}/api/creator-maping/tokomocca.id`);
+    const result = await response.json();
+    const data = result.data || result;
+    
+    if (data.products && Array.isArray(data.products)) {
+      data.products.forEach(p => {
+        productCatalog.value[p.id] = p;
+      });
+    }
+  } catch (err) {
+    console.error('Error fetching catalog:', err);
+  }
+};
 
 const availableStatuses = computed(() => {
   const statuses = new Set();
@@ -284,6 +396,9 @@ const processedTransactions = computed(() => {
       } else if (sortKey.value === 'status') {
         valA = a.status || a.payment_status || '';
         valB = b.status || b.payment_status || '';
+      } else if (sortKey.value === 'description') {
+        valA = getOrderDescription(a).toLowerCase();
+        valB = getOrderDescription(b).toLowerCase();
       }
       
       if (valA < valB) return sortOrder.value === 'asc' ? -1 : 1;
@@ -331,6 +446,85 @@ const getStatusColor = (status) => {
   if (s.includes('fail') || s.includes('cancel') || s.includes('batal')) return '#D32F2F';
   return '#8C7355'; // default mocca color
 };
+
+const viewDetail = (item) => {
+  selectedTransaction.value = item;
+  showDetailModal.value = true;
+};
+
+const downloadInvoice = (item) => {
+  const inv = item.invoice_no || item.invoice;
+  if (!inv) return;
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://api.kolektix.com';
+  window.open(`${apiUrl}/api/order-product/download/${inv}`, '_blank');
+};
+
+const directInvoice = (item) => {
+  const inv = item.invoice_no || item.invoice;
+  if (!inv) return;
+  window.open(`https://kolektix.com/merch-invoice/${inv}`, '_blank');
+};
+
+const formatItemName = (d) => {
+  // Base name
+  let name = d.name || d.product_name || d.ticket_name || d.event_name || '';
+  
+  // Lookup name from catalog if missing
+  if (!name && d.product_id && productCatalog.value[d.product_id]) {
+    const catalogProduct = productCatalog.value[d.product_id];
+    name = catalogProduct.title || catalogProduct.name || '';
+  }
+
+  if (!name) name = 'Item';
+  
+  // Variants for products
+  const variants = [];
+  if (d.variant_name) variants.push(d.variant_name);
+  if (d.variant) variants.push(d.variant);
+  if (d.color) variants.push(d.color);
+  if (d.size) variants.push(d.size);
+  
+  // Lookup variant from catalog if missing
+  if (variants.length === 0 && d.variant_id && d.product_id && productCatalog.value[d.product_id]) {
+    const catalogProduct = productCatalog.value[d.product_id];
+    if (catalogProduct.variants && Array.isArray(catalogProduct.variants)) {
+      const v = catalogProduct.variants.find(v => v.id === d.variant_id || v.id == d.variant_id);
+      if (v && v.name) variants.push(v.name);
+    }
+  }
+  
+  // Categories for tickets
+  if (d.ticket_category && d.ticket_category !== name) variants.push(d.ticket_category);
+  if (d.category && d.category !== name) variants.push(d.category);
+  if (d.type_name && d.type_name !== name) variants.push(d.type_name);
+
+  // Combine
+  const uniqueVariants = [...new Set(variants)].filter(Boolean);
+  if (uniqueVariants.length > 0) {
+    return `${name} (${uniqueVariants.join(', ')})`;
+  }
+  return name;
+};
+
+const getOrderDescription = (item) => {
+  const details = item.items || item.tickets || item.details;
+  if (details && Array.isArray(details) && details.length > 0) {
+    const descriptions = details.map(d => formatItemName(d));
+    return [...new Set(descriptions)].join(', ');
+  }
+
+  if (item.event_name) return item.event_name;
+  if (item.product_name) return item.product_name;
+  if (item.name) return item.name;
+
+  return 'Pesanan ' + (item.invoice_no || item.invoice || '');
+};
+
+const getOrderItems = (transaction) => {
+  if (!transaction) return [];
+  return transaction.items || transaction.tickets || transaction.details || [];
+};
+
 </script>
 
 <style scoped>
@@ -502,5 +696,257 @@ const getStatusColor = (status) => {
   .profile-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ================= ACTION BUTTONS ================= */
+.action-btn {
+  background: none;
+  border: 1px solid rgba(140, 115, 85, 0.2);
+  color: var(--color-mocca-dark);
+  border-radius: 6px;
+  padding: 0.35rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.action-btn:hover {
+  background-color: var(--color-mocca-dark);
+  color: #fff;
+  border-color: var(--color-mocca-dark);
+}
+
+/* ================= RECEIPT MODAL STYLING ================= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(30, 20, 15, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+}
+
+.receipt-card {
+  background: #fff;
+  border-radius: 12px;
+  width: 92%;
+  max-width: 420px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  position: relative;
+  animation: slideUpFade 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+/* Subtle jagged edge bottom effect */
+.receipt-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background-size: 16px 16px;
+  background-image: radial-gradient(circle at 8px 8px, transparent 0, transparent 7px, #fff 8px);
+  z-index: 10;
+  transform: translateY(4px);
+  opacity: 0.5;
+}
+
+.receipt-header {
+  background-color: var(--color-mocca-dark);
+  color: #F5F2ED;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.receipt-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  font-size: 1.05rem;
+}
+
+.close-receipt-btn {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.close-receipt-btn:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+.receipt-body {
+  padding: 2.2rem 1.5rem 1.5rem;
+  background-color: #FAF8F5; /* Paper-like feel */
+  position: relative;
+}
+
+.receipt-status-badge {
+  position: absolute;
+  top: -14px;
+  right: 1.5rem;
+  padding: 0.4rem 1.1rem;
+  border-radius: 20px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  border: 2px solid #FAF8F5;
+  z-index: 5;
+}
+
+.receipt-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.receipt-divider {
+  height: 1px;
+  background-color: rgba(140, 115, 85, 0.2);
+  margin: 1.25rem 0;
+}
+
+.receipt-divider.dashed {
+  background: none;
+  border-top: 1.5px dashed rgba(140, 115, 85, 0.35);
+}
+
+.receipt-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.receipt-label {
+  font-size: 0.8rem;
+  color: var(--color-mocca-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.receipt-value {
+  font-size: 1rem;
+  color: var(--color-mocca-dark);
+  font-weight: 500;
+}
+
+.invoice-text {
+  font-family: monospace;
+  font-size: 1.15rem;
+  letter-spacing: 0.05em;
+  margin-top: 0.35rem;
+  font-weight: 600;
+}
+
+.receipt-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.receipt-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.receipt-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.receipt-item-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-mocca-dark);
+}
+
+.receipt-item-qty {
+  font-size: 0.8rem;
+  color: var(--color-mocca-muted);
+}
+
+.receipt-item-total {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-mocca-dark);
+}
+
+.receipt-totals {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.receipt-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: var(--color-mocca-muted);
+}
+
+.receipt-total-row.grand-total {
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid rgba(140, 115, 85, 0.15);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-mocca-dark);
+}
+
+.receipt-footer {
+  padding: 0 1.5rem 1.5rem;
+  background-color: #FAF8F5;
+  text-align: center;
+}
+
+.btn-primary-mocca {
+  background-color: var(--color-mocca-dark);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.9rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  display: block;
+}
+
+.btn-primary-mocca:hover {
+  background-color: #3b2314;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(90, 60, 40, 0.2);
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 </style>
