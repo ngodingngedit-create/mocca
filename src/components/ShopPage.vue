@@ -215,6 +215,7 @@ const fetchProducts = async () => {
     
     if (data) {
       const checkPreorderActive = (p) => {
+        if (p.is_preorder == 0) return false;
         if (!p.preorder_date_start) return p.is_preorder == 1;
         const now = new Date();
         const cleanStartDate = p.preorder_date_start.split(' ')[0];
