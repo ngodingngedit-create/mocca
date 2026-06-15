@@ -316,7 +316,7 @@ const productData = computed(() => {
     const d = fetchedProductDetails.value;
     
     const variants = d.productVarian || d.product_varian || [];
-    const sizes = variants.map(v => v.varian_name);
+    const sizes = [...new Set(variants.map(v => v.varian_name).filter(Boolean))];
     const defaultSize = sizes.length > 0 ? sizes[0] : 'One Size';
     const thumbnails = d.product_image && d.product_image.length > 0 
       ? d.product_image.map(img => img.image_url) 

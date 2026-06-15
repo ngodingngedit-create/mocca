@@ -109,7 +109,15 @@ const productTitle = computed(() => {
 const availableVariants = computed(() => {
   if (fetchedProductDetails.value) {
     const variants = fetchedProductDetails.value.productVarian || fetchedProductDetails.value.product_varian || [];
-    return variants;
+    const uniqueVariants = [];
+    const seenNames = new Set();
+    for (const v of variants) {
+      if (!seenNames.has(v.varian_name)) {
+        seenNames.add(v.varian_name);
+        uniqueVariants.push(v);
+      }
+    }
+    return uniqueVariants;
   }
   return [];
 });
