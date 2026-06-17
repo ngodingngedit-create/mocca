@@ -263,11 +263,7 @@ const fetchProducts = async () => {
         let promoPrice = null;
         let promoTitle = null;
 
-        if (activeVarian && checkPromoActive(activeVarian, p)) {
-          isPromo = true;
-          promoPrice = parseInt(activeVarian.promo_price || p.promo_price || price);
-          promoTitle = activeVarian.promo_title || p.promo_title || 'PROMO';
-        } else if (checkPromoActive(p)) {
+        if (checkPromoActive(p)) {
           isPromo = true;
           promoPrice = parseInt(p.promo_price || price);
           promoTitle = p.promo_title || 'PROMO';
