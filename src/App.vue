@@ -42,6 +42,9 @@
         <div v-else-if="currentPage === 'info'" key="info">
           <InfoPage />
         </div>
+        <div v-else-if="isLiveReport" key="live-report">
+          <LiveReportPage />
+        </div>
       </Transition>
     </main>
     <Footer v-if="currentPage !== 'login' && currentPage !== 'payment' && currentPage !== 'checkout'" />
@@ -68,11 +71,12 @@ import ProfilePage from './components/ProfilePage.vue'
 import DashboardUserPage from './components/DashboardUserPage.vue'
 import LoginPage from './components/LoginPage.vue'
 import InfoPage from './components/InfoPage.vue'
+import LiveReportPage from './components/LiveReportPage.vue'
 import Footer from './components/Footer.vue'
 import CartDrawer from './components/CartDrawer.vue'
 import BottomCartBar from './components/BottomCartBar.vue'
 import MobileNavbar from './components/MobileNavbar.vue'
-import { currentPage, totalItems, currentTheme } from './store/cart.js'
+import { currentPage, totalItems, currentTheme, isLiveReport } from './store/cart.js'
 import { watch } from 'vue'
 
 watch(currentTheme, (theme) => {

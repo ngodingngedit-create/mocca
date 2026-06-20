@@ -14,6 +14,20 @@ export const activeCreatorSlug = ref('');
 export const activeCategory = ref('all');
 export const activeInfoPage = ref('aboutUs');
 
+export const isLiveReport = computed(() => {
+  if (!currentPage.value) return false;
+  const val = String(currentPage.value).toLowerCase();
+  return val.includes('live-report') || val.includes('live report') || val.includes('live%20report');
+});
+
+export const liveReportSlug = computed(() => {
+  if (!isLiveReport.value) return '';
+  const val = String(currentPage.value);
+  const parts = val.split('/');
+  // handle both `live-report/slug` and `live report/slug` and `live%20report/slug`
+  return parts.length > 1 ? decodeURIComponent(parts.slice(1).join('/')) : '';
+});
+
 // Sync URL on state change
 watch(currentPage, (newPage) => {
   const currentPath = window.location.pathname.replace(/^\/+/, '') || 'home';
