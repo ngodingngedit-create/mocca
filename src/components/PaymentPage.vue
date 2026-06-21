@@ -769,6 +769,15 @@ const initMap = () => {
       lng: position.lng()
     };
   });
+
+  mapInstance.addListener('click', (e) => {
+    const position = e.latLng;
+    markerInstance.setPosition(position);
+    selectedPlaceLocation.value = {
+      lat: position.lat(),
+      lng: position.lng()
+    };
+  });
 };
 
 const proceedToAddressDetail = () => {
