@@ -99,19 +99,21 @@
                   {{ item.latest_manifest?.status_name || (currentLang === 'id' ? 'Menunggu Penjual' : 'Waiting for Seller') }}
                 </td>
                 <td class="text-center">
-                  <button class="action-btn" @click="viewDetail(item)" :title="currentLang === 'id' ? 'Lihat Detail' : 'View Detail'">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                  </button>
-                  <button v-if="!isItemExpired(item)" class="action-btn" @click="printResi(item)" :title="currentLang === 'id' ? 'Cetak Resi' : 'Print Receipt'">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                      <rect x="6" y="14" width="12" height="8"></rect>
-                    </svg>
-                  </button>
+                  <div class="action-buttons">
+                    <button class="action-btn" @click="viewDetail(item)" :title="currentLang === 'id' ? 'Lihat Detail' : 'View Detail'">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                    <button v-if="!isItemExpired(item)" class="action-btn" @click="printResi(item)" :title="currentLang === 'id' ? 'Cetak Resi' : 'Print Receipt'">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                      </svg>
+                    </button>
+                  </div>
                 </td>
               </tr>
               <tr v-if="processedTransactions.length === 0">
@@ -889,6 +891,7 @@ const printResi = async (t) => {
   background-color: #FAF9F6;
   border-bottom: 2px solid rgba(140, 115, 85, 0.1);
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .report-table th.sortable {
@@ -925,6 +928,7 @@ const printResi = async (t) => {
   font-size: 0.9rem;
   color: var(--color-mocca-dark, #4A3B2C);
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .text-center { text-align: center; }
@@ -1235,6 +1239,13 @@ const printResi = async (t) => {
 }
 .w-full {
   width: 100%;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .action-btn {
