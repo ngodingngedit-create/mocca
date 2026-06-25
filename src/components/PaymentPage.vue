@@ -840,6 +840,15 @@ const saveAddressAndFetchShipping = async () => {
         if (carrierKey.includes('pos')) carrierKey = 'pos';
         
         const serviceName = (cost.service || cost.type || '').toLowerCase();
+
+        // Exclude SiCepat Reguler and AnterAja Reguler
+        if (
+          (carrierKey.includes('sicepat') && serviceName.includes('regul')) ||
+          (carrierKey.includes('anteraja') && serviceName.includes('regul'))
+        ) {
+          return;
+        }
+
         // Only allow 'Reguler', 'EZ', or 'Standard'
         if (!serviceName.includes('regul') && serviceName !== 'ez' && !serviceName.includes('standard')) {
           return;
